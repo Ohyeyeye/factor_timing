@@ -1,0 +1,2652 @@
+2025-04-17 16:53:53,285 - INFO - Starting factor timing strategy optimization...
+2025-04-17 16:53:53,285 - INFO - Running parameter grid search...
+2025-04-17 16:53:53,285 - INFO - 
+Running strategy with lstm classifier and mean_variance optimizer
+2025-04-17 16:53:53,285 - INFO - Initializing strategy...
+2025-04-17 16:53:59,418 - INFO - Running strategy...
+2025-04-17 16:53:59,432 - ERROR - Error running lstm with mean_variance: Missing required columns in Fama-French factors data: ['date']
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 47, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 102, in run_strategy
+    train_factors, test_factors = self.prepare_data()
+                                  ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 53, in prepare_data
+    train_factors = self.data_loader.load_fama_french_factors(
+        self.train_start_date, self.train_end_date)
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 113, in load_fama_french_factors
+    self._validate_dataframe(self.ff_factors, required_columns, "Fama-French factors")
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 74, in _validate_dataframe
+    raise ValueError(f"Missing required columns in {data_type} data: {missing_cols}")
+ValueError: Missing required columns in Fama-French factors data: ['date']
+2025-04-17 16:53:59,434 - INFO - 
+Running strategy with lstm classifier and neural optimizer
+2025-04-17 16:53:59,434 - INFO - Initializing strategy...
+2025-04-17 16:53:59,437 - INFO - Running strategy...
+2025-04-17 16:53:59,440 - ERROR - Error running lstm with neural: Missing required columns in Fama-French factors data: ['date']
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 47, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 102, in run_strategy
+    train_factors, test_factors = self.prepare_data()
+                                  ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 53, in prepare_data
+    train_factors = self.data_loader.load_fama_french_factors(
+        self.train_start_date, self.train_end_date)
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 113, in load_fama_french_factors
+    self._validate_dataframe(self.ff_factors, required_columns, "Fama-French factors")
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 74, in _validate_dataframe
+    raise ValueError(f"Missing required columns in {data_type} data: {missing_cols}")
+ValueError: Missing required columns in Fama-French factors data: ['date']
+2025-04-17 16:53:59,441 - INFO - 
+Running strategy with xgboost classifier and mean_variance optimizer
+2025-04-17 16:53:59,441 - INFO - Initializing strategy...
+2025-04-17 16:53:59,610 - INFO - Running strategy...
+2025-04-17 16:53:59,613 - ERROR - Error running xgboost with mean_variance: Missing required columns in Fama-French factors data: ['date']
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 47, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 102, in run_strategy
+    train_factors, test_factors = self.prepare_data()
+                                  ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 53, in prepare_data
+    train_factors = self.data_loader.load_fama_french_factors(
+        self.train_start_date, self.train_end_date)
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 113, in load_fama_french_factors
+    self._validate_dataframe(self.ff_factors, required_columns, "Fama-French factors")
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 74, in _validate_dataframe
+    raise ValueError(f"Missing required columns in {data_type} data: {missing_cols}")
+ValueError: Missing required columns in Fama-French factors data: ['date']
+2025-04-17 16:53:59,614 - INFO - 
+Running strategy with xgboost classifier and neural optimizer
+2025-04-17 16:53:59,614 - INFO - Initializing strategy...
+2025-04-17 16:53:59,615 - INFO - Running strategy...
+2025-04-17 16:53:59,618 - ERROR - Error running xgboost with neural: Missing required columns in Fama-French factors data: ['date']
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 47, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 102, in run_strategy
+    train_factors, test_factors = self.prepare_data()
+                                  ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 53, in prepare_data
+    train_factors = self.data_loader.load_fama_french_factors(
+        self.train_start_date, self.train_end_date)
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 113, in load_fama_french_factors
+    self._validate_dataframe(self.ff_factors, required_columns, "Fama-French factors")
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 74, in _validate_dataframe
+    raise ValueError(f"Missing required columns in {data_type} data: {missing_cols}")
+ValueError: Missing required columns in Fama-French factors data: ['date']
+2025-04-17 16:53:59,618 - INFO - 
+Running strategy with hmm classifier and mean_variance optimizer
+2025-04-17 16:53:59,619 - INFO - Initializing strategy...
+2025-04-17 16:54:00,127 - INFO - Running strategy...
+2025-04-17 16:54:00,130 - ERROR - Error running hmm with mean_variance: Missing required columns in Fama-French factors data: ['date']
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 47, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 102, in run_strategy
+    train_factors, test_factors = self.prepare_data()
+                                  ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 53, in prepare_data
+    train_factors = self.data_loader.load_fama_french_factors(
+        self.train_start_date, self.train_end_date)
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 113, in load_fama_french_factors
+    self._validate_dataframe(self.ff_factors, required_columns, "Fama-French factors")
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 74, in _validate_dataframe
+    raise ValueError(f"Missing required columns in {data_type} data: {missing_cols}")
+ValueError: Missing required columns in Fama-French factors data: ['date']
+2025-04-17 16:54:00,132 - INFO - 
+Running strategy with hmm classifier and neural optimizer
+2025-04-17 16:54:00,132 - INFO - Initializing strategy...
+2025-04-17 16:54:00,133 - INFO - Running strategy...
+2025-04-17 16:54:00,136 - ERROR - Error running hmm with neural: Missing required columns in Fama-French factors data: ['date']
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 47, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 102, in run_strategy
+    train_factors, test_factors = self.prepare_data()
+                                  ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 53, in prepare_data
+    train_factors = self.data_loader.load_fama_french_factors(
+        self.train_start_date, self.train_end_date)
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 113, in load_fama_french_factors
+    self._validate_dataframe(self.ff_factors, required_columns, "Fama-French factors")
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 74, in _validate_dataframe
+    raise ValueError(f"Missing required columns in {data_type} data: {missing_cols}")
+ValueError: Missing required columns in Fama-French factors data: ['date']
+2025-04-17 16:54:00,137 - ERROR - No valid results obtained from parameter grid search
+2025-04-17 16:54:00,137 - INFO - Factor timing strategy optimization completed
+2025-04-17 16:54:40,664 - INFO - Starting factor timing strategy optimization...
+2025-04-17 16:54:40,665 - INFO - Running parameter grid search...
+2025-04-17 16:54:40,665 - INFO - 
+Running strategy with lstm classifier and mean_variance optimizer
+2025-04-17 16:54:40,665 - INFO - Initializing strategy...
+2025-04-17 16:54:41,553 - INFO - Running strategy...
+2025-04-17 16:54:41,567 - ERROR - Error running lstm with mean_variance: Error reading macro data files: 'date'
+Traceback (most recent call last):
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3805, in get_loc
+    return self._engine.get_loc(casted_key)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7081, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7089, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'date'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 159, in load_macro_data
+    cpi['date'] = pd.to_datetime(cpi['date'])
+                                 ~~~^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4102, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3812, in get_loc
+    raise KeyError(key) from err
+KeyError: 'date'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 47, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 102, in run_strategy
+    train_factors, test_factors = self.prepare_data()
+                                  ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 59, in prepare_data
+    train_macro = self.data_loader.load_macro_data(
+        self.train_start_date, self.train_end_date)
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 173, in load_macro_data
+    raise ValueError(f"Error reading macro data files: {str(e)}")
+ValueError: Error reading macro data files: 'date'
+2025-04-17 16:54:41,571 - INFO - 
+Running strategy with lstm classifier and neural optimizer
+2025-04-17 16:54:41,572 - INFO - Initializing strategy...
+2025-04-17 16:54:41,573 - INFO - Running strategy...
+2025-04-17 16:54:41,584 - ERROR - Error running lstm with neural: Error reading macro data files: 'date'
+Traceback (most recent call last):
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3805, in get_loc
+    return self._engine.get_loc(casted_key)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7081, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7089, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'date'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 159, in load_macro_data
+    cpi['date'] = pd.to_datetime(cpi['date'])
+                                 ~~~^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4102, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3812, in get_loc
+    raise KeyError(key) from err
+KeyError: 'date'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 47, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 102, in run_strategy
+    train_factors, test_factors = self.prepare_data()
+                                  ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 59, in prepare_data
+    train_macro = self.data_loader.load_macro_data(
+        self.train_start_date, self.train_end_date)
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 173, in load_macro_data
+    raise ValueError(f"Error reading macro data files: {str(e)}")
+ValueError: Error reading macro data files: 'date'
+2025-04-17 16:54:41,586 - INFO - 
+Running strategy with xgboost classifier and mean_variance optimizer
+2025-04-17 16:54:41,586 - INFO - Initializing strategy...
+2025-04-17 16:54:41,607 - INFO - Running strategy...
+2025-04-17 16:54:41,618 - ERROR - Error running xgboost with mean_variance: Error reading macro data files: 'date'
+Traceback (most recent call last):
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3805, in get_loc
+    return self._engine.get_loc(casted_key)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7081, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7089, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'date'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 159, in load_macro_data
+    cpi['date'] = pd.to_datetime(cpi['date'])
+                                 ~~~^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4102, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3812, in get_loc
+    raise KeyError(key) from err
+KeyError: 'date'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 47, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 102, in run_strategy
+    train_factors, test_factors = self.prepare_data()
+                                  ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 59, in prepare_data
+    train_macro = self.data_loader.load_macro_data(
+        self.train_start_date, self.train_end_date)
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 173, in load_macro_data
+    raise ValueError(f"Error reading macro data files: {str(e)}")
+ValueError: Error reading macro data files: 'date'
+2025-04-17 16:54:41,620 - INFO - 
+Running strategy with xgboost classifier and neural optimizer
+2025-04-17 16:54:41,620 - INFO - Initializing strategy...
+2025-04-17 16:54:41,621 - INFO - Running strategy...
+2025-04-17 16:54:41,631 - ERROR - Error running xgboost with neural: Error reading macro data files: 'date'
+Traceback (most recent call last):
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3805, in get_loc
+    return self._engine.get_loc(casted_key)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7081, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7089, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'date'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 159, in load_macro_data
+    cpi['date'] = pd.to_datetime(cpi['date'])
+                                 ~~~^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4102, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3812, in get_loc
+    raise KeyError(key) from err
+KeyError: 'date'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 47, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 102, in run_strategy
+    train_factors, test_factors = self.prepare_data()
+                                  ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 59, in prepare_data
+    train_macro = self.data_loader.load_macro_data(
+        self.train_start_date, self.train_end_date)
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 173, in load_macro_data
+    raise ValueError(f"Error reading macro data files: {str(e)}")
+ValueError: Error reading macro data files: 'date'
+2025-04-17 16:54:41,633 - INFO - 
+Running strategy with hmm classifier and mean_variance optimizer
+2025-04-17 16:54:41,634 - INFO - Initializing strategy...
+2025-04-17 16:54:41,662 - INFO - Running strategy...
+2025-04-17 16:54:41,674 - ERROR - Error running hmm with mean_variance: Error reading macro data files: 'date'
+Traceback (most recent call last):
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3805, in get_loc
+    return self._engine.get_loc(casted_key)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7081, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7089, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'date'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 159, in load_macro_data
+    cpi['date'] = pd.to_datetime(cpi['date'])
+                                 ~~~^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4102, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3812, in get_loc
+    raise KeyError(key) from err
+KeyError: 'date'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 47, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 102, in run_strategy
+    train_factors, test_factors = self.prepare_data()
+                                  ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 59, in prepare_data
+    train_macro = self.data_loader.load_macro_data(
+        self.train_start_date, self.train_end_date)
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 173, in load_macro_data
+    raise ValueError(f"Error reading macro data files: {str(e)}")
+ValueError: Error reading macro data files: 'date'
+2025-04-17 16:54:41,676 - INFO - 
+Running strategy with hmm classifier and neural optimizer
+2025-04-17 16:54:41,676 - INFO - Initializing strategy...
+2025-04-17 16:54:41,677 - INFO - Running strategy...
+2025-04-17 16:54:41,686 - ERROR - Error running hmm with neural: Error reading macro data files: 'date'
+Traceback (most recent call last):
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3805, in get_loc
+    return self._engine.get_loc(casted_key)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7081, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7089, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'date'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 159, in load_macro_data
+    cpi['date'] = pd.to_datetime(cpi['date'])
+                                 ~~~^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4102, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3812, in get_loc
+    raise KeyError(key) from err
+KeyError: 'date'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 47, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 102, in run_strategy
+    train_factors, test_factors = self.prepare_data()
+                                  ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 59, in prepare_data
+    train_macro = self.data_loader.load_macro_data(
+        self.train_start_date, self.train_end_date)
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 173, in load_macro_data
+    raise ValueError(f"Error reading macro data files: {str(e)}")
+ValueError: Error reading macro data files: 'date'
+2025-04-17 16:54:41,688 - ERROR - No valid results obtained from parameter grid search
+2025-04-17 16:54:41,689 - INFO - Factor timing strategy optimization completed
+2025-04-17 16:55:51,927 - INFO - Starting factor timing strategy optimization...
+2025-04-17 16:55:51,928 - INFO - Running parameter grid search...
+2025-04-17 16:55:51,928 - INFO - 
+Running strategy with lstm classifier and mean_variance optimizer
+2025-04-17 16:55:51,928 - INFO - Initializing strategy...
+2025-04-17 16:55:52,868 - INFO - Running strategy...
+2025-04-17 16:55:52,889 - WARNING - US corporate credit spread file not found
+2025-04-17 16:55:52,889 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:55:52,892 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 16:55:52,892 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 16:55:52,900 - WARNING - US corporate credit spread file not found
+2025-04-17 16:55:52,901 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:55:52,903 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 16:55:52,903 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 16:55:56,009 - ERROR - Error running lstm with mean_variance: Error downloading market data: 'Adj Close'
+Traceback (most recent call last):
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3805, in get_loc
+    return self._engine.get_loc(casted_key)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7081, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7089, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'Adj Close'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 273, in load_market_data
+    sp500_returns = sp500['Adj Close'].pct_change()
+                    ~~~~~^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4101, in __getitem__
+    return self._getitem_multilevel(key)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4159, in _getitem_multilevel
+    loc = self.columns.get_loc(key)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\multi.py", line 3040, in get_loc
+    loc = self._get_level_indexer(key, level=0)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\multi.py", line 3391, in _get_level_indexer
+    idx = self._get_loc_single_level_index(level_index, key)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\multi.py", line 2980, in _get_loc_single_level_index
+    return level_index.get_loc(key)
+           ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3812, in get_loc
+    raise KeyError(key) from err
+KeyError: 'Adj Close'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 47, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 102, in run_strategy
+    train_factors, test_factors = self.prepare_data()
+                                  ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 64, in prepare_data
+    train_market = self.data_loader.load_market_data(
+        self.train_start_date, self.train_end_date)
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 297, in load_market_data
+    raise ValueError(f"Error downloading market data: {str(e)}")
+ValueError: Error downloading market data: 'Adj Close'
+2025-04-17 16:55:56,014 - INFO - 
+Running strategy with lstm classifier and neural optimizer
+2025-04-17 16:55:56,015 - INFO - Initializing strategy...
+2025-04-17 16:55:56,016 - INFO - Running strategy...
+2025-04-17 16:55:56,032 - WARNING - US corporate credit spread file not found
+2025-04-17 16:55:56,033 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:55:56,035 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 16:55:56,035 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 16:55:56,043 - WARNING - US corporate credit spread file not found
+2025-04-17 16:55:56,044 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:55:56,046 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 16:55:56,047 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 16:55:56,118 - ERROR - Error running lstm with neural: Error downloading market data: 'Adj Close'
+Traceback (most recent call last):
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3805, in get_loc
+    return self._engine.get_loc(casted_key)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7081, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7089, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'Adj Close'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 273, in load_market_data
+    sp500_returns = sp500['Adj Close'].pct_change()
+                    ~~~~~^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4101, in __getitem__
+    return self._getitem_multilevel(key)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4159, in _getitem_multilevel
+    loc = self.columns.get_loc(key)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\multi.py", line 3040, in get_loc
+    loc = self._get_level_indexer(key, level=0)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\multi.py", line 3391, in _get_level_indexer
+    idx = self._get_loc_single_level_index(level_index, key)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\multi.py", line 2980, in _get_loc_single_level_index
+    return level_index.get_loc(key)
+           ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3812, in get_loc
+    raise KeyError(key) from err
+KeyError: 'Adj Close'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 47, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 102, in run_strategy
+    train_factors, test_factors = self.prepare_data()
+                                  ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 64, in prepare_data
+    train_market = self.data_loader.load_market_data(
+        self.train_start_date, self.train_end_date)
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 297, in load_market_data
+    raise ValueError(f"Error downloading market data: {str(e)}")
+ValueError: Error downloading market data: 'Adj Close'
+2025-04-17 16:55:56,120 - INFO - 
+Running strategy with xgboost classifier and mean_variance optimizer
+2025-04-17 16:55:56,120 - INFO - Initializing strategy...
+2025-04-17 16:55:56,140 - INFO - Running strategy...
+2025-04-17 16:55:56,157 - WARNING - US corporate credit spread file not found
+2025-04-17 16:55:56,158 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:55:56,160 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 16:55:56,160 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 16:55:56,168 - WARNING - US corporate credit spread file not found
+2025-04-17 16:55:56,169 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:55:56,171 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 16:55:56,172 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 16:55:56,232 - ERROR - Error running xgboost with mean_variance: Error downloading market data: 'Adj Close'
+Traceback (most recent call last):
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3805, in get_loc
+    return self._engine.get_loc(casted_key)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7081, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7089, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'Adj Close'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 273, in load_market_data
+    sp500_returns = sp500['Adj Close'].pct_change()
+                    ~~~~~^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4101, in __getitem__
+    return self._getitem_multilevel(key)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4159, in _getitem_multilevel
+    loc = self.columns.get_loc(key)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\multi.py", line 3040, in get_loc
+    loc = self._get_level_indexer(key, level=0)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\multi.py", line 3391, in _get_level_indexer
+    idx = self._get_loc_single_level_index(level_index, key)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\multi.py", line 2980, in _get_loc_single_level_index
+    return level_index.get_loc(key)
+           ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3812, in get_loc
+    raise KeyError(key) from err
+KeyError: 'Adj Close'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 47, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 102, in run_strategy
+    train_factors, test_factors = self.prepare_data()
+                                  ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 64, in prepare_data
+    train_market = self.data_loader.load_market_data(
+        self.train_start_date, self.train_end_date)
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 297, in load_market_data
+    raise ValueError(f"Error downloading market data: {str(e)}")
+ValueError: Error downloading market data: 'Adj Close'
+2025-04-17 16:55:56,236 - INFO - 
+Running strategy with xgboost classifier and neural optimizer
+2025-04-17 16:55:56,236 - INFO - Initializing strategy...
+2025-04-17 16:55:56,237 - INFO - Running strategy...
+2025-04-17 16:55:56,255 - WARNING - US corporate credit spread file not found
+2025-04-17 16:55:56,255 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:55:56,259 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 16:55:56,259 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 16:55:56,270 - WARNING - US corporate credit spread file not found
+2025-04-17 16:55:56,270 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:55:56,273 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 16:55:56,273 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 16:55:56,324 - ERROR - Error running xgboost with neural: Error downloading market data: 'Adj Close'
+Traceback (most recent call last):
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3805, in get_loc
+    return self._engine.get_loc(casted_key)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7081, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7089, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'Adj Close'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 273, in load_market_data
+    sp500_returns = sp500['Adj Close'].pct_change()
+                    ~~~~~^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4101, in __getitem__
+    return self._getitem_multilevel(key)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4159, in _getitem_multilevel
+    loc = self.columns.get_loc(key)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\multi.py", line 3040, in get_loc
+    loc = self._get_level_indexer(key, level=0)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\multi.py", line 3391, in _get_level_indexer
+    idx = self._get_loc_single_level_index(level_index, key)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\multi.py", line 2980, in _get_loc_single_level_index
+    return level_index.get_loc(key)
+           ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3812, in get_loc
+    raise KeyError(key) from err
+KeyError: 'Adj Close'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 47, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 102, in run_strategy
+    train_factors, test_factors = self.prepare_data()
+                                  ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 64, in prepare_data
+    train_market = self.data_loader.load_market_data(
+        self.train_start_date, self.train_end_date)
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 297, in load_market_data
+    raise ValueError(f"Error downloading market data: {str(e)}")
+ValueError: Error downloading market data: 'Adj Close'
+2025-04-17 16:55:56,327 - INFO - 
+Running strategy with hmm classifier and mean_variance optimizer
+2025-04-17 16:55:56,327 - INFO - Initializing strategy...
+2025-04-17 16:55:56,363 - INFO - Running strategy...
+2025-04-17 16:55:56,381 - WARNING - US corporate credit spread file not found
+2025-04-17 16:55:56,382 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:55:56,383 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 16:55:56,384 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 16:55:56,391 - WARNING - US corporate credit spread file not found
+2025-04-17 16:55:56,391 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:55:56,394 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 16:55:56,394 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 16:55:56,451 - ERROR - Error running hmm with mean_variance: Error downloading market data: 'Adj Close'
+Traceback (most recent call last):
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3805, in get_loc
+    return self._engine.get_loc(casted_key)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7081, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7089, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'Adj Close'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 273, in load_market_data
+    sp500_returns = sp500['Adj Close'].pct_change()
+                    ~~~~~^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4101, in __getitem__
+    return self._getitem_multilevel(key)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4159, in _getitem_multilevel
+    loc = self.columns.get_loc(key)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\multi.py", line 3040, in get_loc
+    loc = self._get_level_indexer(key, level=0)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\multi.py", line 3391, in _get_level_indexer
+    idx = self._get_loc_single_level_index(level_index, key)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\multi.py", line 2980, in _get_loc_single_level_index
+    return level_index.get_loc(key)
+           ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3812, in get_loc
+    raise KeyError(key) from err
+KeyError: 'Adj Close'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 47, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 102, in run_strategy
+    train_factors, test_factors = self.prepare_data()
+                                  ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 64, in prepare_data
+    train_market = self.data_loader.load_market_data(
+        self.train_start_date, self.train_end_date)
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 297, in load_market_data
+    raise ValueError(f"Error downloading market data: {str(e)}")
+ValueError: Error downloading market data: 'Adj Close'
+2025-04-17 16:55:56,453 - INFO - 
+Running strategy with hmm classifier and neural optimizer
+2025-04-17 16:55:56,453 - INFO - Initializing strategy...
+2025-04-17 16:55:56,454 - INFO - Running strategy...
+2025-04-17 16:55:56,470 - WARNING - US corporate credit spread file not found
+2025-04-17 16:55:56,470 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:55:56,472 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 16:55:56,473 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 16:55:56,480 - WARNING - US corporate credit spread file not found
+2025-04-17 16:55:56,481 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:55:56,483 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 16:55:56,483 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 16:55:56,533 - ERROR - Error running hmm with neural: Error downloading market data: 'Adj Close'
+Traceback (most recent call last):
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3805, in get_loc
+    return self._engine.get_loc(casted_key)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7081, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7089, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'Adj Close'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 273, in load_market_data
+    sp500_returns = sp500['Adj Close'].pct_change()
+                    ~~~~~^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4101, in __getitem__
+    return self._getitem_multilevel(key)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4159, in _getitem_multilevel
+    loc = self.columns.get_loc(key)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\multi.py", line 3040, in get_loc
+    loc = self._get_level_indexer(key, level=0)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\multi.py", line 3391, in _get_level_indexer
+    idx = self._get_loc_single_level_index(level_index, key)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\multi.py", line 2980, in _get_loc_single_level_index
+    return level_index.get_loc(key)
+           ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3812, in get_loc
+    raise KeyError(key) from err
+KeyError: 'Adj Close'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 47, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 102, in run_strategy
+    train_factors, test_factors = self.prepare_data()
+                                  ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 64, in prepare_data
+    train_market = self.data_loader.load_market_data(
+        self.train_start_date, self.train_end_date)
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 297, in load_market_data
+    raise ValueError(f"Error downloading market data: {str(e)}")
+ValueError: Error downloading market data: 'Adj Close'
+2025-04-17 16:55:56,535 - ERROR - No valid results obtained from parameter grid search
+2025-04-17 16:55:56,535 - INFO - Factor timing strategy optimization completed
+2025-04-17 16:57:42,412 - INFO - Starting factor timing strategy optimization...
+2025-04-17 16:57:42,413 - INFO - Running parameter grid search...
+2025-04-17 16:57:42,413 - INFO - 
+Running strategy with lstm classifier and mean_variance optimizer
+2025-04-17 16:57:42,413 - INFO - Initializing strategy...
+2025-04-17 16:57:43,347 - INFO - Running strategy...
+2025-04-17 16:57:43,369 - WARNING - US corporate credit spread file not found
+2025-04-17 16:57:43,369 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:57:43,371 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 16:57:43,371 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 16:57:43,378 - WARNING - US corporate credit spread file not found
+2025-04-17 16:57:43,379 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:57:43,381 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 16:57:43,381 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 16:57:44,136 - ERROR - Error running lstm with mean_variance: Error downloading market data: 'Adj Close'
+Traceback (most recent call last):
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3805, in get_loc
+    return self._engine.get_loc(casted_key)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7081, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7089, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'Adj Close'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 280, in load_market_data
+    'VIX': vix['Adj Close'],
+           ~~~^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4102, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3812, in get_loc
+    raise KeyError(key) from err
+KeyError: 'Adj Close'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 47, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 102, in run_strategy
+    train_factors, test_factors = self.prepare_data()
+                                  ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 64, in prepare_data
+    train_market = self.data_loader.load_market_data(
+        self.train_start_date, self.train_end_date)
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 299, in load_market_data
+    raise ValueError(f"Error downloading market data: {str(e)}")
+ValueError: Error downloading market data: 'Adj Close'
+2025-04-17 16:57:44,141 - INFO - 
+Running strategy with lstm classifier and neural optimizer
+2025-04-17 16:57:44,141 - INFO - Initializing strategy...
+2025-04-17 16:57:44,142 - INFO - Running strategy...
+2025-04-17 16:57:44,160 - WARNING - US corporate credit spread file not found
+2025-04-17 16:57:44,161 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:57:44,163 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 16:57:44,163 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 16:57:44,173 - WARNING - US corporate credit spread file not found
+2025-04-17 16:57:44,173 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:57:44,175 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 16:57:44,175 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 16:57:44,234 - ERROR - Error running lstm with neural: Error downloading market data: 'Adj Close'
+Traceback (most recent call last):
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3805, in get_loc
+    return self._engine.get_loc(casted_key)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7081, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7089, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'Adj Close'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 280, in load_market_data
+    'VIX': vix['Adj Close'],
+           ~~~^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4102, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3812, in get_loc
+    raise KeyError(key) from err
+KeyError: 'Adj Close'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 47, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 102, in run_strategy
+    train_factors, test_factors = self.prepare_data()
+                                  ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 64, in prepare_data
+    train_market = self.data_loader.load_market_data(
+        self.train_start_date, self.train_end_date)
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 299, in load_market_data
+    raise ValueError(f"Error downloading market data: {str(e)}")
+ValueError: Error downloading market data: 'Adj Close'
+2025-04-17 16:57:44,236 - INFO - 
+Running strategy with xgboost classifier and mean_variance optimizer
+2025-04-17 16:57:44,237 - INFO - Initializing strategy...
+2025-04-17 16:57:44,256 - INFO - Running strategy...
+2025-04-17 16:57:44,273 - WARNING - US corporate credit spread file not found
+2025-04-17 16:57:44,274 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:57:44,276 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 16:57:44,276 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 16:57:44,284 - WARNING - US corporate credit spread file not found
+2025-04-17 16:57:44,285 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:57:44,287 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 16:57:44,287 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 16:57:44,357 - ERROR - Error running xgboost with mean_variance: Error downloading market data: 'Adj Close'
+Traceback (most recent call last):
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3805, in get_loc
+    return self._engine.get_loc(casted_key)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7081, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7089, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'Adj Close'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 280, in load_market_data
+    'VIX': vix['Adj Close'],
+           ~~~^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4102, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3812, in get_loc
+    raise KeyError(key) from err
+KeyError: 'Adj Close'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 47, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 102, in run_strategy
+    train_factors, test_factors = self.prepare_data()
+                                  ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 64, in prepare_data
+    train_market = self.data_loader.load_market_data(
+        self.train_start_date, self.train_end_date)
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 299, in load_market_data
+    raise ValueError(f"Error downloading market data: {str(e)}")
+ValueError: Error downloading market data: 'Adj Close'
+2025-04-17 16:57:44,360 - INFO - 
+Running strategy with xgboost classifier and neural optimizer
+2025-04-17 16:57:44,361 - INFO - Initializing strategy...
+2025-04-17 16:57:44,362 - INFO - Running strategy...
+2025-04-17 16:57:44,380 - WARNING - US corporate credit spread file not found
+2025-04-17 16:57:44,381 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:57:44,383 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 16:57:44,383 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 16:57:44,391 - WARNING - US corporate credit spread file not found
+2025-04-17 16:57:44,391 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:57:44,393 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 16:57:44,394 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 16:57:44,444 - ERROR - Error running xgboost with neural: Error downloading market data: 'Adj Close'
+Traceback (most recent call last):
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3805, in get_loc
+    return self._engine.get_loc(casted_key)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7081, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7089, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'Adj Close'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 280, in load_market_data
+    'VIX': vix['Adj Close'],
+           ~~~^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4102, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3812, in get_loc
+    raise KeyError(key) from err
+KeyError: 'Adj Close'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 47, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 102, in run_strategy
+    train_factors, test_factors = self.prepare_data()
+                                  ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 64, in prepare_data
+    train_market = self.data_loader.load_market_data(
+        self.train_start_date, self.train_end_date)
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 299, in load_market_data
+    raise ValueError(f"Error downloading market data: {str(e)}")
+ValueError: Error downloading market data: 'Adj Close'
+2025-04-17 16:57:44,446 - INFO - 
+Running strategy with hmm classifier and mean_variance optimizer
+2025-04-17 16:57:44,446 - INFO - Initializing strategy...
+2025-04-17 16:57:44,480 - INFO - Running strategy...
+2025-04-17 16:57:44,498 - WARNING - US corporate credit spread file not found
+2025-04-17 16:57:44,498 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:57:44,500 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 16:57:44,500 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 16:57:44,508 - WARNING - US corporate credit spread file not found
+2025-04-17 16:57:44,508 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:57:44,510 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 16:57:44,510 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 16:57:44,566 - ERROR - Error running hmm with mean_variance: Error downloading market data: 'Adj Close'
+Traceback (most recent call last):
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3805, in get_loc
+    return self._engine.get_loc(casted_key)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7081, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7089, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'Adj Close'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 280, in load_market_data
+    'VIX': vix['Adj Close'],
+           ~~~^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4102, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3812, in get_loc
+    raise KeyError(key) from err
+KeyError: 'Adj Close'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 47, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 102, in run_strategy
+    train_factors, test_factors = self.prepare_data()
+                                  ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 64, in prepare_data
+    train_market = self.data_loader.load_market_data(
+        self.train_start_date, self.train_end_date)
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 299, in load_market_data
+    raise ValueError(f"Error downloading market data: {str(e)}")
+ValueError: Error downloading market data: 'Adj Close'
+2025-04-17 16:57:44,568 - INFO - 
+Running strategy with hmm classifier and neural optimizer
+2025-04-17 16:57:44,568 - INFO - Initializing strategy...
+2025-04-17 16:57:44,569 - INFO - Running strategy...
+2025-04-17 16:57:44,585 - WARNING - US corporate credit spread file not found
+2025-04-17 16:57:44,585 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:57:44,587 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 16:57:44,587 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 16:57:44,595 - WARNING - US corporate credit spread file not found
+2025-04-17 16:57:44,595 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:57:44,597 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 16:57:44,597 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 16:57:44,648 - ERROR - Error running hmm with neural: Error downloading market data: 'Adj Close'
+Traceback (most recent call last):
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3805, in get_loc
+    return self._engine.get_loc(casted_key)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7081, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7089, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'Adj Close'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 280, in load_market_data
+    'VIX': vix['Adj Close'],
+           ~~~^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4102, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\indexes\base.py", line 3812, in get_loc
+    raise KeyError(key) from err
+KeyError: 'Adj Close'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 47, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 102, in run_strategy
+    train_factors, test_factors = self.prepare_data()
+                                  ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 64, in prepare_data
+    train_market = self.data_loader.load_market_data(
+        self.train_start_date, self.train_end_date)
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 299, in load_market_data
+    raise ValueError(f"Error downloading market data: {str(e)}")
+ValueError: Error downloading market data: 'Adj Close'
+2025-04-17 16:57:44,650 - ERROR - No valid results obtained from parameter grid search
+2025-04-17 16:57:44,651 - INFO - Factor timing strategy optimization completed
+2025-04-17 16:58:41,249 - INFO - Starting factor timing strategy optimization...
+2025-04-17 16:58:41,250 - INFO - Running parameter grid search...
+2025-04-17 16:58:41,250 - INFO - 
+Running strategy with lstm classifier and mean_variance optimizer
+2025-04-17 16:58:41,250 - INFO - Initializing strategy...
+2025-04-17 16:58:42,180 - INFO - Running strategy...
+2025-04-17 16:58:42,201 - WARNING - US corporate credit spread file not found
+2025-04-17 16:58:42,201 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:58:42,203 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 16:58:42,203 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 16:58:42,210 - WARNING - US corporate credit spread file not found
+2025-04-17 16:58:42,210 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:58:42,212 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 16:58:42,212 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 16:58:42,774 - WARNING - Found missing values in Market data data
+2025-04-17 16:58:42,774 - INFO - Loaded market data with 1509 rows
+2025-04-17 16:58:42,775 - INFO - Date range: 2014-01-02 00:00:00 to 2019-12-30 00:00:00
+2025-04-17 16:58:43,170 - WARNING - Found missing values in Market data data
+2025-04-17 16:58:43,170 - INFO - Loaded market data with 1257 rows
+2025-04-17 16:58:43,170 - INFO - Date range: 2020-01-02 00:00:00 to 2024-12-30 00:00:00
+2025-04-17 16:58:43,172 - INFO - Prepared training data with 41 samples
+2025-04-17 16:58:43,172 - INFO - Class distribution: {0: 21, 1: 20}
+2025-04-17 16:58:43,176 - ERROR - Error running lstm with mean_variance: input.size(-1) must be equal to input_size. Expected 8, got 6
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 47, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 105, in run_strategy
+    self.train_models()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 92, in train_models
+    self.regime_classifier.train(self.train_data['X'], self.train_data['y'])
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\Desktop\factor_timing\models\regime_classifier.py", line 75, in train
+    outputs = self.model(batch_X)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\ye\Desktop\factor_timing\models\regime_classifier.py", line 38, in forward
+    out, _ = self.lstm(x, (h0, c0))
+             ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\rnn.py", line 1120, in forward
+    self.check_forward_args(input, hx, batch_sizes)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\rnn.py", line 1002, in check_forward_args
+    self.check_input(input, batch_sizes)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\rnn.py", line 314, in check_input
+    raise RuntimeError(
+        f"input.size(-1) must be equal to input_size. Expected {self.input_size}, got {input.size(-1)}"
+    )
+RuntimeError: input.size(-1) must be equal to input_size. Expected 8, got 6
+2025-04-17 16:58:43,179 - INFO - 
+Running strategy with lstm classifier and neural optimizer
+2025-04-17 16:58:43,179 - INFO - Initializing strategy...
+2025-04-17 16:58:43,181 - INFO - Running strategy...
+2025-04-17 16:58:43,199 - WARNING - US corporate credit spread file not found
+2025-04-17 16:58:43,199 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:58:43,201 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 16:58:43,201 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 16:58:43,209 - WARNING - US corporate credit spread file not found
+2025-04-17 16:58:43,210 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:58:43,212 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 16:58:43,212 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 16:58:43,269 - WARNING - Found missing values in Market data data
+2025-04-17 16:58:43,269 - INFO - Loaded market data with 1509 rows
+2025-04-17 16:58:43,269 - INFO - Date range: 2014-01-02 00:00:00 to 2019-12-30 00:00:00
+2025-04-17 16:58:43,310 - WARNING - Found missing values in Market data data
+2025-04-17 16:58:43,310 - INFO - Loaded market data with 1257 rows
+2025-04-17 16:58:43,310 - INFO - Date range: 2020-01-02 00:00:00 to 2024-12-30 00:00:00
+2025-04-17 16:58:43,312 - INFO - Prepared training data with 41 samples
+2025-04-17 16:58:43,313 - INFO - Class distribution: {0: 21, 1: 20}
+2025-04-17 16:58:43,315 - ERROR - Error running lstm with neural: input.size(-1) must be equal to input_size. Expected 8, got 6
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 47, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 105, in run_strategy
+    self.train_models()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 92, in train_models
+    self.regime_classifier.train(self.train_data['X'], self.train_data['y'])
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\Desktop\factor_timing\models\regime_classifier.py", line 75, in train
+    outputs = self.model(batch_X)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\ye\Desktop\factor_timing\models\regime_classifier.py", line 38, in forward
+    out, _ = self.lstm(x, (h0, c0))
+             ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\rnn.py", line 1120, in forward
+    self.check_forward_args(input, hx, batch_sizes)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\rnn.py", line 1002, in check_forward_args
+    self.check_input(input, batch_sizes)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\rnn.py", line 314, in check_input
+    raise RuntimeError(
+        f"input.size(-1) must be equal to input_size. Expected {self.input_size}, got {input.size(-1)}"
+    )
+RuntimeError: input.size(-1) must be equal to input_size. Expected 8, got 6
+2025-04-17 16:58:43,317 - INFO - 
+Running strategy with xgboost classifier and mean_variance optimizer
+2025-04-17 16:58:43,317 - INFO - Initializing strategy...
+2025-04-17 16:58:43,342 - INFO - Running strategy...
+2025-04-17 16:58:43,360 - WARNING - US corporate credit spread file not found
+2025-04-17 16:58:43,360 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:58:43,361 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 16:58:43,362 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 16:58:43,368 - WARNING - US corporate credit spread file not found
+2025-04-17 16:58:43,369 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:58:43,370 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 16:58:43,370 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 16:58:43,429 - WARNING - Found missing values in Market data data
+2025-04-17 16:58:43,429 - INFO - Loaded market data with 1509 rows
+2025-04-17 16:58:43,429 - INFO - Date range: 2014-01-02 00:00:00 to 2019-12-30 00:00:00
+2025-04-17 16:58:43,480 - WARNING - Found missing values in Market data data
+2025-04-17 16:58:43,480 - INFO - Loaded market data with 1257 rows
+2025-04-17 16:58:43,481 - INFO - Date range: 2020-01-02 00:00:00 to 2024-12-30 00:00:00
+2025-04-17 16:58:43,482 - INFO - Prepared training data with 41 samples
+2025-04-17 16:58:43,483 - INFO - Class distribution: {0: 21, 1: 20}
+2025-04-17 16:58:44,773 - ERROR - Error running xgboost with mean_variance: Item wrong length 41 instead of 72.
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 47, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 120, in run_strategy
+    regime_returns[regime] = self.train_data['factors'][regime_mask]
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4093, in __getitem__
+    return self._getitem_bool_array(key)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4143, in _getitem_bool_array
+    raise ValueError(
+        f"Item wrong length {len(key)} instead of {len(self.index)}."
+    )
+ValueError: Item wrong length 41 instead of 72.
+2025-04-17 16:58:44,776 - INFO - 
+Running strategy with xgboost classifier and neural optimizer
+2025-04-17 16:58:44,777 - INFO - Initializing strategy...
+2025-04-17 16:58:44,778 - INFO - Running strategy...
+2025-04-17 16:58:44,804 - WARNING - US corporate credit spread file not found
+2025-04-17 16:58:44,805 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:58:44,807 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 16:58:44,807 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 16:58:44,817 - WARNING - US corporate credit spread file not found
+2025-04-17 16:58:44,818 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:58:44,820 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 16:58:44,820 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 16:58:44,884 - WARNING - Found missing values in Market data data
+2025-04-17 16:58:44,885 - INFO - Loaded market data with 1509 rows
+2025-04-17 16:58:44,885 - INFO - Date range: 2014-01-02 00:00:00 to 2019-12-30 00:00:00
+2025-04-17 16:58:44,926 - WARNING - Found missing values in Market data data
+2025-04-17 16:58:44,926 - INFO - Loaded market data with 1257 rows
+2025-04-17 16:58:44,926 - INFO - Date range: 2020-01-02 00:00:00 to 2024-12-30 00:00:00
+2025-04-17 16:58:44,928 - INFO - Prepared training data with 41 samples
+2025-04-17 16:58:44,929 - INFO - Class distribution: {0: 21, 1: 20}
+2025-04-17 16:58:44,954 - ERROR - Error running xgboost with neural: Item wrong length 41 instead of 72.
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 47, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 120, in run_strategy
+    regime_returns[regime] = self.train_data['factors'][regime_mask]
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4093, in __getitem__
+    return self._getitem_bool_array(key)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4143, in _getitem_bool_array
+    raise ValueError(
+        f"Item wrong length {len(key)} instead of {len(self.index)}."
+    )
+ValueError: Item wrong length 41 instead of 72.
+2025-04-17 16:58:44,956 - INFO - 
+Running strategy with hmm classifier and mean_variance optimizer
+2025-04-17 16:58:44,956 - INFO - Initializing strategy...
+2025-04-17 16:58:45,002 - INFO - Running strategy...
+2025-04-17 16:58:45,026 - WARNING - US corporate credit spread file not found
+2025-04-17 16:58:45,026 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:58:45,028 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 16:58:45,029 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 16:58:45,040 - WARNING - US corporate credit spread file not found
+2025-04-17 16:58:45,040 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:58:45,042 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 16:58:45,042 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 16:58:45,100 - WARNING - Found missing values in Market data data
+2025-04-17 16:58:45,101 - INFO - Loaded market data with 1509 rows
+2025-04-17 16:58:45,101 - INFO - Date range: 2014-01-02 00:00:00 to 2019-12-30 00:00:00
+2025-04-17 16:58:45,154 - WARNING - Found missing values in Market data data
+2025-04-17 16:58:45,154 - INFO - Loaded market data with 1257 rows
+2025-04-17 16:58:45,154 - INFO - Date range: 2020-01-02 00:00:00 to 2024-12-30 00:00:00
+2025-04-17 16:58:45,156 - INFO - Prepared training data with 41 samples
+2025-04-17 16:58:45,156 - INFO - Class distribution: {0: 21, 1: 20}
+2025-04-17 16:58:45,320 - ERROR - Error running hmm with mean_variance: Input contains NaN.
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 47, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 113, in run_strategy
+    regime_predictions = self.regime_classifier.predict(test_X)
+  File "C:\Users\ye\Desktop\factor_timing\models\regime_classifier.py", line 119, in predict
+    return self.model.predict(X_scaled)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\hmmlearn\base.py", line 375, in predict
+    _, state_sequence = self.decode(X, lengths)
+                        ~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\hmmlearn\base.py", line 347, in decode
+    X = check_array(X)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sklearn\utils\validation.py", line 1107, in check_array
+    _assert_all_finite(
+    ~~~~~~~~~~~~~~~~~~^
+        array,
+        ^^^^^^
+    ...<2 lines>...
+        allow_nan=ensure_all_finite == "allow-nan",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sklearn\utils\validation.py", line 120, in _assert_all_finite
+    _assert_all_finite_element_wise(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        X,
+        ^^
+    ...<4 lines>...
+        input_name=input_name,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sklearn\utils\validation.py", line 169, in _assert_all_finite_element_wise
+    raise ValueError(msg_err)
+ValueError: Input contains NaN.
+2025-04-17 16:58:45,323 - INFO - 
+Running strategy with hmm classifier and neural optimizer
+2025-04-17 16:58:45,323 - INFO - Initializing strategy...
+2025-04-17 16:58:45,324 - INFO - Running strategy...
+2025-04-17 16:58:45,342 - WARNING - US corporate credit spread file not found
+2025-04-17 16:58:45,342 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:58:45,344 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 16:58:45,345 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 16:58:45,354 - WARNING - US corporate credit spread file not found
+2025-04-17 16:58:45,354 - WARNING - 10-year Treasury rate file not found
+2025-04-17 16:58:45,357 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 16:58:45,357 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 16:58:45,417 - WARNING - Found missing values in Market data data
+2025-04-17 16:58:45,417 - INFO - Loaded market data with 1509 rows
+2025-04-17 16:58:45,418 - INFO - Date range: 2014-01-02 00:00:00 to 2019-12-30 00:00:00
+2025-04-17 16:58:45,471 - WARNING - Found missing values in Market data data
+2025-04-17 16:58:45,471 - INFO - Loaded market data with 1257 rows
+2025-04-17 16:58:45,472 - INFO - Date range: 2020-01-02 00:00:00 to 2024-12-30 00:00:00
+2025-04-17 16:58:45,473 - INFO - Prepared training data with 41 samples
+2025-04-17 16:58:45,474 - INFO - Class distribution: {0: 21, 1: 20}
+2025-04-17 16:58:45,501 - WARNING - Model is not converging.  Current: -258.73930578737827 is not greater than -258.73926126013816. Delta is -4.452724010661768e-05
+2025-04-17 16:58:45,504 - ERROR - Error running hmm with neural: Input contains NaN.
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 47, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 113, in run_strategy
+    regime_predictions = self.regime_classifier.predict(test_X)
+  File "C:\Users\ye\Desktop\factor_timing\models\regime_classifier.py", line 119, in predict
+    return self.model.predict(X_scaled)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\hmmlearn\base.py", line 375, in predict
+    _, state_sequence = self.decode(X, lengths)
+                        ~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\hmmlearn\base.py", line 347, in decode
+    X = check_array(X)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sklearn\utils\validation.py", line 1107, in check_array
+    _assert_all_finite(
+    ~~~~~~~~~~~~~~~~~~^
+        array,
+        ^^^^^^
+    ...<2 lines>...
+        allow_nan=ensure_all_finite == "allow-nan",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sklearn\utils\validation.py", line 120, in _assert_all_finite
+    _assert_all_finite_element_wise(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        X,
+        ^^
+    ...<4 lines>...
+        input_name=input_name,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sklearn\utils\validation.py", line 169, in _assert_all_finite_element_wise
+    raise ValueError(msg_err)
+ValueError: Input contains NaN.
+2025-04-17 16:58:45,507 - ERROR - No valid results obtained from parameter grid search
+2025-04-17 16:58:45,507 - INFO - Factor timing strategy optimization completed
+2025-04-17 17:18:01,019 - INFO - Starting factor timing strategy optimization...
+2025-04-17 17:18:01,019 - INFO - Running parameter grid search...
+2025-04-17 17:18:01,020 - INFO - 
+Running strategy with lstm classifier and mean_variance optimizer
+2025-04-17 17:18:01,020 - INFO - Initializing strategy...
+2025-04-17 17:18:01,968 - INFO - Running strategy...
+2025-04-17 17:18:01,970 - ERROR - Error running lstm with mean_variance: Fama-French factors file not found at C:\Users\ye\Desktop\data\ff.csv
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 52, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 103, in run_strategy
+    train_factors, test_factors = self.prepare_data()
+                                  ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 54, in prepare_data
+    train_factors = self.data_loader.load_fama_french_factors(
+        self.train_start_date, self.train_end_date)
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 104, in load_fama_french_factors
+    raise FileNotFoundError(f"Fama-French factors file not found at {ff_path}")
+FileNotFoundError: Fama-French factors file not found at C:\Users\ye\Desktop\data\ff.csv
+2025-04-17 17:18:01,972 - INFO - 
+Running strategy with lstm classifier and neural optimizer
+2025-04-17 17:18:01,972 - INFO - Initializing strategy...
+2025-04-17 17:18:01,973 - INFO - Running strategy...
+2025-04-17 17:18:01,975 - ERROR - Error running lstm with neural: Fama-French factors file not found at C:\Users\ye\Desktop\data\ff.csv
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 52, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 103, in run_strategy
+    train_factors, test_factors = self.prepare_data()
+                                  ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 54, in prepare_data
+    train_factors = self.data_loader.load_fama_french_factors(
+        self.train_start_date, self.train_end_date)
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 104, in load_fama_french_factors
+    raise FileNotFoundError(f"Fama-French factors file not found at {ff_path}")
+FileNotFoundError: Fama-French factors file not found at C:\Users\ye\Desktop\data\ff.csv
+2025-04-17 17:18:01,975 - INFO - 
+Running strategy with xgboost classifier and mean_variance optimizer
+2025-04-17 17:18:01,976 - INFO - Initializing strategy...
+2025-04-17 17:18:02,008 - INFO - Running strategy...
+2025-04-17 17:18:02,010 - ERROR - Error running xgboost with mean_variance: Fama-French factors file not found at C:\Users\ye\Desktop\data\ff.csv
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 52, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 103, in run_strategy
+    train_factors, test_factors = self.prepare_data()
+                                  ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 54, in prepare_data
+    train_factors = self.data_loader.load_fama_french_factors(
+        self.train_start_date, self.train_end_date)
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 104, in load_fama_french_factors
+    raise FileNotFoundError(f"Fama-French factors file not found at {ff_path}")
+FileNotFoundError: Fama-French factors file not found at C:\Users\ye\Desktop\data\ff.csv
+2025-04-17 17:18:02,012 - INFO - 
+Running strategy with xgboost classifier and neural optimizer
+2025-04-17 17:18:02,012 - INFO - Initializing strategy...
+2025-04-17 17:18:02,014 - INFO - Running strategy...
+2025-04-17 17:18:02,016 - ERROR - Error running xgboost with neural: Fama-French factors file not found at C:\Users\ye\Desktop\data\ff.csv
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 52, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 103, in run_strategy
+    train_factors, test_factors = self.prepare_data()
+                                  ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 54, in prepare_data
+    train_factors = self.data_loader.load_fama_french_factors(
+        self.train_start_date, self.train_end_date)
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 104, in load_fama_french_factors
+    raise FileNotFoundError(f"Fama-French factors file not found at {ff_path}")
+FileNotFoundError: Fama-French factors file not found at C:\Users\ye\Desktop\data\ff.csv
+2025-04-17 17:18:02,017 - INFO - 
+Running strategy with hmm classifier and mean_variance optimizer
+2025-04-17 17:18:02,018 - INFO - Initializing strategy...
+2025-04-17 17:18:02,053 - INFO - Running strategy...
+2025-04-17 17:18:02,055 - ERROR - Error running hmm with mean_variance: Fama-French factors file not found at C:\Users\ye\Desktop\data\ff.csv
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 52, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 103, in run_strategy
+    train_factors, test_factors = self.prepare_data()
+                                  ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 54, in prepare_data
+    train_factors = self.data_loader.load_fama_french_factors(
+        self.train_start_date, self.train_end_date)
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 104, in load_fama_french_factors
+    raise FileNotFoundError(f"Fama-French factors file not found at {ff_path}")
+FileNotFoundError: Fama-French factors file not found at C:\Users\ye\Desktop\data\ff.csv
+2025-04-17 17:18:02,056 - INFO - 
+Running strategy with hmm classifier and neural optimizer
+2025-04-17 17:18:02,057 - INFO - Initializing strategy...
+2025-04-17 17:18:02,057 - INFO - Running strategy...
+2025-04-17 17:18:02,059 - ERROR - Error running hmm with neural: Fama-French factors file not found at C:\Users\ye\Desktop\data\ff.csv
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 52, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 103, in run_strategy
+    train_factors, test_factors = self.prepare_data()
+                                  ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 54, in prepare_data
+    train_factors = self.data_loader.load_fama_french_factors(
+        self.train_start_date, self.train_end_date)
+  File "C:\Users\ye\Desktop\factor_timing\data\data_loader.py", line 104, in load_fama_french_factors
+    raise FileNotFoundError(f"Fama-French factors file not found at {ff_path}")
+FileNotFoundError: Fama-French factors file not found at C:\Users\ye\Desktop\data\ff.csv
+2025-04-17 17:18:02,060 - ERROR - No valid results obtained from parameter grid search
+2025-04-17 17:18:02,060 - ERROR - No valid results obtained from parameter grid search
+2025-04-17 17:18:02,060 - INFO - Factor timing strategy optimization completed
+2025-04-17 17:18:21,651 - INFO - Starting factor timing strategy optimization...
+2025-04-17 17:18:21,651 - INFO - Running parameter grid search...
+2025-04-17 17:18:21,652 - INFO - 
+Running strategy with lstm classifier and mean_variance optimizer
+2025-04-17 17:18:21,652 - INFO - Initializing strategy...
+2025-04-17 17:18:22,557 - INFO - Running strategy...
+2025-04-17 17:18:22,577 - WARNING - US corporate credit spread file not found
+2025-04-17 17:18:22,578 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:18:22,580 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 17:18:22,580 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 17:18:22,587 - WARNING - US corporate credit spread file not found
+2025-04-17 17:18:22,587 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:18:22,589 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 17:18:22,589 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 17:18:23,174 - WARNING - Found missing values in Market data data
+2025-04-17 17:18:23,174 - INFO - Loaded market data with 1509 rows
+2025-04-17 17:18:23,174 - INFO - Date range: 2014-01-02 00:00:00 to 2019-12-30 00:00:00
+2025-04-17 17:18:23,436 - WARNING - Found missing values in Market data data
+2025-04-17 17:18:23,437 - INFO - Loaded market data with 1257 rows
+2025-04-17 17:18:23,437 - INFO - Date range: 2020-01-02 00:00:00 to 2024-12-30 00:00:00
+2025-04-17 17:18:23,439 - INFO - Prepared training data with 41 samples
+2025-04-17 17:18:23,439 - INFO - Class distribution: {0: 21, 1: 20}
+2025-04-17 17:18:23,443 - ERROR - Error running lstm with mean_variance: input.size(-1) must be equal to input_size. Expected 8, got 6
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 52, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 106, in run_strategy
+    self.train_models()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 93, in train_models
+    self.regime_classifier.train(self.train_data['X'], self.train_data['y'])
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\Desktop\factor_timing\models\regime_classifier.py", line 75, in train
+    outputs = self.model(batch_X)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\ye\Desktop\factor_timing\models\regime_classifier.py", line 38, in forward
+    out, _ = self.lstm(x, (h0, c0))
+             ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\rnn.py", line 1120, in forward
+    self.check_forward_args(input, hx, batch_sizes)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\rnn.py", line 1002, in check_forward_args
+    self.check_input(input, batch_sizes)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\rnn.py", line 314, in check_input
+    raise RuntimeError(
+        f"input.size(-1) must be equal to input_size. Expected {self.input_size}, got {input.size(-1)}"
+    )
+RuntimeError: input.size(-1) must be equal to input_size. Expected 8, got 6
+2025-04-17 17:18:23,445 - INFO - 
+Running strategy with lstm classifier and neural optimizer
+2025-04-17 17:18:23,446 - INFO - Initializing strategy...
+2025-04-17 17:18:23,447 - INFO - Running strategy...
+2025-04-17 17:18:23,465 - WARNING - US corporate credit spread file not found
+2025-04-17 17:18:23,465 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:18:23,468 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 17:18:23,468 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 17:18:23,478 - WARNING - US corporate credit spread file not found
+2025-04-17 17:18:23,478 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:18:23,480 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 17:18:23,480 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 17:18:23,538 - WARNING - Found missing values in Market data data
+2025-04-17 17:18:23,538 - INFO - Loaded market data with 1509 rows
+2025-04-17 17:18:23,538 - INFO - Date range: 2014-01-02 00:00:00 to 2019-12-30 00:00:00
+2025-04-17 17:18:23,596 - WARNING - Found missing values in Market data data
+2025-04-17 17:18:23,596 - INFO - Loaded market data with 1257 rows
+2025-04-17 17:18:23,597 - INFO - Date range: 2020-01-02 00:00:00 to 2024-12-30 00:00:00
+2025-04-17 17:18:23,599 - INFO - Prepared training data with 41 samples
+2025-04-17 17:18:23,600 - INFO - Class distribution: {0: 21, 1: 20}
+2025-04-17 17:18:23,603 - ERROR - Error running lstm with neural: input.size(-1) must be equal to input_size. Expected 8, got 6
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 52, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 106, in run_strategy
+    self.train_models()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 93, in train_models
+    self.regime_classifier.train(self.train_data['X'], self.train_data['y'])
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\Desktop\factor_timing\models\regime_classifier.py", line 75, in train
+    outputs = self.model(batch_X)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\ye\Desktop\factor_timing\models\regime_classifier.py", line 38, in forward
+    out, _ = self.lstm(x, (h0, c0))
+             ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\rnn.py", line 1120, in forward
+    self.check_forward_args(input, hx, batch_sizes)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\rnn.py", line 1002, in check_forward_args
+    self.check_input(input, batch_sizes)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\rnn.py", line 314, in check_input
+    raise RuntimeError(
+        f"input.size(-1) must be equal to input_size. Expected {self.input_size}, got {input.size(-1)}"
+    )
+RuntimeError: input.size(-1) must be equal to input_size. Expected 8, got 6
+2025-04-17 17:18:23,605 - INFO - 
+Running strategy with xgboost classifier and mean_variance optimizer
+2025-04-17 17:18:23,605 - INFO - Initializing strategy...
+2025-04-17 17:18:23,631 - INFO - Running strategy...
+2025-04-17 17:18:23,648 - WARNING - US corporate credit spread file not found
+2025-04-17 17:18:23,649 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:18:23,650 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 17:18:23,651 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 17:18:23,658 - WARNING - US corporate credit spread file not found
+2025-04-17 17:18:23,658 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:18:23,660 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 17:18:23,661 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 17:18:23,718 - WARNING - Found missing values in Market data data
+2025-04-17 17:18:23,718 - INFO - Loaded market data with 1509 rows
+2025-04-17 17:18:23,718 - INFO - Date range: 2014-01-02 00:00:00 to 2019-12-30 00:00:00
+2025-04-17 17:18:23,759 - WARNING - Found missing values in Market data data
+2025-04-17 17:18:23,759 - INFO - Loaded market data with 1257 rows
+2025-04-17 17:18:23,760 - INFO - Date range: 2020-01-02 00:00:00 to 2024-12-30 00:00:00
+2025-04-17 17:18:23,761 - INFO - Prepared training data with 41 samples
+2025-04-17 17:18:23,762 - INFO - Class distribution: {0: 21, 1: 20}
+2025-04-17 17:18:24,978 - ERROR - Error running xgboost with mean_variance: Item wrong length 41 instead of 72.
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 52, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 121, in run_strategy
+    regime_returns[regime] = self.train_data['factors'][regime_mask]
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4093, in __getitem__
+    return self._getitem_bool_array(key)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4143, in _getitem_bool_array
+    raise ValueError(
+        f"Item wrong length {len(key)} instead of {len(self.index)}."
+    )
+ValueError: Item wrong length 41 instead of 72.
+2025-04-17 17:18:24,981 - INFO - 
+Running strategy with xgboost classifier and neural optimizer
+2025-04-17 17:18:24,982 - INFO - Initializing strategy...
+2025-04-17 17:18:24,983 - INFO - Running strategy...
+2025-04-17 17:18:25,004 - WARNING - US corporate credit spread file not found
+2025-04-17 17:18:25,004 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:18:25,006 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 17:18:25,006 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 17:18:25,016 - WARNING - US corporate credit spread file not found
+2025-04-17 17:18:25,017 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:18:25,019 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 17:18:25,019 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 17:18:25,087 - WARNING - Found missing values in Market data data
+2025-04-17 17:18:25,088 - INFO - Loaded market data with 1509 rows
+2025-04-17 17:18:25,088 - INFO - Date range: 2014-01-02 00:00:00 to 2019-12-30 00:00:00
+2025-04-17 17:18:25,138 - WARNING - Found missing values in Market data data
+2025-04-17 17:18:25,138 - INFO - Loaded market data with 1257 rows
+2025-04-17 17:18:25,139 - INFO - Date range: 2020-01-02 00:00:00 to 2024-12-30 00:00:00
+2025-04-17 17:18:25,140 - INFO - Prepared training data with 41 samples
+2025-04-17 17:18:25,141 - INFO - Class distribution: {0: 21, 1: 20}
+2025-04-17 17:18:25,160 - ERROR - Error running xgboost with neural: Item wrong length 41 instead of 72.
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 52, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 121, in run_strategy
+    regime_returns[regime] = self.train_data['factors'][regime_mask]
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4093, in __getitem__
+    return self._getitem_bool_array(key)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4143, in _getitem_bool_array
+    raise ValueError(
+        f"Item wrong length {len(key)} instead of {len(self.index)}."
+    )
+ValueError: Item wrong length 41 instead of 72.
+2025-04-17 17:18:25,161 - INFO - 
+Running strategy with hmm classifier and mean_variance optimizer
+2025-04-17 17:18:25,161 - INFO - Initializing strategy...
+2025-04-17 17:18:25,201 - INFO - Running strategy...
+2025-04-17 17:18:25,223 - WARNING - US corporate credit spread file not found
+2025-04-17 17:18:25,224 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:18:25,226 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 17:18:25,226 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 17:18:25,235 - WARNING - US corporate credit spread file not found
+2025-04-17 17:18:25,235 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:18:25,237 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 17:18:25,237 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 17:18:25,295 - WARNING - Found missing values in Market data data
+2025-04-17 17:18:25,295 - INFO - Loaded market data with 1509 rows
+2025-04-17 17:18:25,295 - INFO - Date range: 2014-01-02 00:00:00 to 2019-12-30 00:00:00
+2025-04-17 17:18:25,346 - WARNING - Found missing values in Market data data
+2025-04-17 17:18:25,346 - INFO - Loaded market data with 1257 rows
+2025-04-17 17:18:25,347 - INFO - Date range: 2020-01-02 00:00:00 to 2024-12-30 00:00:00
+2025-04-17 17:18:25,349 - INFO - Prepared training data with 41 samples
+2025-04-17 17:18:25,349 - INFO - Class distribution: {0: 21, 1: 20}
+2025-04-17 17:18:25,496 - ERROR - Error running hmm with mean_variance: Input contains NaN.
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 52, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 114, in run_strategy
+    regime_predictions = self.regime_classifier.predict(test_X)
+  File "C:\Users\ye\Desktop\factor_timing\models\regime_classifier.py", line 119, in predict
+    return self.model.predict(X_scaled)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\hmmlearn\base.py", line 375, in predict
+    _, state_sequence = self.decode(X, lengths)
+                        ~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\hmmlearn\base.py", line 347, in decode
+    X = check_array(X)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sklearn\utils\validation.py", line 1107, in check_array
+    _assert_all_finite(
+    ~~~~~~~~~~~~~~~~~~^
+        array,
+        ^^^^^^
+    ...<2 lines>...
+        allow_nan=ensure_all_finite == "allow-nan",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sklearn\utils\validation.py", line 120, in _assert_all_finite
+    _assert_all_finite_element_wise(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        X,
+        ^^
+    ...<4 lines>...
+        input_name=input_name,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sklearn\utils\validation.py", line 169, in _assert_all_finite_element_wise
+    raise ValueError(msg_err)
+ValueError: Input contains NaN.
+2025-04-17 17:18:25,500 - INFO - 
+Running strategy with hmm classifier and neural optimizer
+2025-04-17 17:18:25,500 - INFO - Initializing strategy...
+2025-04-17 17:18:25,501 - INFO - Running strategy...
+2025-04-17 17:18:25,521 - WARNING - US corporate credit spread file not found
+2025-04-17 17:18:25,521 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:18:25,523 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 17:18:25,523 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 17:18:25,533 - WARNING - US corporate credit spread file not found
+2025-04-17 17:18:25,533 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:18:25,535 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 17:18:25,535 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 17:18:25,602 - WARNING - Found missing values in Market data data
+2025-04-17 17:18:25,603 - INFO - Loaded market data with 1509 rows
+2025-04-17 17:18:25,603 - INFO - Date range: 2014-01-02 00:00:00 to 2019-12-30 00:00:00
+2025-04-17 17:18:25,653 - WARNING - Found missing values in Market data data
+2025-04-17 17:18:25,654 - INFO - Loaded market data with 1257 rows
+2025-04-17 17:18:25,654 - INFO - Date range: 2020-01-02 00:00:00 to 2024-12-30 00:00:00
+2025-04-17 17:18:25,656 - INFO - Prepared training data with 41 samples
+2025-04-17 17:18:25,657 - INFO - Class distribution: {0: 21, 1: 20}
+2025-04-17 17:18:25,684 - ERROR - Error running hmm with neural: Input contains NaN.
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 52, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 114, in run_strategy
+    regime_predictions = self.regime_classifier.predict(test_X)
+  File "C:\Users\ye\Desktop\factor_timing\models\regime_classifier.py", line 119, in predict
+    return self.model.predict(X_scaled)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\hmmlearn\base.py", line 375, in predict
+    _, state_sequence = self.decode(X, lengths)
+                        ~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\hmmlearn\base.py", line 347, in decode
+    X = check_array(X)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sklearn\utils\validation.py", line 1107, in check_array
+    _assert_all_finite(
+    ~~~~~~~~~~~~~~~~~~^
+        array,
+        ^^^^^^
+    ...<2 lines>...
+        allow_nan=ensure_all_finite == "allow-nan",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sklearn\utils\validation.py", line 120, in _assert_all_finite
+    _assert_all_finite_element_wise(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        X,
+        ^^
+    ...<4 lines>...
+        input_name=input_name,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sklearn\utils\validation.py", line 169, in _assert_all_finite_element_wise
+    raise ValueError(msg_err)
+ValueError: Input contains NaN.
+2025-04-17 17:18:25,686 - ERROR - No valid results obtained from parameter grid search
+2025-04-17 17:18:25,687 - ERROR - No valid results obtained from parameter grid search
+2025-04-17 17:18:25,687 - INFO - Factor timing strategy optimization completed
+2025-04-17 17:21:54,076 - INFO - Starting factor timing strategy optimization...
+2025-04-17 17:21:54,076 - INFO - Running parameter grid search...
+2025-04-17 17:21:54,076 - INFO - 
+Running strategy with lstm classifier and mean_variance optimizer
+2025-04-17 17:21:54,077 - INFO - Initializing strategy...
+2025-04-17 17:21:55,051 - INFO - Running strategy...
+2025-04-17 17:21:55,072 - WARNING - US corporate credit spread file not found
+2025-04-17 17:21:55,072 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:21:55,075 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 17:21:55,075 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 17:21:55,083 - WARNING - US corporate credit spread file not found
+2025-04-17 17:21:55,083 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:21:55,085 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 17:21:55,085 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 17:21:55,793 - WARNING - Found missing values in Market data data
+2025-04-17 17:21:55,794 - INFO - Loaded market data with 1509 rows
+2025-04-17 17:21:55,794 - INFO - Date range: 2014-01-02 00:00:00 to 2019-12-30 00:00:00
+2025-04-17 17:21:56,147 - WARNING - Found missing values in Market data data
+2025-04-17 17:21:56,147 - INFO - Loaded market data with 1257 rows
+2025-04-17 17:21:56,147 - INFO - Date range: 2020-01-02 00:00:00 to 2024-12-30 00:00:00
+2025-04-17 17:21:56,151 - INFO - Prepared training data with 60 samples
+2025-04-17 17:21:56,152 - INFO - Class distribution: {0: 40, 1: 20}
+2025-04-17 17:21:56,156 - ERROR - Error running lstm with mean_variance: input.size(-1) must be equal to input_size. Expected 8, got 6
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 52, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 106, in run_strategy
+    self.train_models()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 93, in train_models
+    self.regime_classifier.train(self.train_data['X'], self.train_data['y'])
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\Desktop\factor_timing\models\regime_classifier.py", line 88, in train
+    outputs = self.model(batch_X)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\ye\Desktop\factor_timing\models\regime_classifier.py", line 51, in forward
+    out, _ = self.lstm(x, (h0, c0))
+             ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\rnn.py", line 1120, in forward
+    self.check_forward_args(input, hx, batch_sizes)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\rnn.py", line 1002, in check_forward_args
+    self.check_input(input, batch_sizes)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\rnn.py", line 314, in check_input
+    raise RuntimeError(
+        f"input.size(-1) must be equal to input_size. Expected {self.input_size}, got {input.size(-1)}"
+    )
+RuntimeError: input.size(-1) must be equal to input_size. Expected 8, got 6
+2025-04-17 17:21:56,159 - INFO - 
+Running strategy with lstm classifier and neural optimizer
+2025-04-17 17:21:56,159 - INFO - Initializing strategy...
+2025-04-17 17:21:56,160 - INFO - Running strategy...
+2025-04-17 17:21:56,178 - WARNING - US corporate credit spread file not found
+2025-04-17 17:21:56,178 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:21:56,180 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 17:21:56,181 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 17:21:56,188 - WARNING - US corporate credit spread file not found
+2025-04-17 17:21:56,189 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:21:56,190 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 17:21:56,191 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 17:21:56,248 - WARNING - Found missing values in Market data data
+2025-04-17 17:21:56,248 - INFO - Loaded market data with 1509 rows
+2025-04-17 17:21:56,249 - INFO - Date range: 2014-01-02 00:00:00 to 2019-12-30 00:00:00
+2025-04-17 17:21:56,300 - WARNING - Found missing values in Market data data
+2025-04-17 17:21:56,301 - INFO - Loaded market data with 1257 rows
+2025-04-17 17:21:56,301 - INFO - Date range: 2020-01-02 00:00:00 to 2024-12-30 00:00:00
+2025-04-17 17:21:56,304 - INFO - Prepared training data with 60 samples
+2025-04-17 17:21:56,305 - INFO - Class distribution: {0: 40, 1: 20}
+2025-04-17 17:21:56,308 - ERROR - Error running lstm with neural: input.size(-1) must be equal to input_size. Expected 8, got 6
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 52, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 106, in run_strategy
+    self.train_models()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 93, in train_models
+    self.regime_classifier.train(self.train_data['X'], self.train_data['y'])
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\Desktop\factor_timing\models\regime_classifier.py", line 88, in train
+    outputs = self.model(batch_X)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\ye\Desktop\factor_timing\models\regime_classifier.py", line 51, in forward
+    out, _ = self.lstm(x, (h0, c0))
+             ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\rnn.py", line 1120, in forward
+    self.check_forward_args(input, hx, batch_sizes)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\rnn.py", line 1002, in check_forward_args
+    self.check_input(input, batch_sizes)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\rnn.py", line 314, in check_input
+    raise RuntimeError(
+        f"input.size(-1) must be equal to input_size. Expected {self.input_size}, got {input.size(-1)}"
+    )
+RuntimeError: input.size(-1) must be equal to input_size. Expected 8, got 6
+2025-04-17 17:21:56,310 - INFO - 
+Running strategy with xgboost classifier and mean_variance optimizer
+2025-04-17 17:21:56,310 - INFO - Initializing strategy...
+2025-04-17 17:21:56,336 - INFO - Running strategy...
+2025-04-17 17:21:56,353 - WARNING - US corporate credit spread file not found
+2025-04-17 17:21:56,353 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:21:56,355 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 17:21:56,356 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 17:21:56,364 - WARNING - US corporate credit spread file not found
+2025-04-17 17:21:56,364 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:21:56,366 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 17:21:56,366 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 17:21:56,423 - WARNING - Found missing values in Market data data
+2025-04-17 17:21:56,423 - INFO - Loaded market data with 1509 rows
+2025-04-17 17:21:56,423 - INFO - Date range: 2014-01-02 00:00:00 to 2019-12-30 00:00:00
+2025-04-17 17:21:56,464 - WARNING - Found missing values in Market data data
+2025-04-17 17:21:56,464 - INFO - Loaded market data with 1257 rows
+2025-04-17 17:21:56,465 - INFO - Date range: 2020-01-02 00:00:00 to 2024-12-30 00:00:00
+2025-04-17 17:21:56,468 - INFO - Prepared training data with 60 samples
+2025-04-17 17:21:56,468 - INFO - Class distribution: {0: 40, 1: 20}
+2025-04-17 17:21:57,763 - ERROR - Error running xgboost with mean_variance: Item wrong length 60 instead of 72.
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 52, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 121, in run_strategy
+    regime_returns[regime] = self.train_data['factors'][regime_mask]
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4093, in __getitem__
+    return self._getitem_bool_array(key)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4143, in _getitem_bool_array
+    raise ValueError(
+        f"Item wrong length {len(key)} instead of {len(self.index)}."
+    )
+ValueError: Item wrong length 60 instead of 72.
+2025-04-17 17:21:57,767 - INFO - 
+Running strategy with xgboost classifier and neural optimizer
+2025-04-17 17:21:57,767 - INFO - Initializing strategy...
+2025-04-17 17:21:57,768 - INFO - Running strategy...
+2025-04-17 17:21:57,789 - WARNING - US corporate credit spread file not found
+2025-04-17 17:21:57,789 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:21:57,791 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 17:21:57,791 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 17:21:57,801 - WARNING - US corporate credit spread file not found
+2025-04-17 17:21:57,801 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:21:57,803 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 17:21:57,803 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 17:21:57,866 - WARNING - Found missing values in Market data data
+2025-04-17 17:21:57,866 - INFO - Loaded market data with 1509 rows
+2025-04-17 17:21:57,866 - INFO - Date range: 2014-01-02 00:00:00 to 2019-12-30 00:00:00
+2025-04-17 17:21:57,907 - WARNING - Found missing values in Market data data
+2025-04-17 17:21:57,907 - INFO - Loaded market data with 1257 rows
+2025-04-17 17:21:57,907 - INFO - Date range: 2020-01-02 00:00:00 to 2024-12-30 00:00:00
+2025-04-17 17:21:57,910 - INFO - Prepared training data with 60 samples
+2025-04-17 17:21:57,911 - INFO - Class distribution: {0: 40, 1: 20}
+2025-04-17 17:21:57,936 - ERROR - Error running xgboost with neural: Item wrong length 60 instead of 72.
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 52, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 121, in run_strategy
+    regime_returns[regime] = self.train_data['factors'][regime_mask]
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4093, in __getitem__
+    return self._getitem_bool_array(key)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\pandas\core\frame.py", line 4143, in _getitem_bool_array
+    raise ValueError(
+        f"Item wrong length {len(key)} instead of {len(self.index)}."
+    )
+ValueError: Item wrong length 60 instead of 72.
+2025-04-17 17:21:57,937 - INFO - 
+Running strategy with hmm classifier and mean_variance optimizer
+2025-04-17 17:21:57,937 - INFO - Initializing strategy...
+2025-04-17 17:21:57,979 - INFO - Running strategy...
+2025-04-17 17:21:58,001 - WARNING - US corporate credit spread file not found
+2025-04-17 17:21:58,002 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:21:58,004 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 17:21:58,004 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 17:21:58,013 - WARNING - US corporate credit spread file not found
+2025-04-17 17:21:58,013 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:21:58,015 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 17:21:58,016 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 17:21:58,074 - WARNING - Found missing values in Market data data
+2025-04-17 17:21:58,074 - INFO - Loaded market data with 1509 rows
+2025-04-17 17:21:58,074 - INFO - Date range: 2014-01-02 00:00:00 to 2019-12-30 00:00:00
+2025-04-17 17:21:58,126 - WARNING - Found missing values in Market data data
+2025-04-17 17:21:58,127 - INFO - Loaded market data with 1257 rows
+2025-04-17 17:21:58,127 - INFO - Date range: 2020-01-02 00:00:00 to 2024-12-30 00:00:00
+2025-04-17 17:21:58,130 - INFO - Prepared training data with 60 samples
+2025-04-17 17:21:58,131 - INFO - Class distribution: {0: 40, 1: 20}
+2025-04-17 17:21:58,280 - ERROR - Error running hmm with mean_variance: Input contains NaN.
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 52, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 114, in run_strategy
+    regime_predictions = self.regime_classifier.predict(test_X)
+  File "C:\Users\ye\Desktop\factor_timing\models\regime_classifier.py", line 132, in predict
+    return self.model.predict(X_scaled)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\hmmlearn\base.py", line 375, in predict
+    _, state_sequence = self.decode(X, lengths)
+                        ~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\hmmlearn\base.py", line 347, in decode
+    X = check_array(X)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sklearn\utils\validation.py", line 1107, in check_array
+    _assert_all_finite(
+    ~~~~~~~~~~~~~~~~~~^
+        array,
+        ^^^^^^
+    ...<2 lines>...
+        allow_nan=ensure_all_finite == "allow-nan",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sklearn\utils\validation.py", line 120, in _assert_all_finite
+    _assert_all_finite_element_wise(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        X,
+        ^^
+    ...<4 lines>...
+        input_name=input_name,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sklearn\utils\validation.py", line 169, in _assert_all_finite_element_wise
+    raise ValueError(msg_err)
+ValueError: Input contains NaN.
+2025-04-17 17:21:58,283 - INFO - 
+Running strategy with hmm classifier and neural optimizer
+2025-04-17 17:21:58,284 - INFO - Initializing strategy...
+2025-04-17 17:21:58,284 - INFO - Running strategy...
+2025-04-17 17:21:58,301 - WARNING - US corporate credit spread file not found
+2025-04-17 17:21:58,301 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:21:58,303 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 17:21:58,303 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 17:21:58,311 - WARNING - US corporate credit spread file not found
+2025-04-17 17:21:58,311 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:21:58,313 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 17:21:58,314 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 17:21:58,372 - WARNING - Found missing values in Market data data
+2025-04-17 17:21:58,372 - INFO - Loaded market data with 1509 rows
+2025-04-17 17:21:58,372 - INFO - Date range: 2014-01-02 00:00:00 to 2019-12-30 00:00:00
+2025-04-17 17:21:58,424 - WARNING - Found missing values in Market data data
+2025-04-17 17:21:58,424 - INFO - Loaded market data with 1257 rows
+2025-04-17 17:21:58,425 - INFO - Date range: 2020-01-02 00:00:00 to 2024-12-30 00:00:00
+2025-04-17 17:21:58,428 - INFO - Prepared training data with 60 samples
+2025-04-17 17:21:58,428 - INFO - Class distribution: {0: 40, 1: 20}
+2025-04-17 17:21:58,456 - ERROR - Error running hmm with neural: Input contains NaN.
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 52, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 114, in run_strategy
+    regime_predictions = self.regime_classifier.predict(test_X)
+  File "C:\Users\ye\Desktop\factor_timing\models\regime_classifier.py", line 132, in predict
+    return self.model.predict(X_scaled)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\hmmlearn\base.py", line 375, in predict
+    _, state_sequence = self.decode(X, lengths)
+                        ~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\hmmlearn\base.py", line 347, in decode
+    X = check_array(X)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sklearn\utils\validation.py", line 1107, in check_array
+    _assert_all_finite(
+    ~~~~~~~~~~~~~~~~~~^
+        array,
+        ^^^^^^
+    ...<2 lines>...
+        allow_nan=ensure_all_finite == "allow-nan",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sklearn\utils\validation.py", line 120, in _assert_all_finite
+    _assert_all_finite_element_wise(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        X,
+        ^^
+    ...<4 lines>...
+        input_name=input_name,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sklearn\utils\validation.py", line 169, in _assert_all_finite_element_wise
+    raise ValueError(msg_err)
+ValueError: Input contains NaN.
+2025-04-17 17:21:58,458 - ERROR - No valid results obtained from parameter grid search
+2025-04-17 17:21:58,458 - ERROR - No valid results obtained from parameter grid search
+2025-04-17 17:21:58,459 - INFO - Factor timing strategy optimization completed
+2025-04-17 17:23:39,938 - INFO - Starting factor timing strategy optimization...
+2025-04-17 17:23:39,938 - INFO - Running parameter grid search...
+2025-04-17 17:23:39,939 - INFO - 
+Running strategy with lstm classifier and mean_variance optimizer
+2025-04-17 17:23:39,939 - INFO - Initializing strategy...
+2025-04-17 17:23:40,904 - INFO - Running strategy...
+2025-04-17 17:23:40,925 - WARNING - US corporate credit spread file not found
+2025-04-17 17:23:40,925 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:23:40,927 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 17:23:40,927 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 17:23:40,935 - WARNING - US corporate credit spread file not found
+2025-04-17 17:23:40,935 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:23:40,937 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 17:23:40,938 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 17:23:41,433 - WARNING - Found missing values in Market data data
+2025-04-17 17:23:41,433 - INFO - Loaded market data with 1509 rows
+2025-04-17 17:23:41,433 - INFO - Date range: 2014-01-02 00:00:00 to 2019-12-30 00:00:00
+2025-04-17 17:23:41,661 - WARNING - Found missing values in Market data data
+2025-04-17 17:23:41,661 - INFO - Loaded market data with 1257 rows
+2025-04-17 17:23:41,661 - INFO - Date range: 2020-01-02 00:00:00 to 2024-12-30 00:00:00
+2025-04-17 17:23:41,665 - INFO - Prepared training data with 60 samples
+2025-04-17 17:23:41,665 - INFO - Class distribution: {0: 40, 1: 20}
+2025-04-17 17:23:42,246 - ERROR - Error running lstm with mean_variance: float() argument must be a string or a real number, not 'Timestamp'
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 52, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 146, in run_strategy
+    weights.loc[date] = self.portfolio_optimizer.optimize_weights(
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        test_factors.loc[date],
+        ^^^^^^^^^^^^^^^^^^^^^^^
+        test_factors.cov()
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ye\Desktop\factor_timing\optimization\portfolio_optimizer.py", line 34, in optimize_weights
+    ret = expected_returns.values @ w
+          ~~~~~~~~~~~~~~~~~~~~~~~~^~~
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\cvxpy\expressions\expression.py", line 801, in __array_ufunc__
+    return ufunc_handler(self, args[0])
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\cvxpy\expressions\expression.py", line 99, in <lambda>
+    np.matmul: lambda self, a: self.__rmatmul__(a),
+                               ~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\cvxpy\expressions\expression.py", line 50, in cast_op
+    other = self.cast_to_const(other)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\cvxpy\expressions\expression.py", line 579, in cast_to_const
+    return expr if isinstance(expr, Expression) else cvxtypes.constant()(expr)
+                                                     ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\cvxpy\expressions\constants\constant.py", line 54, in __init__
+    self._value = intf.DEFAULT_INTF.const_to_matrix(value)
+                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\cvxpy\interface\numpy_interface\ndarray_interface.py", line 56, in const_to_matrix
+    return result.astype(numpy.float64)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+TypeError: float() argument must be a string or a real number, not 'Timestamp'
+2025-04-17 17:23:42,258 - INFO - 
+Running strategy with lstm classifier and neural optimizer
+2025-04-17 17:23:42,258 - INFO - Initializing strategy...
+2025-04-17 17:23:42,260 - INFO - Running strategy...
+2025-04-17 17:23:42,279 - WARNING - US corporate credit spread file not found
+2025-04-17 17:23:42,280 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:23:42,282 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 17:23:42,282 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 17:23:42,291 - WARNING - US corporate credit spread file not found
+2025-04-17 17:23:42,291 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:23:42,293 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 17:23:42,294 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 17:23:42,351 - WARNING - Found missing values in Market data data
+2025-04-17 17:23:42,352 - INFO - Loaded market data with 1509 rows
+2025-04-17 17:23:42,352 - INFO - Date range: 2014-01-02 00:00:00 to 2019-12-30 00:00:00
+2025-04-17 17:23:42,408 - WARNING - Found missing values in Market data data
+2025-04-17 17:23:42,408 - INFO - Loaded market data with 1257 rows
+2025-04-17 17:23:42,408 - INFO - Date range: 2020-01-02 00:00:00 to 2024-12-30 00:00:00
+2025-04-17 17:23:42,412 - INFO - Prepared training data with 60 samples
+2025-04-17 17:23:42,412 - INFO - Class distribution: {0: 40, 1: 20}
+2025-04-17 17:23:42,941 - ERROR - Error running lstm with neural: can't convert np.ndarray of type numpy.object_. The only supported types are: float64, float32, float16, complex64, complex128, int64, int32, int16, int8, uint64, uint32, uint16, uint8, and bool.
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 52, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 146, in run_strategy
+    weights.loc[date] = self.portfolio_optimizer.optimize_weights(
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        test_factors.loc[date],
+        ^^^^^^^^^^^^^^^^^^^^^^^
+        test_factors.cov()
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ye\Desktop\factor_timing\optimization\portfolio_optimizer.py", line 73, in optimize_weights
+    features_tensor = torch.FloatTensor(features.values)
+TypeError: can't convert np.ndarray of type numpy.object_. The only supported types are: float64, float32, float16, complex64, complex128, int64, int32, int16, int8, uint64, uint32, uint16, uint8, and bool.
+2025-04-17 17:23:42,942 - INFO - 
+Running strategy with xgboost classifier and mean_variance optimizer
+2025-04-17 17:23:42,943 - INFO - Initializing strategy...
+2025-04-17 17:23:42,978 - INFO - Running strategy...
+2025-04-17 17:23:42,995 - WARNING - US corporate credit spread file not found
+2025-04-17 17:23:42,995 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:23:42,997 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 17:23:42,997 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 17:23:43,005 - WARNING - US corporate credit spread file not found
+2025-04-17 17:23:43,006 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:23:43,008 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 17:23:43,008 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 17:23:43,067 - WARNING - Found missing values in Market data data
+2025-04-17 17:23:43,068 - INFO - Loaded market data with 1509 rows
+2025-04-17 17:23:43,068 - INFO - Date range: 2014-01-02 00:00:00 to 2019-12-30 00:00:00
+2025-04-17 17:23:43,121 - WARNING - Found missing values in Market data data
+2025-04-17 17:23:43,121 - INFO - Loaded market data with 1257 rows
+2025-04-17 17:23:43,122 - INFO - Date range: 2020-01-02 00:00:00 to 2024-12-30 00:00:00
+2025-04-17 17:23:43,125 - INFO - Prepared training data with 60 samples
+2025-04-17 17:23:43,125 - INFO - Class distribution: {0: 40, 1: 20}
+2025-04-17 17:23:44,364 - ERROR - Error running xgboost with mean_variance: float() argument must be a string or a real number, not 'Timestamp'
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 52, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 146, in run_strategy
+    weights.loc[date] = self.portfolio_optimizer.optimize_weights(
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        test_factors.loc[date],
+        ^^^^^^^^^^^^^^^^^^^^^^^
+        test_factors.cov()
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ye\Desktop\factor_timing\optimization\portfolio_optimizer.py", line 34, in optimize_weights
+    ret = expected_returns.values @ w
+          ~~~~~~~~~~~~~~~~~~~~~~~~^~~
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\cvxpy\expressions\expression.py", line 801, in __array_ufunc__
+    return ufunc_handler(self, args[0])
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\cvxpy\expressions\expression.py", line 99, in <lambda>
+    np.matmul: lambda self, a: self.__rmatmul__(a),
+                               ~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\cvxpy\expressions\expression.py", line 50, in cast_op
+    other = self.cast_to_const(other)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\cvxpy\expressions\expression.py", line 579, in cast_to_const
+    return expr if isinstance(expr, Expression) else cvxtypes.constant()(expr)
+                                                     ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\cvxpy\expressions\constants\constant.py", line 54, in __init__
+    self._value = intf.DEFAULT_INTF.const_to_matrix(value)
+                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\cvxpy\interface\numpy_interface\ndarray_interface.py", line 56, in const_to_matrix
+    return result.astype(numpy.float64)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+TypeError: float() argument must be a string or a real number, not 'Timestamp'
+2025-04-17 17:23:44,366 - INFO - 
+Running strategy with xgboost classifier and neural optimizer
+2025-04-17 17:23:44,366 - INFO - Initializing strategy...
+2025-04-17 17:23:44,367 - INFO - Running strategy...
+2025-04-17 17:23:44,389 - WARNING - US corporate credit spread file not found
+2025-04-17 17:23:44,389 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:23:44,391 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 17:23:44,392 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 17:23:44,401 - WARNING - US corporate credit spread file not found
+2025-04-17 17:23:44,402 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:23:44,404 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 17:23:44,404 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 17:23:44,471 - WARNING - Found missing values in Market data data
+2025-04-17 17:23:44,471 - INFO - Loaded market data with 1509 rows
+2025-04-17 17:23:44,472 - INFO - Date range: 2014-01-02 00:00:00 to 2019-12-30 00:00:00
+2025-04-17 17:23:44,511 - WARNING - Found missing values in Market data data
+2025-04-17 17:23:44,512 - INFO - Loaded market data with 1257 rows
+2025-04-17 17:23:44,512 - INFO - Date range: 2020-01-02 00:00:00 to 2024-12-30 00:00:00
+2025-04-17 17:23:44,515 - INFO - Prepared training data with 60 samples
+2025-04-17 17:23:44,515 - INFO - Class distribution: {0: 40, 1: 20}
+2025-04-17 17:23:44,545 - ERROR - Error running xgboost with neural: can't convert np.ndarray of type numpy.object_. The only supported types are: float64, float32, float16, complex64, complex128, int64, int32, int16, int8, uint64, uint32, uint16, uint8, and bool.
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 52, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 146, in run_strategy
+    weights.loc[date] = self.portfolio_optimizer.optimize_weights(
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        test_factors.loc[date],
+        ^^^^^^^^^^^^^^^^^^^^^^^
+        test_factors.cov()
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ye\Desktop\factor_timing\optimization\portfolio_optimizer.py", line 73, in optimize_weights
+    features_tensor = torch.FloatTensor(features.values)
+TypeError: can't convert np.ndarray of type numpy.object_. The only supported types are: float64, float32, float16, complex64, complex128, int64, int32, int16, int8, uint64, uint32, uint16, uint8, and bool.
+2025-04-17 17:23:44,546 - INFO - 
+Running strategy with hmm classifier and mean_variance optimizer
+2025-04-17 17:23:44,546 - INFO - Initializing strategy...
+2025-04-17 17:23:44,585 - INFO - Running strategy...
+2025-04-17 17:23:44,607 - WARNING - US corporate credit spread file not found
+2025-04-17 17:23:44,607 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:23:44,609 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 17:23:44,610 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 17:23:44,619 - WARNING - US corporate credit spread file not found
+2025-04-17 17:23:44,619 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:23:44,621 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 17:23:44,621 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 17:23:44,679 - WARNING - Found missing values in Market data data
+2025-04-17 17:23:44,680 - INFO - Loaded market data with 1509 rows
+2025-04-17 17:23:44,680 - INFO - Date range: 2014-01-02 00:00:00 to 2019-12-30 00:00:00
+2025-04-17 17:23:44,720 - WARNING - Found missing values in Market data data
+2025-04-17 17:23:44,721 - INFO - Loaded market data with 1257 rows
+2025-04-17 17:23:44,721 - INFO - Date range: 2020-01-02 00:00:00 to 2024-12-30 00:00:00
+2025-04-17 17:23:44,725 - INFO - Prepared training data with 60 samples
+2025-04-17 17:23:44,725 - INFO - Class distribution: {0: 40, 1: 20}
+2025-04-17 17:23:44,873 - ERROR - Error running hmm with mean_variance: Input contains NaN.
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 52, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 114, in run_strategy
+    regime_predictions = self.regime_classifier.predict(test_X)
+  File "C:\Users\ye\Desktop\factor_timing\models\regime_classifier.py", line 132, in predict
+    return self.model.predict(X_scaled)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\hmmlearn\base.py", line 375, in predict
+    _, state_sequence = self.decode(X, lengths)
+                        ~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\hmmlearn\base.py", line 347, in decode
+    X = check_array(X)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sklearn\utils\validation.py", line 1107, in check_array
+    _assert_all_finite(
+    ~~~~~~~~~~~~~~~~~~^
+        array,
+        ^^^^^^
+    ...<2 lines>...
+        allow_nan=ensure_all_finite == "allow-nan",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sklearn\utils\validation.py", line 120, in _assert_all_finite
+    _assert_all_finite_element_wise(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        X,
+        ^^
+    ...<4 lines>...
+        input_name=input_name,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sklearn\utils\validation.py", line 169, in _assert_all_finite_element_wise
+    raise ValueError(msg_err)
+ValueError: Input contains NaN.
+2025-04-17 17:23:44,877 - INFO - 
+Running strategy with hmm classifier and neural optimizer
+2025-04-17 17:23:44,877 - INFO - Initializing strategy...
+2025-04-17 17:23:44,878 - INFO - Running strategy...
+2025-04-17 17:23:44,898 - WARNING - US corporate credit spread file not found
+2025-04-17 17:23:44,898 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:23:44,901 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 17:23:44,901 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 17:23:44,910 - WARNING - US corporate credit spread file not found
+2025-04-17 17:23:44,911 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:23:44,913 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 17:23:44,913 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 17:23:44,981 - WARNING - Found missing values in Market data data
+2025-04-17 17:23:44,982 - INFO - Loaded market data with 1509 rows
+2025-04-17 17:23:44,982 - INFO - Date range: 2014-01-02 00:00:00 to 2019-12-30 00:00:00
+2025-04-17 17:23:45,021 - WARNING - Found missing values in Market data data
+2025-04-17 17:23:45,021 - INFO - Loaded market data with 1257 rows
+2025-04-17 17:23:45,021 - INFO - Date range: 2020-01-02 00:00:00 to 2024-12-30 00:00:00
+2025-04-17 17:23:45,025 - INFO - Prepared training data with 60 samples
+2025-04-17 17:23:45,025 - INFO - Class distribution: {0: 40, 1: 20}
+2025-04-17 17:23:45,054 - ERROR - Error running hmm with neural: Input contains NaN.
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 52, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 114, in run_strategy
+    regime_predictions = self.regime_classifier.predict(test_X)
+  File "C:\Users\ye\Desktop\factor_timing\models\regime_classifier.py", line 132, in predict
+    return self.model.predict(X_scaled)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\hmmlearn\base.py", line 375, in predict
+    _, state_sequence = self.decode(X, lengths)
+                        ~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\hmmlearn\base.py", line 347, in decode
+    X = check_array(X)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sklearn\utils\validation.py", line 1107, in check_array
+    _assert_all_finite(
+    ~~~~~~~~~~~~~~~~~~^
+        array,
+        ^^^^^^
+    ...<2 lines>...
+        allow_nan=ensure_all_finite == "allow-nan",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sklearn\utils\validation.py", line 120, in _assert_all_finite
+    _assert_all_finite_element_wise(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        X,
+        ^^
+    ...<4 lines>...
+        input_name=input_name,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sklearn\utils\validation.py", line 169, in _assert_all_finite_element_wise
+    raise ValueError(msg_err)
+ValueError: Input contains NaN.
+2025-04-17 17:23:45,056 - ERROR - No valid results obtained from parameter grid search
+2025-04-17 17:23:45,056 - ERROR - No valid results obtained from parameter grid search
+2025-04-17 17:23:45,056 - INFO - Factor timing strategy optimization completed
+2025-04-17 17:24:54,493 - INFO - Starting factor timing strategy optimization...
+2025-04-17 17:24:54,493 - INFO - Running parameter grid search...
+2025-04-17 17:24:54,493 - INFO - 
+Running strategy with lstm classifier and mean_variance optimizer
+2025-04-17 17:24:54,493 - INFO - Initializing strategy...
+2025-04-17 17:24:55,443 - INFO - Running strategy...
+2025-04-17 17:24:55,465 - WARNING - US corporate credit spread file not found
+2025-04-17 17:24:55,465 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:24:55,467 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 17:24:55,467 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 17:24:55,476 - WARNING - US corporate credit spread file not found
+2025-04-17 17:24:55,477 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:24:55,478 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 17:24:55,479 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 17:24:56,062 - WARNING - Found missing values in Market data data
+2025-04-17 17:24:56,063 - INFO - Loaded market data with 1509 rows
+2025-04-17 17:24:56,063 - INFO - Date range: 2014-01-02 00:00:00 to 2019-12-30 00:00:00
+2025-04-17 17:24:56,478 - WARNING - Found missing values in Market data data
+2025-04-17 17:24:56,479 - INFO - Loaded market data with 1257 rows
+2025-04-17 17:24:56,479 - INFO - Date range: 2020-01-02 00:00:00 to 2024-12-30 00:00:00
+2025-04-17 17:24:56,483 - INFO - Prepared training data with 60 samples
+2025-04-17 17:24:56,483 - INFO - Class distribution: {0: 40, 1: 20}
+2025-04-17 17:24:57,104 - ERROR - Error running lstm with mean_variance: Solver 'OSQP' failed. Try another solver, or solve with verbose=True for more information.
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 52, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 146, in run_strategy
+    weights.loc[date] = self.portfolio_optimizer.optimize_weights(
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        test_factors.loc[date],
+        ^^^^^^^^^^^^^^^^^^^^^^^
+        test_factors.cov()
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ye\Desktop\factor_timing\optimization\portfolio_optimizer.py", line 53, in optimize_weights
+    prob.solve()
+    ~~~~~~~~~~^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\cvxpy\problems\problem.py", line 600, in solve
+    return solve_func(self, *args, **kwargs)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\cvxpy\problems\problem.py", line 1187, in _solve
+    self.unpack_results(solution, solving_chain, inverse_data)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\cvxpy\problems\problem.py", line 1512, in unpack_results
+    raise error.SolverError(
+    ...<2 lines>...
+            "information.")
+cvxpy.error.SolverError: Solver 'OSQP' failed. Try another solver, or solve with verbose=True for more information.
+2025-04-17 17:24:57,108 - INFO - 
+Running strategy with lstm classifier and neural optimizer
+2025-04-17 17:24:57,108 - INFO - Initializing strategy...
+2025-04-17 17:24:57,109 - INFO - Running strategy...
+2025-04-17 17:24:57,127 - WARNING - US corporate credit spread file not found
+2025-04-17 17:24:57,127 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:24:57,129 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 17:24:57,129 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 17:24:57,139 - WARNING - US corporate credit spread file not found
+2025-04-17 17:24:57,139 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:24:57,141 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 17:24:57,141 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 17:24:57,199 - WARNING - Found missing values in Market data data
+2025-04-17 17:24:57,199 - INFO - Loaded market data with 1509 rows
+2025-04-17 17:24:57,200 - INFO - Date range: 2014-01-02 00:00:00 to 2019-12-30 00:00:00
+2025-04-17 17:24:57,252 - WARNING - Found missing values in Market data data
+2025-04-17 17:24:57,252 - INFO - Loaded market data with 1257 rows
+2025-04-17 17:24:57,252 - INFO - Date range: 2020-01-02 00:00:00 to 2024-12-30 00:00:00
+2025-04-17 17:24:57,256 - INFO - Prepared training data with 60 samples
+2025-04-17 17:24:57,257 - INFO - Class distribution: {0: 40, 1: 20}
+2025-04-17 17:24:57,795 - ERROR - Error running lstm with neural: mat1 and mat2 shapes cannot be multiplied (7x2 and 6x64)
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 52, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 146, in run_strategy
+    weights.loc[date] = self.portfolio_optimizer.optimize_weights(
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        test_factors.loc[date],
+        ^^^^^^^^^^^^^^^^^^^^^^^
+        test_factors.cov()
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ye\Desktop\factor_timing\optimization\portfolio_optimizer.py", line 85, in optimize_weights
+    weights = self.model(features_tensor)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\ye\Desktop\factor_timing\optimization\portfolio_optimizer.py", line 113, in forward
+    x = torch.relu(self.fc1(x))
+                   ~~~~~~~~^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\linear.py", line 125, in forward
+    return F.linear(input, self.weight, self.bias)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: mat1 and mat2 shapes cannot be multiplied (7x2 and 6x64)
+2025-04-17 17:24:57,798 - INFO - 
+Running strategy with xgboost classifier and mean_variance optimizer
+2025-04-17 17:24:57,798 - INFO - Initializing strategy...
+2025-04-17 17:24:57,827 - INFO - Running strategy...
+2025-04-17 17:24:57,846 - WARNING - US corporate credit spread file not found
+2025-04-17 17:24:57,847 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:24:57,849 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 17:24:57,849 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 17:24:57,856 - WARNING - US corporate credit spread file not found
+2025-04-17 17:24:57,857 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:24:57,858 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 17:24:57,859 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 17:24:57,917 - WARNING - Found missing values in Market data data
+2025-04-17 17:24:57,918 - INFO - Loaded market data with 1509 rows
+2025-04-17 17:24:57,918 - INFO - Date range: 2014-01-02 00:00:00 to 2019-12-30 00:00:00
+2025-04-17 17:24:57,971 - WARNING - Found missing values in Market data data
+2025-04-17 17:24:57,971 - INFO - Loaded market data with 1257 rows
+2025-04-17 17:24:57,971 - INFO - Date range: 2020-01-02 00:00:00 to 2024-12-30 00:00:00
+2025-04-17 17:24:57,974 - INFO - Prepared training data with 60 samples
+2025-04-17 17:24:57,975 - INFO - Class distribution: {0: 40, 1: 20}
+2025-04-17 17:24:59,250 - ERROR - Error running xgboost with mean_variance: Solver 'OSQP' failed. Try another solver, or solve with verbose=True for more information.
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 52, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 146, in run_strategy
+    weights.loc[date] = self.portfolio_optimizer.optimize_weights(
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        test_factors.loc[date],
+        ^^^^^^^^^^^^^^^^^^^^^^^
+        test_factors.cov()
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ye\Desktop\factor_timing\optimization\portfolio_optimizer.py", line 53, in optimize_weights
+    prob.solve()
+    ~~~~~~~~~~^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\cvxpy\problems\problem.py", line 600, in solve
+    return solve_func(self, *args, **kwargs)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\cvxpy\problems\problem.py", line 1187, in _solve
+    self.unpack_results(solution, solving_chain, inverse_data)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\cvxpy\problems\problem.py", line 1512, in unpack_results
+    raise error.SolverError(
+    ...<2 lines>...
+            "information.")
+cvxpy.error.SolverError: Solver 'OSQP' failed. Try another solver, or solve with verbose=True for more information.
+2025-04-17 17:24:59,252 - INFO - 
+Running strategy with xgboost classifier and neural optimizer
+2025-04-17 17:24:59,252 - INFO - Initializing strategy...
+2025-04-17 17:24:59,253 - INFO - Running strategy...
+2025-04-17 17:24:59,275 - WARNING - US corporate credit spread file not found
+2025-04-17 17:24:59,275 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:24:59,277 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 17:24:59,278 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 17:24:59,287 - WARNING - US corporate credit spread file not found
+2025-04-17 17:24:59,288 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:24:59,290 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 17:24:59,290 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 17:24:59,350 - WARNING - Found missing values in Market data data
+2025-04-17 17:24:59,350 - INFO - Loaded market data with 1509 rows
+2025-04-17 17:24:59,351 - INFO - Date range: 2014-01-02 00:00:00 to 2019-12-30 00:00:00
+2025-04-17 17:24:59,391 - WARNING - Found missing values in Market data data
+2025-04-17 17:24:59,391 - INFO - Loaded market data with 1257 rows
+2025-04-17 17:24:59,391 - INFO - Date range: 2020-01-02 00:00:00 to 2024-12-30 00:00:00
+2025-04-17 17:24:59,395 - INFO - Prepared training data with 60 samples
+2025-04-17 17:24:59,395 - INFO - Class distribution: {0: 40, 1: 20}
+2025-04-17 17:24:59,427 - ERROR - Error running xgboost with neural: mat1 and mat2 shapes cannot be multiplied (7x2 and 6x64)
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 52, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 146, in run_strategy
+    weights.loc[date] = self.portfolio_optimizer.optimize_weights(
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        test_factors.loc[date],
+        ^^^^^^^^^^^^^^^^^^^^^^^
+        test_factors.cov()
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ye\Desktop\factor_timing\optimization\portfolio_optimizer.py", line 85, in optimize_weights
+    weights = self.model(features_tensor)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\ye\Desktop\factor_timing\optimization\portfolio_optimizer.py", line 113, in forward
+    x = torch.relu(self.fc1(x))
+                   ~~~~~~~~^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\torch\nn\modules\linear.py", line 125, in forward
+    return F.linear(input, self.weight, self.bias)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: mat1 and mat2 shapes cannot be multiplied (7x2 and 6x64)
+2025-04-17 17:24:59,429 - INFO - 
+Running strategy with hmm classifier and mean_variance optimizer
+2025-04-17 17:24:59,429 - INFO - Initializing strategy...
+2025-04-17 17:24:59,469 - INFO - Running strategy...
+2025-04-17 17:24:59,491 - WARNING - US corporate credit spread file not found
+2025-04-17 17:24:59,491 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:24:59,493 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 17:24:59,493 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 17:24:59,503 - WARNING - US corporate credit spread file not found
+2025-04-17 17:24:59,503 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:24:59,505 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 17:24:59,505 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 17:24:59,565 - WARNING - Found missing values in Market data data
+2025-04-17 17:24:59,566 - INFO - Loaded market data with 1509 rows
+2025-04-17 17:24:59,566 - INFO - Date range: 2014-01-02 00:00:00 to 2019-12-30 00:00:00
+2025-04-17 17:24:59,618 - WARNING - Found missing values in Market data data
+2025-04-17 17:24:59,618 - INFO - Loaded market data with 1257 rows
+2025-04-17 17:24:59,619 - INFO - Date range: 2020-01-02 00:00:00 to 2024-12-30 00:00:00
+2025-04-17 17:24:59,622 - INFO - Prepared training data with 60 samples
+2025-04-17 17:24:59,622 - INFO - Class distribution: {0: 40, 1: 20}
+2025-04-17 17:24:59,770 - ERROR - Error running hmm with mean_variance: Input contains NaN.
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 52, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 114, in run_strategy
+    regime_predictions = self.regime_classifier.predict(test_X)
+  File "C:\Users\ye\Desktop\factor_timing\models\regime_classifier.py", line 132, in predict
+    return self.model.predict(X_scaled)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\hmmlearn\base.py", line 375, in predict
+    _, state_sequence = self.decode(X, lengths)
+                        ~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\hmmlearn\base.py", line 347, in decode
+    X = check_array(X)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sklearn\utils\validation.py", line 1107, in check_array
+    _assert_all_finite(
+    ~~~~~~~~~~~~~~~~~~^
+        array,
+        ^^^^^^
+    ...<2 lines>...
+        allow_nan=ensure_all_finite == "allow-nan",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sklearn\utils\validation.py", line 120, in _assert_all_finite
+    _assert_all_finite_element_wise(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        X,
+        ^^
+    ...<4 lines>...
+        input_name=input_name,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sklearn\utils\validation.py", line 169, in _assert_all_finite_element_wise
+    raise ValueError(msg_err)
+ValueError: Input contains NaN.
+2025-04-17 17:24:59,773 - INFO - 
+Running strategy with hmm classifier and neural optimizer
+2025-04-17 17:24:59,773 - INFO - Initializing strategy...
+2025-04-17 17:24:59,774 - INFO - Running strategy...
+2025-04-17 17:24:59,793 - WARNING - US corporate credit spread file not found
+2025-04-17 17:24:59,794 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:24:59,795 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-17 17:24:59,796 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-17 17:24:59,803 - WARNING - US corporate credit spread file not found
+2025-04-17 17:24:59,804 - WARNING - 10-year Treasury rate file not found
+2025-04-17 17:24:59,806 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-17 17:24:59,806 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-17 17:24:59,865 - WARNING - Found missing values in Market data data
+2025-04-17 17:24:59,866 - INFO - Loaded market data with 1509 rows
+2025-04-17 17:24:59,866 - INFO - Date range: 2014-01-02 00:00:00 to 2019-12-30 00:00:00
+2025-04-17 17:24:59,906 - WARNING - Found missing values in Market data data
+2025-04-17 17:24:59,906 - INFO - Loaded market data with 1257 rows
+2025-04-17 17:24:59,906 - INFO - Date range: 2020-01-02 00:00:00 to 2024-12-30 00:00:00
+2025-04-17 17:24:59,910 - INFO - Prepared training data with 60 samples
+2025-04-17 17:24:59,910 - INFO - Class distribution: {0: 40, 1: 20}
+2025-04-17 17:24:59,941 - ERROR - Error running hmm with neural: Input contains NaN.
+Traceback (most recent call last):
+  File "C:\Users\ye\Desktop\factor_timing\run_strategy.py", line 52, in run_parameter_grid
+    strategy_results = strategy.run_strategy()
+  File "C:\Users\ye\Desktop\factor_timing\main.py", line 114, in run_strategy
+    regime_predictions = self.regime_classifier.predict(test_X)
+  File "C:\Users\ye\Desktop\factor_timing\models\regime_classifier.py", line 132, in predict
+    return self.model.predict(X_scaled)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\hmmlearn\base.py", line 375, in predict
+    _, state_sequence = self.decode(X, lengths)
+                        ~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\hmmlearn\base.py", line 347, in decode
+    X = check_array(X)
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sklearn\utils\validation.py", line 1107, in check_array
+    _assert_all_finite(
+    ~~~~~~~~~~~~~~~~~~^
+        array,
+        ^^^^^^
+    ...<2 lines>...
+        allow_nan=ensure_all_finite == "allow-nan",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sklearn\utils\validation.py", line 120, in _assert_all_finite
+    _assert_all_finite_element_wise(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        X,
+        ^^
+    ...<4 lines>...
+        input_name=input_name,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ye\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sklearn\utils\validation.py", line 169, in _assert_all_finite_element_wise
+    raise ValueError(msg_err)
+ValueError: Input contains NaN.
+2025-04-17 17:24:59,943 - ERROR - No valid results obtained from parameter grid search
+2025-04-17 17:24:59,943 - ERROR - No valid results obtained from parameter grid search
+2025-04-17 17:24:59,943 - INFO - Factor timing strategy optimization completed

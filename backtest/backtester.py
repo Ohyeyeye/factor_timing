@@ -5,135 +5,155 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 
 class Backtester:
-    def __init__(self,
-                 factor_returns: pd.DataFrame,
-                 initial_capital: float = 1000000.0,
-                 rebalance_freq: str = 'M'):
-        self.factor_returns = factor_returns
-        self.initial_capital = initial_capital
+    def __init__(self, returns: pd.DataFrame, rebalance_freq: str = 'ME'):
+        """
+        Initialize backtester
+        
+        Args:
+            returns (pd.DataFrame): Asset returns
+            rebalance_freq (str): Rebalancing frequency (e.g., 'ME' for month-end)
+        """
+        self.returns = returns
         self.rebalance_freq = rebalance_freq
-        self.portfolio_value = pd.Series(dtype=float)
-        self.weights_history = pd.DataFrame()
+        self.portfolio_returns = None
         
-    def run_backtest(self,
-                    weights: pd.DataFrame,
-                    start_date: Optional[datetime] = None,
-                    end_date: Optional[datetime] = None) -> Dict:
-        """Run backtest with given weights"""
-        if start_date is None:
-            start_date = weights.index[0]
-        if end_date is None:
-            end_date = weights.index[-1]
-            
-        # Initialize portfolio
-        portfolio_value = self.initial_capital
-        portfolio_values = []
-        dates = []
+    def run_backtest(self, weights: pd.DataFrame) -> Dict:
+        """
+        Run backtest with given weights
         
-        # Get rebalance dates
-        rebalance_dates = pd.date_range(start=start_date, end=end_date, freq=self.rebalance_freq)
+        Args:
+            weights (pd.DataFrame): Portfolio weights for each period
+            
+        Returns:
+            Dict: Backtest results
+        """
+        # Ensure index alignment
+        common_dates = self.returns.index.intersection(weights.index)
+        if len(common_dates) == 0:
+            raise ValueError("No common dates between returns and weights")
+            
+        aligned_returns = self.returns.loc[common_dates]
+        aligned_weights = weights.loc[common_dates]
         
-        for i in range(len(rebalance_dates) - 1):
-            current_date = rebalance_dates[i]
-            next_date = rebalance_dates[i + 1]
+        # Initialize portfolio values
+        portfolio_values = pd.Series(index=aligned_returns.index, dtype=float)
+        portfolio_values.iloc[0] = 100.0  # Start with $100
+        
+        # Calculate portfolio returns
+        self.portfolio_returns = pd.Series(index=aligned_returns.index, dtype=float)
+        
+        for i in range(len(aligned_returns)):
+            date = aligned_returns.index[i]
+            current_weights = aligned_weights.loc[date]
+            period_returns = aligned_returns.loc[date]
             
-            # Get current weights
-            current_weights = weights.loc[current_date]
-            
-            # Get returns for the period
-            period_returns = self.factor_returns.loc[current_date:next_date]
-            
-            # Calculate portfolio returns
-            portfolio_returns = (period_returns * current_weights).sum(axis=1)
+            # Calculate portfolio return for the period
+            portfolio_return = (current_weights * period_returns).sum()
+            self.portfolio_returns.loc[date] = portfolio_return
             
             # Update portfolio value
-            portfolio_value *= (1 + portfolio_returns).prod()
+            if i > 0:
+                portfolio_values.iloc[i] = portfolio_values.iloc[i-1] * (1 + portfolio_return)
             
-            # Store results
-            portfolio_values.append(portfolio_value)
-            dates.append(next_date)
-            
-        # Create results DataFrame
-        self.portfolio_value = pd.Series(portfolio_values, index=dates)
-        self.weights_history = weights
-        
-        return self.calculate_performance_metrics()
-    
-    def calculate_performance_metrics(self) -> Dict:
-        """Calculate performance metrics"""
-        returns = self.portfolio_value.pct_change().dropna()
-        
-        # Calculate metrics
-        total_return = (self.portfolio_value.iloc[-1] / self.initial_capital) - 1
-        annualized_return = (1 + total_return) ** (252 / len(returns)) - 1
-        annualized_vol = returns.std() * np.sqrt(252)
-        sharpe_ratio = annualized_return / annualized_vol if annualized_vol != 0 else 0
-        
-        # Calculate maximum drawdown
-        cummax = self.portfolio_value.cummax()
-        drawdown = (self.portfolio_value - cummax) / cummax
-        max_drawdown = drawdown.min()
-        
-        return {
-            'total_return': total_return,
-            'annualized_return': annualized_return,
-            'annualized_volatility': annualized_vol,
-            'sharpe_ratio': sharpe_ratio,
-            'max_drawdown': max_drawdown
+        # Calculate performance metrics
+        results = {
+            'portfolio_values': portfolio_values,
+            'portfolio_returns': self.portfolio_returns,
+            'total_return': (portfolio_values.iloc[-1] / portfolio_values.iloc[0]) - 1,
+            'annualized_return': self._calculate_annualized_return(self.portfolio_returns),
+            'annualized_volatility': self._calculate_annualized_volatility(self.portfolio_returns),
+            'sharpe_ratio': self._calculate_sharpe_ratio(self.portfolio_returns),
+            'max_drawdown': self._calculate_max_drawdown(portfolio_values)
         }
-    
+        
+        return results
+        
+    def _calculate_annualized_return(self, returns: pd.Series) -> float:
+        """Calculate annualized return"""
+        total_days = (returns.index[-1] - returns.index[0]).days
+        total_return = (1 + returns).prod() - 1
+        return (1 + total_return) ** (365 / total_days) - 1
+        
+    def _calculate_annualized_volatility(self, returns: pd.Series) -> float:
+        """Calculate annualized volatility"""
+        return returns.std() * np.sqrt(252)  # Assuming daily returns
+        
+    def _calculate_sharpe_ratio(self, returns: pd.Series, risk_free_rate: float = 0.02) -> float:
+        """Calculate Sharpe ratio"""
+        excess_returns = returns - risk_free_rate/252  # Daily risk-free rate
+        return excess_returns.mean() / excess_returns.std() * np.sqrt(252)
+        
+    def _calculate_max_drawdown(self, portfolio_values: pd.Series) -> float:
+        """Calculate maximum drawdown"""
+        rolling_max = portfolio_values.expanding().max()
+        drawdowns = portfolio_values / rolling_max - 1
+        return drawdowns.min()
+        
     def plot_results(self, benchmark: Optional[pd.Series] = None):
         """Plot backtest results"""
-        plt.figure(figsize=(12, 6))
-        
-        # Plot portfolio value
-        plt.plot(self.portfolio_value.index, self.portfolio_value / self.initial_capital,
-                label='Strategy', linewidth=2)
-        
-        # Plot benchmark if provided
-        if benchmark is not None:
-            plt.plot(benchmark.index, benchmark / benchmark.iloc[0],
-                    label='Benchmark', linewidth=2, alpha=0.7)
+        if self.portfolio_returns is None:
+            raise ValueError("Run backtest first before plotting")
             
-        plt.title('Portfolio Performance')
+        plt.figure(figsize=(12, 6))
+        cumulative_returns = (1 + self.portfolio_returns).cumprod()
+        plt.plot(cumulative_returns.index, cumulative_returns.values, label='Strategy')
+        
+        if benchmark is not None:
+            # Align benchmark with portfolio returns
+            aligned_benchmark = benchmark.reindex(self.portfolio_returns.index)
+            cumulative_benchmark = (1 + aligned_benchmark).cumprod()
+            plt.plot(cumulative_benchmark.index, cumulative_benchmark.values, label='Benchmark')
+            
+        plt.title('Cumulative Returns')
         plt.xlabel('Date')
         plt.ylabel('Cumulative Return')
         plt.legend()
         plt.grid(True)
         plt.show()
         
-        # Plot weights over time
-        if not self.weights_history.empty:
-            plt.figure(figsize=(12, 6))
-            self.weights_history.plot(kind='area', stacked=True)
-            plt.title('Portfolio Weights Over Time')
-            plt.xlabel('Date')
-            plt.ylabel('Weight')
-            plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
-            plt.grid(True)
-            plt.show()
-    
-    def compare_with_benchmark(self, benchmark: pd.Series) -> Dict:
-        """Compare strategy with benchmark"""
-        strategy_metrics = self.calculate_performance_metrics()
+    def calculate_performance_metrics(self) -> Dict:
+        """Calculate detailed performance metrics"""
+        if self.portfolio_returns is None:
+            raise ValueError("Run backtest first before calculating metrics")
+            
+        metrics = {
+            'annualized_return': self._calculate_annualized_return(self.portfolio_returns),
+            'annualized_volatility': self._calculate_annualized_volatility(self.portfolio_returns),
+            'sharpe_ratio': self._calculate_sharpe_ratio(self.portfolio_returns),
+            'max_drawdown': self._calculate_max_drawdown((1 + self.portfolio_returns).cumprod()),
+            'skewness': self.portfolio_returns.skew(),
+            'kurtosis': self.portfolio_returns.kurtosis(),
+            'var_95': self.portfolio_returns.quantile(0.05),
+            'var_99': self.portfolio_returns.quantile(0.01)
+        }
         
-        # Calculate benchmark metrics
-        benchmark_returns = benchmark.pct_change().dropna()
-        benchmark_total_return = (benchmark.iloc[-1] / benchmark.iloc[0]) - 1
-        benchmark_annualized_return = (1 + benchmark_total_return) ** (252 / len(benchmark_returns)) - 1
-        benchmark_annualized_vol = benchmark_returns.std() * np.sqrt(252)
-        benchmark_sharpe = benchmark_annualized_return / benchmark_annualized_vol if benchmark_annualized_vol != 0 else 0
+        return metrics
+        
+    def compare_with_benchmark(self, benchmark: pd.Series) -> Dict:
+        """Compare strategy performance with benchmark"""
+        if self.portfolio_returns is None:
+            raise ValueError("Run backtest first before comparing with benchmark")
+            
+        # Align benchmark with portfolio returns
+        aligned_benchmark = benchmark.reindex(self.portfolio_returns.index)
         
         # Calculate tracking error
-        tracking_error = (benchmark_returns - self.portfolio_value.pct_change().dropna()).std() * np.sqrt(252)
+        tracking_error = (self.portfolio_returns - aligned_benchmark).std() * np.sqrt(252)
         
-        return {
-            'strategy_metrics': strategy_metrics,
-            'benchmark_metrics': {
-                'total_return': benchmark_total_return,
-                'annualized_return': benchmark_annualized_return,
-                'annualized_volatility': benchmark_annualized_vol,
-                'sharpe_ratio': benchmark_sharpe
-            },
-            'tracking_error': tracking_error
-        } 
+        # Calculate information ratio
+        active_returns = self.portfolio_returns - aligned_benchmark
+        information_ratio = active_returns.mean() / active_returns.std() * np.sqrt(252)
+        
+        # Calculate beta
+        covariance = np.cov(self.portfolio_returns, aligned_benchmark)[0,1]
+        variance = aligned_benchmark.var()
+        beta = covariance / variance
+        
+        comparison = {
+            'tracking_error': tracking_error,
+            'information_ratio': information_ratio,
+            'beta': beta,
+            'correlation': self.portfolio_returns.corr(aligned_benchmark)
+        }
+        
+        return comparison 

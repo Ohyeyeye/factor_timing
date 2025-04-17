@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
 from typing import Dict, Optional, Tuple
+import logging
 
 from data.data_loader import DataLoader
 from models.regime_classifier import LSTMRegimeClassifier, XGBoostRegimeClassifier, HMMRegimeClassifier
@@ -15,14 +16,23 @@ class FactorTimingStrategy:
                  test_start_date: str = '2020-01-01',
                  test_end_date: str = '2024-12-31',
                  model_type: str = 'lstm',
-                 optimizer_type: str = 'mean_variance'):
+                 optimizer_type: str = 'mean_variance',
+                 data_dir: str = None):
+        # Set up logging
+        self.logger = logging.getLogger(__name__)
+        self.logger.info(f"Initializing FactorTimingStrategy with {model_type} model and {optimizer_type} optimizer")
+        
         self.train_start_date = train_start_date
         self.train_end_date = train_end_date
         self.test_start_date = test_start_date
         self.test_end_date = test_end_date
         
         # Initialize components
-        self.data_loader = DataLoader()
+        self.data_loader = DataLoader(data_dir=data_dir)
+        self.data_loader.set_date_ranges(
+            train_start_date, train_end_date,
+            test_start_date, test_end_date
+        )
         self.regime_classifier = self._init_regime_classifier(model_type)
         self.portfolio_optimizer = self._init_portfolio_optimizer(optimizer_type)
         self.backtester = None
@@ -30,7 +40,7 @@ class FactorTimingStrategy:
     def _init_regime_classifier(self, model_type: str):
         """Initialize regime classifier based on model type"""
         if model_type == 'lstm':
-            return LSTMRegimeClassifier(input_size=8)  # Adjust input_size based on features
+            return LSTMRegimeClassifier(input_size=6)  # Match actual number of features
         elif model_type == 'xgboost':
             return XGBoostRegimeClassifier()
         elif model_type == 'hmm':
@@ -54,6 +64,21 @@ class FactorTimingStrategy:
             self.train_start_date, self.train_end_date)
         test_factors = self.data_loader.load_fama_french_factors(
             self.test_start_date, self.test_end_date)
+            
+        # Drop the 'date' column if it exists and convert returns to numeric
+        if 'date' in train_factors.columns:
+            train_factors = train_factors.drop('date', axis=1)
+        if 'date' in test_factors.columns:
+            test_factors = test_factors.drop('date', axis=1)
+            
+        # Convert returns to numeric, excluding the index
+        numeric_columns = ['Mkt-RF', 'SMB', 'HML', 'RMW', 'CMA', 'RF']
+        train_factors[numeric_columns] = train_factors[numeric_columns].apply(pd.to_numeric, errors='coerce')
+        test_factors[numeric_columns] = test_factors[numeric_columns].apply(pd.to_numeric, errors='coerce')
+        
+        # Handle missing values in factor data
+        train_factors = train_factors.ffill().bfill()
+        test_factors = test_factors.ffill().bfill()
             
         # Load macro and market data for both periods
         train_macro = self.data_loader.load_macro_data(
@@ -84,6 +109,13 @@ class FactorTimingStrategy:
             'market': test_market
         }
         
+        # Ensure all data is properly aligned
+        common_train_idx = train_factors.index.intersection(train_macro.index).intersection(train_market.index)
+        common_test_idx = test_factors.index.intersection(test_macro.index).intersection(test_market.index)
+        
+        train_factors = train_factors.loc[common_train_idx]
+        test_factors = test_factors.loc[common_test_idx]
+        
         return train_factors, test_factors
         
     def train_models(self):
@@ -98,47 +130,91 @@ class FactorTimingStrategy:
             
     def run_strategy(self) -> Dict:
         """Run the factor timing strategy with train-test split"""
+        self.logger.info("Starting strategy execution...")
+        
         # Prepare data
+        self.logger.info("Preparing training and testing data...")
         train_factors, test_factors = self.prepare_data()
+        self.logger.info(f"Prepared data - Train shape: {train_factors.shape}, Test shape: {test_factors.shape}")
         
         # Train models
+        self.logger.info("Training models...")
         self.train_models()
+        self.logger.info("Model training completed")
         
         # Initialize portfolio weights DataFrame for test period
+        self.logger.info("Initializing portfolio weights...")
         weights = pd.DataFrame(index=test_factors.index,
                              columns=test_factors.columns)
         
         # Get regime predictions for test period
+        self.logger.info("Generating regime predictions for test period...")
         test_X = pd.concat([self.test_data['macro'], self.test_data['market']], axis=1)
+        # Align test_X with test_factors
+        test_X = test_X.reindex(test_factors.index).ffill().bfill()
+        self.logger.info(f"Test features shape after alignment: {test_X.shape}")
         regime_predictions = self.regime_classifier.predict(test_X)
+        self.logger.info(f"Generated {len(regime_predictions)} regime predictions")
         
         # Calculate regime-specific returns from training period
-        train_regime_predictions = self.regime_classifier.predict(self.train_data['X'])
+        self.logger.info("Calculating regime-specific returns...")
+        train_X = pd.concat([self.train_data['macro'], self.train_data['market']], axis=1)
+        # Align train_X with train_factors
+        train_X = train_X.reindex(train_factors.index).ffill().bfill()
+        train_regime_predictions = self.regime_classifier.predict(train_X)
+        
+        # Create a DataFrame with regime predictions
+        train_regimes = pd.Series(train_regime_predictions, index=train_factors.index)
+        
+        # Calculate regime-specific returns
         regime_returns = {}
-        for regime in np.unique(train_regime_predictions):
-            regime_mask = train_regime_predictions == regime
-            regime_returns[regime] = self.train_data['factors'][regime_mask]
-            
+        unique_regimes = np.unique(train_regime_predictions)
+        self.logger.info(f"Found {len(unique_regimes)} unique regimes")
+        
+        for regime in unique_regimes:
+            # Align regime mask with factor data
+            regime_mask = train_regimes == regime
+            regime_returns[regime] = train_factors[regime_mask].astype(float)
+            self.logger.info(f"Regime {regime}: {len(regime_returns[regime])} samples")
+        
+        # Create test period regime predictions series
+        test_regimes = pd.Series(regime_predictions, index=test_factors.index)
+        
         # Optimize weights for each period in test set
+        self.logger.info("Optimizing portfolio weights...")
+        optimization_count = 0
+        
         for date in weights.index:
-            current_regime = regime_predictions[date]
+            # Get the most recent regime prediction
+            current_regime = test_regimes.loc[date]
+            
+            # Get factor returns for the current date
+            current_returns = test_factors.loc[date].astype(float)
             
             if isinstance(self.portfolio_optimizer, RegimeAwareOptimizer):
                 weights.loc[date] = self.portfolio_optimizer.optimize_weights(
-                    test_factors.loc[date],
-                    test_factors.cov(),
+                    current_returns,
+                    test_factors.astype(float).cov(),
                     current_regime,
                     regime_returns
                 )
             else:
                 weights.loc[date] = self.portfolio_optimizer.optimize_weights(
-                    test_factors.loc[date],
-                    test_factors.cov()
+                    current_returns,
+                    test_factors.astype(float).cov()
                 )
+            
+            optimization_count += 1
+            if optimization_count % 50 == 0:
+                self.logger.info(f"Optimized weights for {optimization_count} periods")
                 
+        self.logger.info("Portfolio optimization completed")
+        
         # Run backtest on test period
-        self.backtester = Backtester(test_factors)
+        self.logger.info("Running backtest...")
+        self.backtester = Backtester(test_factors.astype(float))
         results = self.backtester.run_backtest(weights)
+        self.logger.info("Backtest completed")
         
         return results
         
@@ -171,7 +247,8 @@ def main():
         test_start_date='2020-01-01',
         test_end_date='2024-12-31',
         model_type='lstm',
-        optimizer_type='mean_variance'
+        optimizer_type='mean_variance',
+        data_dir='data'  # Specify the data directory
     )
     
     # Run strategy

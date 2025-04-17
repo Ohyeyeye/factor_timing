@@ -1,10 +1,11 @@
 import numpy as np
 import pandas as pd
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple
 import cvxpy as cp
 from sklearn.ensemble import RandomForestRegressor
 import torch
 import torch.nn as nn
+from scipy.optimize import minimize
 
 class BasePortfolioOptimizer:
     def __init__(self):
@@ -19,36 +20,74 @@ class BasePortfolioOptimizer:
 
 class MeanVarianceOptimizer(BasePortfolioOptimizer):
     def __init__(self, risk_aversion: float = 1.0):
+        """Initialize mean-variance optimizer"""
         self.risk_aversion = risk_aversion
         
-    def optimize_weights(self,
-                        expected_returns: pd.Series,
-                        covariance: pd.DataFrame,
-                        constraints: Optional[Dict] = None) -> pd.Series:
-        """Mean-variance optimization with constraints"""
-        n_assets = len(expected_returns)
-        w = cp.Variable(n_assets)
+    def _clean_data(self, returns: pd.Series, cov_matrix: pd.DataFrame) -> Tuple[pd.Series, pd.DataFrame]:
+        """Clean input data by handling NaN values"""
+        # Forward fill any NaN values in returns
+        clean_returns = returns.ffill().fillna(0)
         
-        # Define objective
-        risk = cp.quad_form(w, covariance.values)
-        ret = expected_returns.values @ w
-        objective = cp.Maximize(ret - self.risk_aversion * risk)
+        # Handle NaN values in covariance matrix
+        clean_cov = cov_matrix.copy()
+        # Fill diagonal with small positive values if NaN
+        np.fill_diagonal(clean_cov.values, 
+                        np.where(np.isnan(np.diag(clean_cov)), 1e-6, np.diag(clean_cov)))
+        # Forward fill remaining NaN values
+        clean_cov = clean_cov.ffill().bfill().fillna(0)
         
-        # Define constraints
-        constraints_list = [cp.sum(w) == 1, w >= 0]  # Basic constraints
+        return clean_returns, clean_cov
         
-        # Add custom constraints if provided
-        if constraints:
-            if 'max_weight' in constraints:
-                constraints_list.append(w <= constraints['max_weight'])
-            if 'min_weight' in constraints:
-                constraints_list.append(w >= constraints['min_weight'])
-                
-        # Solve optimization problem
-        prob = cp.Problem(objective, constraints_list)
-        prob.solve()
+    def optimize_weights(self, 
+                        returns: pd.Series, 
+                        cov_matrix: pd.DataFrame,
+                        **kwargs) -> np.ndarray:
+        """
+        Optimize portfolio weights using mean-variance optimization
         
-        return pd.Series(w.value, index=expected_returns.index)
+        Args:
+            returns: Expected returns for each asset
+            cov_matrix: Covariance matrix of asset returns
+            **kwargs: Additional arguments (unused)
+            
+        Returns:
+            np.ndarray: Optimal portfolio weights
+        """
+        # Clean input data
+        clean_returns, clean_cov = self._clean_data(returns, cov_matrix)
+        
+        n_assets = len(returns)
+        
+        # Optimization objective: maximize returns - risk_aversion * variance
+        def objective(weights):
+            portfolio_return = np.sum(weights * clean_returns)
+            portfolio_risk = np.sqrt(np.dot(weights.T, np.dot(clean_cov, weights)))
+            return -(portfolio_return - self.risk_aversion * portfolio_risk)
+        
+        # Constraints
+        constraints = [
+            {'type': 'eq', 'fun': lambda x: np.sum(x) - 1.0},  # weights sum to 1
+        ]
+        
+        # Bounds for each weight (0 to 1)
+        bounds = tuple((0, 1) for _ in range(n_assets))
+        
+        # Initial guess (equal weights)
+        initial_weights = np.array([1.0/n_assets] * n_assets)
+        
+        # Optimize
+        result = minimize(objective, 
+                        initial_weights,
+                        method='SLSQP',
+                        bounds=bounds,
+                        constraints=constraints)
+        
+        if not result.success:
+            # If optimization fails, return equal weights
+            self.logger.warning("Optimization failed. Returning equal weights.")
+            return initial_weights
+            
+        return result.x
 
 class NeuralPortfolioOptimizer(BasePortfolioOptimizer):
     def __init__(self,
@@ -63,6 +102,10 @@ class NeuralPortfolioOptimizer(BasePortfolioOptimizer):
                         covariance: pd.DataFrame,
                         constraints: Optional[Dict] = None) -> pd.Series:
         """Use neural network to predict optimal weights"""
+        # Convert expected returns and covariance to numeric values
+        expected_returns = pd.to_numeric(expected_returns, errors='coerce')
+        covariance = covariance.astype(float)
+        
         # Prepare input features
         features = pd.concat([
             expected_returns,
@@ -70,7 +113,7 @@ class NeuralPortfolioOptimizer(BasePortfolioOptimizer):
         ], axis=1)
         
         # Convert to tensor
-        features_tensor = torch.FloatTensor(features.values)
+        features_tensor = torch.FloatTensor(features.values.astype(float))
         
         # Get predictions
         with torch.no_grad():
