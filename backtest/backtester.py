@@ -16,7 +16,9 @@ class Backtester:
         """
         self.returns = returns
         self.rebalance_freq = rebalance_freq
+        self.portfolio_values = None
         self.portfolio_returns = None
+        self.weights = None
         self.logger = logging.getLogger(__name__)
         
     def run_backtest(self, weights: pd.DataFrame) -> Dict:
@@ -24,34 +26,66 @@ class Backtester:
         self.logger.info("Starting backtest...")
         
         # Ensure dates are aligned
+        self.logger.info("Aligning dates between weights and returns...")
         common_dates = weights.index.intersection(self.returns.index)
         weights = weights.loc[common_dates]
         returns = self.returns.loc[common_dates]
+        self.logger.info(f"Aligned {len(common_dates)} common dates")
+        
+        # Validate returns
+        self.logger.info("Validating returns...")
+        if (returns > 1.0).any().any():
+            self.logger.warning("Found returns > 100%, capping at 100%")
+            returns = returns.clip(upper=1.0)
+        self.logger.info("Returns validation completed")
         
         # Initialize portfolio value
+        self.logger.info("Initializing portfolio...")
         portfolio_value = 1.0
         portfolio_values = []
         
         # Run backtest
+        self.logger.info("Running backtest simulation...")
         for date in weights.index:
             current_weights = weights.loc[date]
             current_returns = returns.loc[date]
             
+            # Validate weights
+            if not np.isclose(current_weights.sum(), 1.0, rtol=1e-5):
+                self.logger.warning(f"Weights do not sum to 1 on {date}, normalizing")
+                current_weights = current_weights / current_weights.sum()
+            
             # Calculate daily return
             daily_return = (current_weights * current_returns).sum()
+            
+            # Cap daily return at 100%
+            daily_return = min(daily_return, 1.0)
+            
             portfolio_value *= (1 + daily_return)
             portfolio_values.append(portfolio_value)
+            
+            # Log if return is unusually high
+            if daily_return > 0.5:  # 50% daily return
+                self.logger.warning(f"Unusually high return on {date}: {daily_return:.2%}")
+        
+        self.logger.info("Backtest simulation completed")
+        
+        # Store results as instance variables
+        self.logger.info("Storing backtest results...")
+        self.portfolio_values = pd.Series(portfolio_values, index=weights.index)
+        self.portfolio_returns = pd.Series([(portfolio_values[i]/portfolio_values[i-1] - 1) 
+                                          for i in range(1, len(portfolio_values))], 
+                                          index=weights.index[1:])
+        self.weights = weights
         
         # Create results dictionary
         results = {
-            'portfolio_values': pd.Series(portfolio_values, index=weights.index),
-            'returns': pd.Series([(portfolio_values[i]/portfolio_values[i-1] - 1) 
-                                for i in range(1, len(portfolio_values))], 
-                                index=weights.index[1:]),
-            'weights': weights
+            'portfolio_values': self.portfolio_values,
+            'returns': self.portfolio_returns,
+            'weights': self.weights
         }
         
-        self.logger.info("Backtest completed")
+        self.logger.info("Backtest completed successfully")
         return results
         
     def _calculate_annualized_return(self, returns: pd.Series) -> float:
@@ -77,42 +111,47 @@ class Backtester:
         
     def plot_results(self, benchmark: Optional[pd.Series] = None):
         """Plot backtest results"""
-        if self.portfolio_returns is None:
+        self.logger.info("Starting to plot results...")
+        if self.portfolio_values is None:
             raise ValueError("Run backtest first before plotting")
             
+        self.logger.info("Creating plot...")
         plt.figure(figsize=(12, 6))
-        cumulative_returns = (1 + self.portfolio_returns).cumprod()
-        plt.plot(cumulative_returns.index, cumulative_returns.values, label='Strategy')
+        plt.plot(self.portfolio_values.index, self.portfolio_values.values, label='Strategy')
         
         if benchmark is not None:
-            # Align benchmark with portfolio returns
-            aligned_benchmark = benchmark.reindex(self.portfolio_returns.index)
-            cumulative_benchmark = (1 + aligned_benchmark).cumprod()
-            plt.plot(cumulative_benchmark.index, cumulative_benchmark.values, label='Benchmark')
+            self.logger.info("Adding benchmark to plot...")
+            # Align benchmark with portfolio values
+            aligned_benchmark = benchmark.reindex(self.portfolio_values.index)
+            plt.plot(aligned_benchmark.index, aligned_benchmark.values, label='Benchmark')
             
-        plt.title('Cumulative Returns')
+        plt.title('Portfolio Value Over Time')
         plt.xlabel('Date')
-        plt.ylabel('Cumulative Return')
+        plt.ylabel('Portfolio Value')
         plt.legend()
         plt.grid(True)
         plt.show()
+        self.logger.info("Plot completed")
         
     def calculate_performance_metrics(self) -> Dict:
         """Calculate detailed performance metrics"""
+        self.logger.info("Starting performance metrics calculation...")
         if self.portfolio_returns is None:
             raise ValueError("Run backtest first before calculating metrics")
             
+        self.logger.info("Calculating metrics...")
         metrics = {
             'annualized_return': self._calculate_annualized_return(self.portfolio_returns),
             'annualized_volatility': self._calculate_annualized_volatility(self.portfolio_returns),
             'sharpe_ratio': self._calculate_sharpe_ratio(self.portfolio_returns),
-            'max_drawdown': self._calculate_max_drawdown((1 + self.portfolio_returns).cumprod()),
+            'max_drawdown': self._calculate_max_drawdown(self.portfolio_values),
             'skewness': self.portfolio_returns.skew(),
             'kurtosis': self.portfolio_returns.kurtosis(),
             'var_95': self.portfolio_returns.quantile(0.05),
             'var_99': self.portfolio_returns.quantile(0.01)
         }
         
+        self.logger.info("Performance metrics calculation completed")
         return metrics
         
     def compare_with_benchmark(self, benchmark: pd.Series) -> Dict:

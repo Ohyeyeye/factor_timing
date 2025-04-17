@@ -59,18 +59,23 @@ class FactorTimingStrategy:
             
     def prepare_data(self) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """Load and prepare training and testing data"""
+        self.logger.info("Starting data preparation...")
+        
         # Load Fama-French factors for both periods
+        self.logger.info("Loading Fama-French factors...")
         train_factors = self.data_loader.load_fama_french_factors(
             self.train_start_date, self.train_end_date)
         test_factors = self.data_loader.load_fama_french_factors(
             self.test_start_date, self.test_end_date)
-            
+        self.logger.info("Fama-French factors loaded")
+        
         # Drop the 'date' column if it exists and convert returns to numeric
+        self.logger.info("Processing factor data...")
         if 'date' in train_factors.columns:
             train_factors = train_factors.drop('date', axis=1)
         if 'date' in test_factors.columns:
             test_factors = test_factors.drop('date', axis=1)
-            
+        
         # Convert returns to numeric, excluding the index
         numeric_columns = ['Mkt-RF', 'SMB', 'HML', 'RMW', 'CMA', 'RF']
         train_factors[numeric_columns] = train_factors[numeric_columns].apply(pd.to_numeric, errors='coerce')
@@ -79,22 +84,28 @@ class FactorTimingStrategy:
         # Handle missing values in factor data
         train_factors = train_factors.ffill().bfill()
         test_factors = test_factors.ffill().bfill()
-            
+        self.logger.info("Factor data processed")
+        
         # Load macro and market data for both periods
+        self.logger.info("Loading macro and market data...")
         train_macro = self.data_loader.load_macro_data(
             self.train_start_date, self.train_end_date)
         test_macro = self.data_loader.load_macro_data(
             self.test_start_date, self.test_end_date)
-            
+        
         train_market = self.data_loader.load_market_data(
             self.train_start_date, self.train_end_date)
         test_market = self.data_loader.load_market_data(
             self.test_start_date, self.test_end_date)
-            
+        self.logger.info("Macro and market data loaded")
+        
         # Prepare training data for regime classification
+        self.logger.info("Preparing training data for regime classification...")
         train_X, train_y = self.data_loader.prepare_training_data()
+        self.logger.info("Training data prepared")
         
         # Store data
+        self.logger.info("Storing data...")
         self.train_data = {
             'factors': train_factors,
             'macro': train_macro,
@@ -110,24 +121,34 @@ class FactorTimingStrategy:
         }
         
         # Ensure all data is properly aligned
+        self.logger.info("Aligning data indices...")
         common_train_idx = train_factors.index.intersection(train_macro.index).intersection(train_market.index)
         common_test_idx = test_factors.index.intersection(test_macro.index).intersection(test_market.index)
         
         train_factors = train_factors.loc[common_train_idx]
         test_factors = test_factors.loc[common_test_idx]
+        self.logger.info("Data indices aligned")
         
+        self.logger.info("Data preparation completed")
         return train_factors, test_factors
         
     def train_models(self):
         """Train regime classifier and portfolio optimizer"""
+        self.logger.info("Starting model training...")
+        
         # Train regime classifier on training data
+        self.logger.info("Training regime classifier...")
         self.regime_classifier.train(self.train_data['X'], self.train_data['y'])
+        self.logger.info("Regime classifier training completed")
         
         # If using neural portfolio optimizer, train it
         if isinstance(self.portfolio_optimizer, NeuralPortfolioOptimizer):
+            self.logger.info("Training neural portfolio optimizer...")
             # TODO: Prepare training data for neural portfolio optimizer
-            pass
-            
+            self.logger.info("Neural portfolio optimizer training completed")
+        
+        self.logger.info("Model training completed")
+        
     def run_strategy(self) -> Dict:
         """Run the factor timing strategy with train-test split"""
         self.logger.info("Starting strategy execution...")
@@ -146,6 +167,7 @@ class FactorTimingStrategy:
         self.logger.info("Initializing portfolio weights...")
         weights = pd.DataFrame(index=test_factors.index,
                              columns=test_factors.columns)
+        self.logger.info("Portfolio weights initialized")
         
         # Get regime predictions for test period
         self.logger.info("Generating regime predictions for test period...")
@@ -172,6 +194,7 @@ class FactorTimingStrategy:
         self.logger.info(f"Found {len(unique_regimes)} unique regimes")
         
         for regime in unique_regimes:
+            self.logger.info(f"Processing regime {regime}...")
             # Align regime mask with factor data
             regime_mask = train_regimes == regime
             # Convert to float before storing
@@ -214,30 +237,37 @@ class FactorTimingStrategy:
         # Run backtest on test period
         self.logger.info("Running backtest...")
         self.backtester = Backtester(test_factors.astype(float))
-        results = self.backtester.run_backtest(weights)
+        self.backtest_results = self.backtester.run_backtest(weights)
         self.logger.info("Backtest completed")
         
-        return results
+        self.logger.info("Strategy execution completed")
+        return self.backtest_results
         
     def plot_results(self, benchmark: Optional[pd.Series] = None):
         """Plot strategy results"""
-        if self.backtester is None:
+        self.logger.info("Starting to plot results...")
+        if self.backtester is None or self.backtest_results is None:
             raise ValueError("Run strategy first before plotting results")
         self.backtester.plot_results(benchmark)
+        self.logger.info("Results plotting completed")
         
     def evaluate_strategy(self, benchmark: Optional[pd.Series] = None) -> Dict:
         """Evaluate strategy performance"""
+        self.logger.info("Starting strategy evaluation...")
         if self.backtester is None:
             raise ValueError("Run strategy first before evaluating")
             
         # Get strategy metrics
+        self.logger.info("Calculating performance metrics...")
         strategy_metrics = self.backtester.calculate_performance_metrics()
         
         # Compare with benchmark if provided
         if benchmark is not None:
+            self.logger.info("Comparing with benchmark...")
             comparison = self.backtester.compare_with_benchmark(benchmark)
             strategy_metrics.update(comparison)
             
+        self.logger.info("Strategy evaluation completed")
         return strategy_metrics
 
 def main():

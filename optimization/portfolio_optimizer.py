@@ -6,6 +6,7 @@ from sklearn.ensemble import RandomForestRegressor
 import torch
 import torch.nn as nn
 from scipy.optimize import minimize
+import logging
 
 class BasePortfolioOptimizer:
     def __init__(self):
@@ -19,75 +20,58 @@ class BasePortfolioOptimizer:
         raise NotImplementedError
 
 class MeanVarianceOptimizer(BasePortfolioOptimizer):
-    def __init__(self, risk_aversion: float = 1.0):
-        """Initialize mean-variance optimizer"""
+    def __init__(self, risk_aversion: float = 1.0, max_weight: float = 0.5):
         self.risk_aversion = risk_aversion
+        self.max_weight = max_weight
+        self.logger = logging.getLogger(__name__)
         
-    def _clean_data(self, returns: pd.Series, cov_matrix: pd.DataFrame) -> Tuple[pd.Series, pd.DataFrame]:
-        """Clean input data by handling NaN values"""
-        # Forward fill any NaN values in returns
-        clean_returns = returns.ffill().fillna(0)
+    def optimize_weights(self, expected_returns: pd.Series, covariance: pd.DataFrame) -> pd.Series:
+        """Optimize portfolio weights using mean-variance optimization"""
+        self.logger.info("Optimizing portfolio weights...")
         
-        # Handle NaN values in covariance matrix
-        clean_cov = cov_matrix.copy()
-        # Fill diagonal with small positive values if NaN
-        np.fill_diagonal(clean_cov.values, 
-                        np.where(np.isnan(np.diag(clean_cov)), 1e-6, np.diag(clean_cov)))
-        # Forward fill remaining NaN values
-        clean_cov = clean_cov.ffill().bfill().fillna(0)
+        # Convert inputs to numpy arrays
+        mu = expected_returns.values
+        Sigma = covariance.values
         
-        return clean_returns, clean_cov
+        # Number of assets
+        n = len(mu)
         
-    def optimize_weights(self, 
-                        returns: pd.Series, 
-                        cov_matrix: pd.DataFrame,
-                        **kwargs) -> np.ndarray:
-        """
-        Optimize portfolio weights using mean-variance optimization
-        
-        Args:
-            returns: Expected returns for each asset
-            cov_matrix: Covariance matrix of asset returns
-            **kwargs: Additional arguments (unused)
+        # Define optimization problem
+        def objective(w):
+            return -(w @ mu - self.risk_aversion * w @ Sigma @ w)
             
-        Returns:
-            np.ndarray: Optimal portfolio weights
-        """
-        # Clean input data
-        clean_returns, clean_cov = self._clean_data(returns, cov_matrix)
-        
-        n_assets = len(returns)
-        
-        # Optimization objective: maximize returns - risk_aversion * variance
-        def objective(weights):
-            portfolio_return = np.sum(weights * clean_returns)
-            portfolio_risk = np.sqrt(np.dot(weights.T, np.dot(clean_cov, weights)))
-            return -(portfolio_return - self.risk_aversion * portfolio_risk)
+        # Initial guess (equal weights)
+        w0 = np.ones(n) / n
         
         # Constraints
         constraints = [
-            {'type': 'eq', 'fun': lambda x: np.sum(x) - 1.0},  # weights sum to 1
+            {'type': 'eq', 'fun': lambda w: np.sum(w) - 1},  # Weights sum to 1
+            {'type': 'ineq', 'fun': lambda w: w},  # Weights >= 0
+            {'type': 'ineq', 'fun': lambda w: self.max_weight - w}  # Weights <= max_weight
         ]
         
-        # Bounds for each weight (0 to 1)
-        bounds = tuple((0, 1) for _ in range(n_assets))
-        
-        # Initial guess (equal weights)
-        initial_weights = np.array([1.0/n_assets] * n_assets)
-        
         # Optimize
-        result = minimize(objective, 
-                        initial_weights,
-                        method='SLSQP',
-                        bounds=bounds,
-                        constraints=constraints)
+        result = minimize(
+            objective,
+            w0,
+            method='SLSQP',
+            constraints=constraints,
+            options={'maxiter': 1000}
+        )
         
         if not result.success:
-            # If optimization fails, return equal weights
-            self.logger.warning("Optimization failed. Returning equal weights.")
-            return initial_weights
+            self.logger.warning("Optimization did not converge, using equal weights")
+            weights = np.ones(n) / n
+        else:
+            weights = result.x
             
-        return result.x
+        # Create Series with original index
+        weights_series = pd.Series(weights, index=expected_returns.index)
+        
+        # Log weight distribution
+        self.logger.info(f"Weight distribution: {weights_series.to_dict()}")
+        
+        return weights_series
 
 class NeuralPortfolioOptimizer(BasePortfolioOptimizer):
     def __init__(self,
