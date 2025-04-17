@@ -41,27 +41,6 @@ factor_timing/
 pip install -r requirements.txt
 ```
 
-## Usage
-
-Basic usage example:
-
-```python
-from factor_timing.main import FactorTimingStrategy
-
-# Initialize strategy
-strategy = FactorTimingStrategy(
-    start_date='2010-01-01',
-    end_date='2020-12-31',
-    model_type='lstm',  # Options: 'lstm', 'xgboost', 'hmm'
-    optimizer_type='mean_variance'  # Options: 'mean_variance', 'neural'
-)
-
-# Run strategy
-results = strategy.run_strategy()
-
-# Plot results
-strategy.plot_results()
-```
 
 ## Data Requirements
 
