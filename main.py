@@ -174,7 +174,8 @@ class FactorTimingStrategy:
         for regime in unique_regimes:
             # Align regime mask with factor data
             regime_mask = train_regimes == regime
-            regime_returns[regime] = train_factors[regime_mask].astype(float)
+            # Convert to float before storing
+            regime_returns[regime] = train_factors[regime_mask].apply(pd.to_numeric, errors='coerce')
             self.logger.info(f"Regime {regime}: {len(regime_returns[regime])} samples")
         
         # Create test period regime predictions series
@@ -252,6 +253,7 @@ def main():
     )
     
     # Run strategy
+    print("Running strategy...")
     results = strategy.run_strategy()
     print("Strategy Results:", results)
     
@@ -259,6 +261,7 @@ def main():
     strategy.plot_results()
     
     # Evaluate strategy
+    print("Evaluating strategy...")
     evaluation = strategy.evaluate_strategy()
     print("Strategy Evaluation:", evaluation)
 

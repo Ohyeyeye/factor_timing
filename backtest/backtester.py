@@ -3,6 +3,7 @@ import numpy as np
 from typing import Dict, List, Optional
 from datetime import datetime
 import matplotlib.pyplot as plt
+import logging
 
 class Backtester:
     def __init__(self, returns: pd.DataFrame, rebalance_freq: str = 'ME'):
@@ -16,56 +17,41 @@ class Backtester:
         self.returns = returns
         self.rebalance_freq = rebalance_freq
         self.portfolio_returns = None
+        self.logger = logging.getLogger(__name__)
         
     def run_backtest(self, weights: pd.DataFrame) -> Dict:
-        """
-        Run backtest with given weights
+        """Run backtest on the test period"""
+        self.logger.info("Starting backtest...")
         
-        Args:
-            weights (pd.DataFrame): Portfolio weights for each period
-            
-        Returns:
-            Dict: Backtest results
-        """
-        # Ensure index alignment
-        common_dates = self.returns.index.intersection(weights.index)
-        if len(common_dates) == 0:
-            raise ValueError("No common dates between returns and weights")
-            
-        aligned_returns = self.returns.loc[common_dates]
-        aligned_weights = weights.loc[common_dates]
+        # Ensure dates are aligned
+        common_dates = weights.index.intersection(self.returns.index)
+        weights = weights.loc[common_dates]
+        returns = self.returns.loc[common_dates]
         
-        # Initialize portfolio values
-        portfolio_values = pd.Series(index=aligned_returns.index, dtype=float)
-        portfolio_values.iloc[0] = 100.0  # Start with $100
+        # Initialize portfolio value
+        portfolio_value = 1.0
+        portfolio_values = []
         
-        # Calculate portfolio returns
-        self.portfolio_returns = pd.Series(index=aligned_returns.index, dtype=float)
+        # Run backtest
+        for date in weights.index:
+            current_weights = weights.loc[date]
+            current_returns = returns.loc[date]
+            
+            # Calculate daily return
+            daily_return = (current_weights * current_returns).sum()
+            portfolio_value *= (1 + daily_return)
+            portfolio_values.append(portfolio_value)
         
-        for i in range(len(aligned_returns)):
-            date = aligned_returns.index[i]
-            current_weights = aligned_weights.loc[date]
-            period_returns = aligned_returns.loc[date]
-            
-            # Calculate portfolio return for the period
-            portfolio_return = (current_weights * period_returns).sum()
-            self.portfolio_returns.loc[date] = portfolio_return
-            
-            # Update portfolio value
-            if i > 0:
-                portfolio_values.iloc[i] = portfolio_values.iloc[i-1] * (1 + portfolio_return)
-            
-        # Calculate performance metrics
+        # Create results dictionary
         results = {
-            'portfolio_values': portfolio_values,
-            'portfolio_returns': self.portfolio_returns,
-            'total_return': (portfolio_values.iloc[-1] / portfolio_values.iloc[0]) - 1,
-            'annualized_return': self._calculate_annualized_return(self.portfolio_returns),
-            'annualized_volatility': self._calculate_annualized_volatility(self.portfolio_returns),
-            'sharpe_ratio': self._calculate_sharpe_ratio(self.portfolio_returns),
-            'max_drawdown': self._calculate_max_drawdown(portfolio_values)
+            'portfolio_values': pd.Series(portfolio_values, index=weights.index),
+            'returns': pd.Series([(portfolio_values[i]/portfolio_values[i-1] - 1) 
+                                for i in range(1, len(portfolio_values))], 
+                                index=weights.index[1:]),
+            'weights': weights
         }
         
+        self.logger.info("Backtest completed")
         return results
         
     def _calculate_annualized_return(self, returns: pd.Series) -> float:
