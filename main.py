@@ -68,7 +68,7 @@ class FactorTimingStrategy:
         
         if model_type == 'lstm':
             classifier = LSTMRegimeClassifier(
-                n_regimes=5,
+                n_regimes=9,
                 sequence_length=20,
                 hidden_size=64,
                 num_layers=2,
@@ -104,13 +104,13 @@ class FactorTimingStrategy:
         
         return classifier
             
-    def _init_portfolio_optimizer(self, optimizer_type: str):
-        """Initialize portfolio optimizer based on type"""
-        if optimizer_type == 'mean_variance':
-            return MeanVarianceOptimizer()
-        elif optimizer_type == 'transformer':
+    def _init_portfolio_optimizer(self, optimizer_type: str = 'transformer'):
+        """Initialize the portfolio optimizer based on the specified type."""
+        self.logger.info(f"Initializing portfolio optimizer of type: {optimizer_type}")
+        
+        if optimizer_type == 'transformer':
             return TransformerRegimeOptimizer(
-                n_regimes=5,
+                n_regimes=9,  # Updated from 5 to 9
                 sequence_length=60,
                 hidden_size=64,
                 num_layers=2,
@@ -119,6 +119,8 @@ class FactorTimingStrategy:
                 num_epochs=100,
                 batch_size=32
             )
+        elif optimizer_type == 'mean_variance':
+            return MeanVarianceOptimizer()
         elif optimizer_type == 'neural':
             return NeuralPortfolioOptimizer(input_size=len(self.factor_columns))
         elif optimizer_type == 'neural_attention':

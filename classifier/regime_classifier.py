@@ -13,7 +13,7 @@ from sklearn.utils.class_weight import compute_class_weight
 import os
 
 class BaseRegimeClassifier:
-    def __init__(self, n_regimes=5):
+    def __init__(self, n_regimes=9):
         self.logger = logging.getLogger(__name__)
         self.n_regimes = n_regimes
         self.model = None
@@ -138,7 +138,7 @@ class LSTMModel(nn.Module):
         return out
 
 class LSTMRegimeClassifier(BaseRegimeClassifier):
-    def __init__(self, n_regimes: int = 5, sequence_length: int = 20, 
+    def __init__(self, n_regimes: int = 9, sequence_length: int = 20, 
                  hidden_size: int = 128, num_layers: int = 2, dropout: float = 0.3,
                  learning_rate: float = 0.001, num_epochs: int = 200, batch_size: int = 32,
                  model_path: str = None):
@@ -254,12 +254,22 @@ class LSTMRegimeClassifier(BaseRegimeClassifier):
         dataset = TensorDataset(X_seq, y_seq)
         train_loader = DataLoader(dataset, batch_size=self.batch_size, shuffle=True)
         
-        # Compute class weights
-        class_weights = compute_class_weight(
-            class_weight='balanced',
-            classes=np.unique(y_np),
-            y=y_np
-        )
+        # Compute class weights for all possible classes
+        unique_classes = np.arange(self.n_regimes)  # All possible classes from 0 to n_regimes-1
+        class_counts = np.bincount(y_np.astype(int), minlength=self.n_regimes)
+        class_weights = np.zeros(self.n_regimes)
+        n_samples = len(y_np)
+        
+        # Calculate balanced weights
+        for i in unique_classes:
+            class_weights[i] = n_samples / (len(unique_classes) * class_counts[i]) if class_counts[i] > 0 else 0
+            
+        # Normalize weights
+        if np.sum(class_weights) > 0:
+            class_weights = class_weights / np.sum(class_weights) * len(unique_classes)
+        else:
+            class_weights = np.ones(self.n_regimes)  # Fallback to equal weights
+            
         class_weights = torch.FloatTensor(class_weights).to(self.device)
         
         # Initialize model if not loaded
@@ -402,7 +412,7 @@ class XGBoostRegimeClassifier(BaseRegimeClassifier):
         return self._validate_predictions(predictions)
 
 class HMMRegimeClassifier(BaseRegimeClassifier):
-    def __init__(self, n_components=5, n_iter=100, random_state=42):
+    def __init__(self, n_components=9, n_iter=100, random_state=42):
         super().__init__(n_regimes=n_components)
         self.n_components = n_components
         self.n_iter = n_iter

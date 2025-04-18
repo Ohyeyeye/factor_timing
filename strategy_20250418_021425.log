@@ -1,0 +1,161 @@
+2025-04-18 02:14:25,733 - INFO - Initializing FactorTimingStrategy with lstm model and transformer optimizer
+2025-04-18 02:14:25,734 - INFO - Model will be saved to/loaded from: C:\Users\ye\Desktop\factor_timing\models\lstm_classifier.pth
+2025-04-18 02:14:25,734 - INFO - Initializing lstm classifier. Model path: C:\Users\ye\Desktop\factor_timing\models\lstm_classifier.pth
+2025-04-18 02:14:25,734 - INFO - Initialized BaseRegimeClassifier with 5 regimes
+2025-04-18 02:14:25,734 - INFO - Loading pretrained model from C:\Users\ye\Desktop\factor_timing\models\lstm_classifier.pth
+2025-04-18 02:14:25,740 - INFO - Model loaded successfully from C:\Users\ye\Desktop\factor_timing\models\lstm_classifier.pth
+2025-04-18 02:14:25,741 - INFO - Successfully loaded pretrained model
+2025-04-18 02:14:25,753 - INFO - Loading existing market data...
+2025-04-18 02:14:25,757 - INFO - Loaded existing market data with 1257 rows
+2025-04-18 02:14:25,758 - INFO - Starting strategy execution...
+2025-04-18 02:14:25,758 - INFO - Preparing training and testing data...
+2025-04-18 02:14:25,758 - INFO - Starting data preparation...
+2025-04-18 02:14:25,759 - INFO - Loading Fama-French factors...
+2025-04-18 02:14:25,770 - INFO - Fama-French factors loaded
+2025-04-18 02:14:25,770 - INFO - Processing factor data...
+2025-04-18 02:14:25,773 - INFO - Factor data processed
+2025-04-18 02:14:25,773 - INFO - 
+Factor Returns Summary (in decimal):
+2025-04-18 02:14:25,773 - INFO - 
+Training Period:
+2025-04-18 02:14:25,778 - INFO -           Mkt-RF        SMB        HML        RMW        CMA
+count  72.000000  72.000000  72.000000  72.000000  72.000000
+mean    0.009000  -0.002390  -0.003132   0.001429  -0.002057
+std     0.034268   0.025209   0.025297   0.014796   0.015346
+min    -0.095700  -0.045500  -0.047900  -0.038700  -0.032600
+25%    -0.001000  -0.021150  -0.019225  -0.006475  -0.012950
+50%     0.010950   0.002550  -0.005150   0.003650  -0.003900
+75%     0.026800   0.009950   0.007125   0.009350   0.005300
+max     0.084000   0.070700   0.082100   0.034700   0.036900
+2025-04-18 02:14:25,786 - INFO - 
+Testing Period:
+2025-04-18 02:14:25,790 - INFO -           Mkt-RF        SMB        HML        RMW        CMA
+count  60.000000  60.000000  60.000000  60.000000  60.000000
+mean    0.010582  -0.001545  -0.000152   0.006287   0.000443
+std     0.054485   0.035034   0.046867   0.026354   0.029893
+min    -0.133900  -0.082400  -0.138800  -0.047900  -0.072000
+25%    -0.024400  -0.026075  -0.026050  -0.014925  -0.018525
+50%     0.016750  -0.004050  -0.004300   0.005850  -0.005950
+75%     0.046900   0.018425   0.029125   0.023475   0.014325
+max     0.136500   0.082800   0.128000   0.072700   0.077400
+2025-04-18 02:14:25,798 - INFO - Loading macro and market data...
+2025-04-18 02:14:25,800 - INFO - Loading existing macro data...
+2025-04-18 02:14:25,810 - WARNING - US corporate credit spread file not found
+2025-04-18 02:14:25,810 - WARNING - 10-year Treasury rate file not found
+2025-04-18 02:14:25,814 - INFO - Saved combined macro data to data\combined_macro_data.csv
+2025-04-18 02:14:25,814 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-18 02:14:25,814 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-18 02:14:25,815 - INFO - Loading existing macro data...
+2025-04-18 02:14:25,825 - WARNING - US corporate credit spread file not found
+2025-04-18 02:14:25,825 - WARNING - 10-year Treasury rate file not found
+2025-04-18 02:14:25,829 - INFO - Saved combined macro data to data\combined_macro_data.csv
+2025-04-18 02:14:25,829 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-18 02:14:25,829 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-18 02:14:25,830 - INFO - Loading existing market data...
+2025-04-18 02:14:25,834 - INFO - Loaded existing market data with 1509 rows
+2025-04-18 02:14:25,834 - INFO - Loading existing market data...
+2025-04-18 02:14:25,837 - INFO - Loaded existing market data with 1257 rows
+2025-04-18 02:14:25,838 - INFO - Macro and market data loaded
+2025-04-18 02:14:25,838 - INFO - Preparing training data for regime classification...
+2025-04-18 02:14:25,838 - INFO - Preparing training data for regime classification...
+2025-04-18 02:14:25,838 - INFO - Loading existing macro data...
+2025-04-18 02:14:25,848 - WARNING - US corporate credit spread file not found
+2025-04-18 02:14:25,849 - WARNING - 10-year Treasury rate file not found
+2025-04-18 02:14:25,852 - INFO - Saved combined macro data to data\combined_macro_data.csv
+2025-04-18 02:14:25,852 - INFO - Loaded macro data with 72 rows and 3 columns
+2025-04-18 02:14:25,852 - INFO - Date range: 2014-01-01 00:00:00 to 2019-12-01 00:00:00
+2025-04-18 02:14:25,853 - INFO - Loading existing market data...
+2025-04-18 02:14:25,856 - INFO - Loaded existing market data with 1509 rows
+2025-04-18 02:14:25,979 - INFO - Training class distribution: {0: np.int64(808), 2: np.int64(215), 3: np.int64(211), 4: np.int64(173), 1: np.int64(129)}
+2025-04-18 02:14:25,979 - INFO - Prepared training data with 1536 samples
+2025-04-18 02:14:25,980 - INFO - Preparing test data for regime classification...
+2025-04-18 02:14:25,980 - INFO - Preparing test data for regime classification...
+2025-04-18 02:14:25,981 - INFO - Loading existing macro data...
+2025-04-18 02:14:25,991 - WARNING - US corporate credit spread file not found
+2025-04-18 02:14:25,992 - WARNING - 10-year Treasury rate file not found
+2025-04-18 02:14:25,994 - INFO - Saved combined macro data to data\combined_macro_data.csv
+2025-04-18 02:14:25,995 - INFO - Loaded macro data with 60 rows and 3 columns
+2025-04-18 02:14:25,995 - INFO - Date range: 2020-01-01 00:00:00 to 2024-12-01 00:00:00
+2025-04-18 02:14:25,996 - INFO - Loading existing market data...
+2025-04-18 02:14:26,000 - INFO - Loaded existing market data with 1257 rows
+2025-04-18 02:14:26,010 - INFO - Test class distribution: {4: np.int64(1061), 1: np.int64(102), 2: np.int64(86), 3: np.int64(27)}
+2025-04-18 02:14:26,010 - INFO - Prepared test data with 1276 samples
+2025-04-18 02:14:26,011 - INFO - Test data prepared
+2025-04-18 02:14:26,011 - INFO - Storing data...
+2025-04-18 02:14:26,011 - INFO - Aligning data indices...
+2025-04-18 02:14:26,013 - INFO - Data indices aligned
+2025-04-18 02:14:26,013 - INFO - Data preparation completed
+2025-04-18 02:14:26,014 - INFO - Prepared data - Train shape: (45, 5), Test shape: (41, 5)
+2025-04-18 02:14:26,014 - INFO - Training models...
+2025-04-18 02:14:26,014 - INFO - Starting model training...
+2025-04-18 02:14:26,015 - INFO - Checking for existing model at: C:\Users\ye\Desktop\factor_timing\models\lstm_classifier.pth
+2025-04-18 02:14:26,015 - INFO - Model exists: True, Load pretrained: True
+2025-04-18 02:14:26,015 - INFO - Loading pretrained LSTM model...
+2025-04-18 02:14:26,021 - INFO - Model loaded successfully from C:\Users\ye\Desktop\factor_timing\models\lstm_classifier.pth
+2025-04-18 02:14:26,022 - INFO - Successfully loaded pretrained model
+2025-04-18 02:14:26,083 - INFO - Training portfolio optimizer...
+2025-04-18 02:14:26,130 - INFO - Training regime-aware optimizer...
+2025-04-18 02:14:26,157 - INFO - Training model for regime 0...
+2025-04-18 02:14:27,255 - INFO - Regime 0 - Epoch [10/150], Loss: 0.0007
+2025-04-18 02:14:27,332 - INFO - Regime 0 - Epoch [20/150], Loss: 0.0000
+2025-04-18 02:14:27,411 - INFO - Regime 0 - Epoch [30/150], Loss: 0.0000
+2025-04-18 02:14:27,485 - INFO - Regime 0 - Epoch [40/150], Loss: 0.0000
+2025-04-18 02:14:27,562 - INFO - Regime 0 - Epoch [50/150], Loss: 0.0000
+2025-04-18 02:14:27,638 - INFO - Regime 0 - Epoch [60/150], Loss: 0.0000
+2025-04-18 02:14:27,712 - INFO - Regime 0 - Epoch [70/150], Loss: 0.0000
+2025-04-18 02:14:27,790 - INFO - Regime 0 - Epoch [80/150], Loss: 0.0000
+2025-04-18 02:14:27,870 - INFO - Regime 0 - Epoch [90/150], Loss: 0.0000
+2025-04-18 02:14:27,942 - INFO - Regime 0 - Epoch [100/150], Loss: 0.0000
+2025-04-18 02:14:28,017 - INFO - Regime 0 - Epoch [110/150], Loss: 0.0000
+2025-04-18 02:14:28,094 - INFO - Regime 0 - Epoch [120/150], Loss: 0.0000
+2025-04-18 02:14:28,167 - INFO - Regime 0 - Epoch [130/150], Loss: 0.0000
+2025-04-18 02:14:28,247 - INFO - Regime 0 - Epoch [140/150], Loss: 0.0000
+2025-04-18 02:14:28,329 - INFO - Regime 0 - Epoch [150/150], Loss: 0.0000
+2025-04-18 02:14:28,329 - INFO - Training model for regime 1...
+2025-04-18 02:14:28,340 - INFO - Regime 1 - Epoch [10/150], Loss: 0.0000
+2025-04-18 02:14:28,344 - INFO - Regime 1 - Epoch [20/150], Loss: 0.0000
+2025-04-18 02:14:28,348 - INFO - Regime 1 - Epoch [30/150], Loss: 0.0000
+2025-04-18 02:14:28,354 - INFO - Regime 1 - Epoch [40/150], Loss: 0.0000
+2025-04-18 02:14:28,359 - INFO - Regime 1 - Epoch [50/150], Loss: 0.0000
+2025-04-18 02:14:28,364 - INFO - Regime 1 - Epoch [60/150], Loss: 0.0000
+2025-04-18 02:14:28,369 - INFO - Regime 1 - Epoch [70/150], Loss: 0.0000
+2025-04-18 02:14:28,374 - INFO - Regime 1 - Epoch [80/150], Loss: 0.0000
+2025-04-18 02:14:28,379 - INFO - Regime 1 - Epoch [90/150], Loss: 0.0000
+2025-04-18 02:14:28,383 - INFO - Regime 1 - Epoch [100/150], Loss: 0.0000
+2025-04-18 02:14:28,387 - INFO - Regime 1 - Epoch [110/150], Loss: 0.0000
+2025-04-18 02:14:28,392 - INFO - Regime 1 - Epoch [120/150], Loss: 0.0000
+2025-04-18 02:14:28,397 - INFO - Regime 1 - Epoch [130/150], Loss: 0.0000
+2025-04-18 02:14:28,403 - INFO - Regime 1 - Epoch [140/150], Loss: 0.0000
+2025-04-18 02:14:28,408 - INFO - Regime 1 - Epoch [150/150], Loss: 0.0000
+2025-04-18 02:14:28,408 - INFO - Training model for regime 2...
+2025-04-18 02:14:28,556 - INFO - Regime 2 - Epoch [10/150], Loss: 0.0008
+2025-04-18 02:14:28,687 - INFO - Regime 2 - Epoch [20/150], Loss: 0.0001
+2025-04-18 02:14:28,823 - INFO - Regime 2 - Epoch [30/150], Loss: 0.0000
+2025-04-18 02:14:28,954 - INFO - Regime 2 - Epoch [40/150], Loss: 0.0000
+2025-04-18 02:14:29,084 - INFO - Regime 2 - Epoch [50/150], Loss: 0.0000
+2025-04-18 02:14:29,207 - INFO - Regime 2 - Epoch [60/150], Loss: 0.0000
+2025-04-18 02:14:29,337 - INFO - Regime 2 - Epoch [70/150], Loss: 0.0000
+2025-04-18 02:14:29,463 - INFO - Regime 2 - Epoch [80/150], Loss: 0.0000
+2025-04-18 02:14:29,582 - INFO - Regime 2 - Epoch [90/150], Loss: 0.0000
+2025-04-18 02:14:29,714 - INFO - Regime 2 - Epoch [100/150], Loss: 0.0000
+2025-04-18 02:14:29,838 - INFO - Regime 2 - Epoch [110/150], Loss: 0.0000
+2025-04-18 02:14:29,964 - INFO - Regime 2 - Epoch [120/150], Loss: 0.0000
+2025-04-18 02:14:30,080 - INFO - Regime 2 - Epoch [130/150], Loss: 0.0000
+2025-04-18 02:14:30,208 - INFO - Regime 2 - Epoch [140/150], Loss: 0.0000
+2025-04-18 02:14:30,332 - INFO - Regime 2 - Epoch [150/150], Loss: 0.0000
+2025-04-18 02:14:30,332 - INFO - Training completed successfully
+2025-04-18 02:14:30,333 - INFO - Portfolio optimizer training completed
+2025-04-18 02:14:30,335 - INFO - Model training completed
+2025-04-18 02:14:30,335 - INFO - Initializing portfolio weights...
+2025-04-18 02:14:30,336 - INFO - Portfolio weights initialized
+2025-04-18 02:14:30,336 - INFO - Generating regime predictions for test period...
+2025-04-18 02:14:30,337 - INFO - Preparing test data for regime classification...
+2025-04-18 02:14:30,338 - INFO - Loading existing macro data...
+2025-04-18 02:14:30,349 - INFO - Loaded existing macro data with 60 rows
+2025-04-18 02:14:30,350 - INFO - Loading existing market data...
+2025-04-18 02:14:30,354 - INFO - Loaded existing market data with 1257 rows
+2025-04-18 02:14:30,360 - INFO - Test class distribution: {4: np.int64(1061), 1: np.int64(102), 2: np.int64(86), 3: np.int64(27)}
+2025-04-18 02:14:30,360 - INFO - Prepared test data with 1276 samples
+2025-04-18 02:14:30,361 - INFO - Test features shape after alignment: (41, 8)
+2025-04-18 02:14:30,367 - INFO - Generated 41 regime predictions
+2025-04-18 02:14:30,367 - INFO - Optimizing portfolio weights...

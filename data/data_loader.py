@@ -398,7 +398,7 @@ class DataLoader:
             self.scaler = StandardScaler()
             features_scaled = self.scaler.fit_transform(features)
             # Identify regimes using clustering
-            self.kmeans_model = KMeans(n_clusters=5, random_state=42)
+            self.kmeans_model = KMeans(n_clusters=9, random_state=42)
             regime_labels = self.kmeans_model.fit_predict(features_scaled)
         else:
             # Ensure test data has same features as training data
