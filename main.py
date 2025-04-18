@@ -152,18 +152,11 @@ class FactorTimingStrategy:
         train_X = self.train_data['X']
         train_y = self.train_data['y']
         
-        # Split training data into train and validation sets
-        from sklearn.model_selection import train_test_split
-        X_train, X_val, y_train, y_val = train_test_split(
-            train_X, train_y, test_size=0.2, random_state=42
-        )
-        
-        # Train the model
-        self.regime_classifier.train(X_train, y_train)
+        # Train the model on full training period
+        self.regime_classifier.train(train_X, train_y)
         
         # Get training predictions
-        train_pred = self.regime_classifier.predict(X_train)
-        val_pred = self.regime_classifier.predict(X_val)
+        train_pred = self.regime_classifier.predict(train_X)
         
         # Calculate and display metrics
         from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
@@ -171,37 +164,22 @@ class FactorTimingStrategy:
         import matplotlib.pyplot as plt
         
         # Training metrics
-        train_accuracy = accuracy_score(y_train, train_pred)
-        val_accuracy = accuracy_score(y_val, val_pred)
+        train_accuracy = accuracy_score(train_y, train_pred)
         
         print("\nModel Training Results:")
         print("----------------------")
         print(f"Training Accuracy: {train_accuracy:.4f}")
-        print(f"Validation Accuracy: {val_accuracy:.4f}")
         
         print("\nTraining Set Classification Report:")
-        print(classification_report(y_train, train_pred))
+        print(classification_report(train_y, train_pred))
         
-        print("\nValidation Set Classification Report:")
-        print(classification_report(y_val, val_pred))
-        
-        # Plot confusion matrices
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
-        
-        # Training confusion matrix
-        train_cm = confusion_matrix(y_train, train_pred)
-        sns.heatmap(train_cm, annot=True, fmt='d', ax=ax1)
-        ax1.set_title('Training Confusion Matrix')
-        ax1.set_xlabel('Predicted')
-        ax1.set_ylabel('True')
-        
-        # Validation confusion matrix
-        val_cm = confusion_matrix(y_val, val_pred)
-        sns.heatmap(val_cm, annot=True, fmt='d', ax=ax2)
-        ax2.set_title('Validation Confusion Matrix')
-        ax2.set_xlabel('Predicted')
-        ax2.set_ylabel('True')
-        
+        # Plot confusion matrix
+        plt.figure(figsize=(8, 6))
+        train_cm = confusion_matrix(train_y, train_pred)
+        sns.heatmap(train_cm, annot=True, fmt='d')
+        plt.title('Training Confusion Matrix')
+        plt.xlabel('Predicted')
+        plt.ylabel('True')
         plt.tight_layout()
         plt.savefig('training_results.png')
         plt.close()
@@ -217,9 +195,7 @@ class FactorTimingStrategy:
         # Return metrics dictionary
         training_metrics = {
             'train_accuracy': train_accuracy,
-            'val_accuracy': val_accuracy,
-            'train_confusion_matrix': train_cm,
-            'val_confusion_matrix': val_cm
+            'train_confusion_matrix': train_cm
         }
         
         return training_metrics
@@ -293,6 +269,14 @@ class FactorTimingStrategy:
         # Create test period regime predictions series
         test_regimes = pd.Series(regime_predictions, index=test_factors.index)
         
+        # Train portfolio optimizer on training data
+        self.logger.info("Training portfolio optimizer...")
+        if isinstance(self.portfolio_optimizer, RegimeAwareOptimizer):
+            self.portfolio_optimizer.train(train_factors, train_regime_predictions, regime_returns)
+        else:
+            self.portfolio_optimizer.train(train_factors)
+        self.logger.info("Portfolio optimizer training completed")
+        
         # Optimize weights for each period in test set
         self.logger.info("Optimizing portfolio weights...")
         optimization_count = 0
@@ -301,20 +285,18 @@ class FactorTimingStrategy:
             # Get the most recent regime prediction
             current_regime = test_regimes.loc[date]
             
-            # Get factor returns for the current date
-            current_returns = test_factors.loc[date].astype(float)
+            # Get historical returns up to the current date
+            historical_returns = test_factors.loc[:date].astype(float)
             
             if isinstance(self.portfolio_optimizer, RegimeAwareOptimizer):
                 weights.loc[date] = self.portfolio_optimizer.optimize_weights(
-                    current_returns,
-                    test_factors.astype(float).cov(),
+                    historical_returns,
                     current_regime,
                     regime_returns
                 )
             else:
                 weights.loc[date] = self.portfolio_optimizer.optimize_weights(
-                    current_returns,
-                    test_factors.astype(float).cov()
+                    historical_returns
                 )
             
             optimization_count += 1
@@ -371,8 +353,8 @@ def main():
         data_dir='data'  # Specify the data directory
     )
     
-    # Create equal weight benchmark
-    print("Creating equal weight benchmark...")
+    # Create benchmarks
+    print("Creating benchmarks...")
     
     # Load Fama-French factors for test period
     ff5_factors = strategy.data_loader.load_fama_french_factors(
@@ -384,21 +366,34 @@ def main():
     ff5_factors = ff5_factors.apply(pd.to_numeric, errors='coerce') / 100
     
     print("FF5 factors loaded and converted to decimal format")
+    
     # Calculate equal weight returns (excluding RF)
     factor_columns = ['Mkt-RF', 'SMB', 'HML', 'RMW', 'CMA']
     equal_weight_returns = ff5_factors[factor_columns].mean(axis=1)
+    
+    # Load S&P 500 returns
+    sp500_returns = strategy.data_loader.load_market_data(
+        strategy.test_start_date,
+        strategy.test_end_date
+    )['SP500_Return']
+    
+    # Create benchmark dictionary
+    benchmarks = {
+        'Equal Weight FF5': equal_weight_returns,
+        'S&P 500': sp500_returns
+    }
 
     # Run strategy
     print("Running strategy...")
     results = strategy.run_strategy()
     print("Strategy Results:", results)
     
-    # Plot results
-    strategy.plot_results(equal_weight_returns)
+    # Plot results with both benchmarks
+    strategy.plot_results(benchmarks)
     
-    # Evaluate strategy
+    # Evaluate strategy against both benchmarks
     print("Evaluating strategy...")
-    evaluation = strategy.evaluate_strategy(equal_weight_returns)
+    evaluation = strategy.evaluate_strategy(benchmarks)
     print("Strategy Evaluation:", evaluation)
 
 if __name__ == "__main__":

@@ -64,9 +64,25 @@ class Backtester:
             current_returns = returns.loc[date]
             
             # Validate weights
-            if not np.isclose(current_weights.sum(), 1.0, rtol=1e-5):
+            weight_sum = current_weights.sum()
+            if not np.isclose(weight_sum, 1.0, rtol=1e-5):
                 self.logger.warning(f"Weights do not sum to 1 on {date}, normalizing")
-                current_weights = current_weights / current_weights.sum()
+                if weight_sum > 0:
+                    current_weights = current_weights / weight_sum
+                else:
+                    self.logger.warning("All weights are zero, using equal weights")
+                    current_weights = pd.Series(1/len(current_weights), index=current_weights.index)
+            
+            # Ensure weights are non-negative
+            if (current_weights < 0).any():
+                self.logger.warning(f"Negative weights found on {date}, clipping to 0")
+                current_weights = current_weights.clip(lower=0)
+                weight_sum = current_weights.sum()
+                if weight_sum > 0:
+                    current_weights = current_weights / weight_sum
+                else:
+                    self.logger.warning("All weights are zero after clipping, using equal weights")
+                    current_weights = pd.Series(1/len(current_weights), index=current_weights.index)
             
             # Calculate daily return as weighted sum of factor returns
             daily_return = (current_weights * current_returns).sum()
@@ -150,8 +166,8 @@ class Backtester:
         drawdowns = portfolio_values / rolling_max - 1
         return drawdowns.min()
         
-    def plot_results(self, benchmark: Optional[pd.Series] = None):
-        """Plot backtest results"""
+    def plot_results(self, benchmarks: Optional[Dict[str, pd.Series]] = None):
+        """Plot backtest results with multiple benchmarks"""
         self.logger.info("Starting to plot results...")
         if self.portfolio_values is None:
             raise ValueError("Run backtest first before plotting")
@@ -160,14 +176,16 @@ class Backtester:
         fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10))
         
         # Plot 1: Portfolio Value Over Time
-        ax1.plot(self.portfolio_values.index, self.portfolio_values.values / 1000, label='Strategy')
+        ax1.plot(self.portfolio_values.index, self.portfolio_values.values / 1000, 
+                label='Strategy', linewidth=2)
         
-        if benchmark is not None:
-            self.logger.info("Adding benchmark to plot...")
-            # Align benchmark with portfolio values and convert to cumulative value
-            aligned_benchmark = benchmark.reindex(self.portfolio_values.index)
-            benchmark_value = 1000 * (1 + aligned_benchmark).cumprod()
-            ax1.plot(benchmark_value.index, benchmark_value.values / 1000, label='Benchmark')
+        if benchmarks is not None:
+            self.logger.info("Adding benchmarks to plot...")
+            for name, returns in benchmarks.items():
+                # Calculate cumulative value starting from $1000
+                benchmark_value = 1000 * (1 + returns).cumprod()
+                ax1.plot(benchmark_value.index, benchmark_value.values / 1000, 
+                        label=name, linestyle='--', alpha=0.7)
             
         ax1.set_title('Portfolio Value Over Time')
         ax1.set_xlabel('Date')
@@ -176,19 +194,28 @@ class Backtester:
         ax1.grid(True)
         
         # Plot 2: Monthly Returns Comparison
-        # Resample returns to monthly frequency
-        monthly_returns = self.portfolio_returns.resample('M').apply(lambda x: (1 + x).prod() - 1)
+        # Resample returns to monthly frequency using ME (month end) instead of M
+        monthly_returns = self.portfolio_returns.resample('ME').apply(lambda x: (1 + x).prod() - 1)
         
-        if benchmark is not None:
-            # Align and resample benchmark returns
-            aligned_benchmark = benchmark.reindex(self.portfolio_returns.index)
-            monthly_benchmark = aligned_benchmark.resample('M').apply(lambda x: (1 + x).prod() - 1)
-            
+        if benchmarks is not None:
             # Plot monthly returns comparison
-            width = 0.35
+            width = 0.25
             x = np.arange(len(monthly_returns))
-            ax2.bar(x - width/2, monthly_returns * 100, width, label='Strategy', alpha=0.7)
-            ax2.bar(x + width/2, monthly_benchmark * 100, width, label='Benchmark', alpha=0.7)
+            
+            # Strategy returns
+            ax2.bar(x - width, monthly_returns * 100, width, 
+                   label='Strategy', alpha=0.7)
+            
+            # Benchmark returns
+            for i, (name, returns) in enumerate(benchmarks.items()):
+                # Align benchmark returns with strategy returns
+                aligned_returns = returns.reindex(self.portfolio_returns.index)
+                # Resample to monthly frequency
+                monthly_benchmark = aligned_returns.resample('ME').apply(lambda x: (1 + x).prod() - 1)
+                # Ensure same length as strategy returns
+                monthly_benchmark = monthly_benchmark.reindex(monthly_returns.index)
+                ax2.bar(x + width * i, monthly_benchmark * 100, width, 
+                       label=name, alpha=0.7)
         else:
             # Plot only strategy monthly returns
             ax2.bar(monthly_returns.index, monthly_returns * 100, label='Strategy')
@@ -201,8 +228,8 @@ class Backtester:
         
         # Adjust layout to prevent overlap
         plt.tight_layout()
-        plt.show()
         plt.savefig('backtest_results.png')
+        plt.close()
         self.logger.info("Plot completed")
         
     def calculate_performance_metrics(self) -> Dict:
@@ -226,31 +253,38 @@ class Backtester:
         self.logger.info("Performance metrics calculation completed")
         return metrics
         
-    def compare_with_benchmark(self, benchmark: pd.Series) -> Dict:
-        """Compare strategy performance with benchmark"""
+    def compare_with_benchmark(self, benchmarks: Dict[str, pd.Series]) -> Dict:
+        """Compare strategy performance with multiple benchmarks"""
         if self.portfolio_returns is None:
-            raise ValueError("Run backtest first before comparing with benchmark")
+            raise ValueError("Run backtest first before comparing with benchmarks")
             
-        # Align benchmark with portfolio returns
-        aligned_benchmark = benchmark.reindex(self.portfolio_returns.index)
+        comparison = {}
         
-        # Calculate tracking error
-        tracking_error = (self.portfolio_returns - aligned_benchmark).std() * np.sqrt(252)
-        
-        # Calculate information ratio
-        active_returns = self.portfolio_returns - aligned_benchmark
-        information_ratio = active_returns.mean() / active_returns.std() * np.sqrt(252)
-        
-        # Calculate beta
-        covariance = np.cov(self.portfolio_returns, aligned_benchmark)[0,1]
-        variance = aligned_benchmark.var()
-        beta = covariance / variance
-        
-        comparison = {
-            'tracking_error': tracking_error,
-            'information_ratio': information_ratio,
-            'beta': beta,
-            'correlation': self.portfolio_returns.corr(aligned_benchmark)
-        }
+        for name, benchmark_returns in benchmarks.items():
+            # Align benchmark with portfolio returns
+            aligned_benchmark = benchmark_returns.reindex(self.portfolio_returns.index)
+            
+            # Calculate tracking error
+            tracking_error = (self.portfolio_returns - aligned_benchmark).std() * np.sqrt(252)
+            
+            # Calculate information ratio
+            active_returns = self.portfolio_returns - aligned_benchmark
+            information_ratio = active_returns.mean() / active_returns.std() * np.sqrt(252)
+            
+            # Calculate beta
+            covariance = np.cov(self.portfolio_returns, aligned_benchmark)[0,1]
+            variance = aligned_benchmark.var()
+            beta = covariance / variance if variance > 0 else 0
+            
+            # Calculate alpha
+            alpha = self.portfolio_returns.mean() - beta * aligned_benchmark.mean()
+            
+            comparison[name] = {
+                'tracking_error': tracking_error,
+                'information_ratio': information_ratio,
+                'beta': beta,
+                'alpha': alpha,
+                'correlation': self.portfolio_returns.corr(aligned_benchmark)
+            }
         
         return comparison 
