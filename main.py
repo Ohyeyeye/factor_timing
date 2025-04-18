@@ -76,15 +76,26 @@ class FactorTimingStrategy:
         if 'date' in test_factors.columns:
             test_factors = test_factors.drop('date', axis=1)
         
-        # Convert returns to numeric, excluding the index
-        numeric_columns = ['Mkt-RF', 'SMB', 'HML', 'RMW', 'CMA', 'RF']
-        train_factors[numeric_columns] = train_factors[numeric_columns].apply(pd.to_numeric, errors='coerce')
-        test_factors[numeric_columns] = test_factors[numeric_columns].apply(pd.to_numeric, errors='coerce')
+        # Convert returns to numeric and select factor columns
+        factor_columns = ['Mkt-RF', 'SMB', 'HML', 'RMW', 'CMA']
+        train_factors = train_factors[factor_columns].apply(pd.to_numeric, errors='coerce')
+        test_factors = test_factors[factor_columns].apply(pd.to_numeric, errors='coerce')
+        
+        # Convert percentage returns to decimal format (e.g., -0.87% -> -0.0087)
+        train_factors = train_factors / 100
+        test_factors = test_factors / 100
         
         # Handle missing values in factor data
         train_factors = train_factors.ffill().bfill()
         test_factors = test_factors.ffill().bfill()
         self.logger.info("Factor data processed")
+        
+        # Log some statistics about the factor returns
+        self.logger.info("\nFactor Returns Summary (in decimal):")
+        self.logger.info("\nTraining Period:")
+        self.logger.info(train_factors.describe())
+        self.logger.info("\nTesting Period:")
+        self.logger.info(test_factors.describe())
         
         # Load macro and market data for both periods
         self.logger.info("Loading macro and market data...")
@@ -138,8 +149,62 @@ class FactorTimingStrategy:
         
         # Train regime classifier on training data
         self.logger.info("Training regime classifier...")
-        self.regime_classifier.train(self.train_data['X'], self.train_data['y'])
-        self.logger.info("Regime classifier training completed")
+        train_X = self.train_data['X']
+        train_y = self.train_data['y']
+        
+        # Split training data into train and validation sets
+        from sklearn.model_selection import train_test_split
+        X_train, X_val, y_train, y_val = train_test_split(
+            train_X, train_y, test_size=0.2, random_state=42
+        )
+        
+        # Train the model
+        self.regime_classifier.train(X_train, y_train)
+        
+        # Get training predictions
+        train_pred = self.regime_classifier.predict(X_train)
+        val_pred = self.regime_classifier.predict(X_val)
+        
+        # Calculate and display metrics
+        from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+        import seaborn as sns
+        import matplotlib.pyplot as plt
+        
+        # Training metrics
+        train_accuracy = accuracy_score(y_train, train_pred)
+        val_accuracy = accuracy_score(y_val, val_pred)
+        
+        print("\nModel Training Results:")
+        print("----------------------")
+        print(f"Training Accuracy: {train_accuracy:.4f}")
+        print(f"Validation Accuracy: {val_accuracy:.4f}")
+        
+        print("\nTraining Set Classification Report:")
+        print(classification_report(y_train, train_pred))
+        
+        print("\nValidation Set Classification Report:")
+        print(classification_report(y_val, val_pred))
+        
+        # Plot confusion matrices
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+        
+        # Training confusion matrix
+        train_cm = confusion_matrix(y_train, train_pred)
+        sns.heatmap(train_cm, annot=True, fmt='d', ax=ax1)
+        ax1.set_title('Training Confusion Matrix')
+        ax1.set_xlabel('Predicted')
+        ax1.set_ylabel('True')
+        
+        # Validation confusion matrix
+        val_cm = confusion_matrix(y_val, val_pred)
+        sns.heatmap(val_cm, annot=True, fmt='d', ax=ax2)
+        ax2.set_title('Validation Confusion Matrix')
+        ax2.set_xlabel('Predicted')
+        ax2.set_ylabel('True')
+        
+        plt.tight_layout()
+        plt.savefig('training_results.png')
+        plt.close()
         
         # If using neural portfolio optimizer, train it
         if isinstance(self.portfolio_optimizer, NeuralPortfolioOptimizer):
@@ -148,6 +213,16 @@ class FactorTimingStrategy:
             self.logger.info("Neural portfolio optimizer training completed")
         
         self.logger.info("Model training completed")
+        
+        # Return metrics dictionary
+        training_metrics = {
+            'train_accuracy': train_accuracy,
+            'val_accuracy': val_accuracy,
+            'train_confusion_matrix': train_cm,
+            'val_confusion_matrix': val_cm
+        }
+        
+        return training_metrics
         
     def run_strategy(self) -> Dict:
         """Run the factor timing strategy with train-test split"""
@@ -158,9 +233,23 @@ class FactorTimingStrategy:
         train_factors, test_factors = self.prepare_data()
         self.logger.info(f"Prepared data - Train shape: {train_factors.shape}, Test shape: {test_factors.shape}")
         
-        # Train models
+        # Train models and get metrics
         self.logger.info("Training models...")
-        self.train_models()
+        training_metrics = self.train_models()
+        
+        # Display additional training insights
+        print("\nRegime Distribution in Training Data:")
+        regime_dist = pd.Series(self.train_data['y']).value_counts(normalize=True)
+        print(regime_dist)
+        
+        print("\nFeature Importance:")
+        if hasattr(self.regime_classifier, 'feature_importance'):
+            feature_importance = pd.Series(
+                self.regime_classifier.feature_importance(),
+                index=self.train_data['X'].columns
+            ).sort_values(ascending=False)
+            print(feature_importance)
+        
         self.logger.info("Model training completed")
         
         # Initialize portfolio weights DataFrame for test period
@@ -282,17 +371,34 @@ def main():
         data_dir='data'  # Specify the data directory
     )
     
+    # Create equal weight benchmark
+    print("Creating equal weight benchmark...")
+    
+    # Load Fama-French factors for test period
+    ff5_factors = strategy.data_loader.load_fama_french_factors(
+        strategy.test_start_date, 
+        strategy.test_end_date
+    )
+    
+    # Convert percentage returns to decimal
+    ff5_factors = ff5_factors.apply(pd.to_numeric, errors='coerce') / 100
+    
+    print("FF5 factors loaded and converted to decimal format")
+    # Calculate equal weight returns (excluding RF)
+    factor_columns = ['Mkt-RF', 'SMB', 'HML', 'RMW', 'CMA']
+    equal_weight_returns = ff5_factors[factor_columns].mean(axis=1)
+
     # Run strategy
     print("Running strategy...")
     results = strategy.run_strategy()
     print("Strategy Results:", results)
     
     # Plot results
-    strategy.plot_results()
+    strategy.plot_results(equal_weight_returns)
     
     # Evaluate strategy
     print("Evaluating strategy...")
-    evaluation = strategy.evaluate_strategy()
+    evaluation = strategy.evaluate_strategy(equal_weight_returns)
     print("Strategy Evaluation:", evaluation)
 
 if __name__ == "__main__":
