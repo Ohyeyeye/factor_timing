@@ -5,9 +5,11 @@ from typing import Dict, Optional, Tuple
 import logging
 
 from data.data_loader import DataLoader
-from models.regime_classifier import LSTMRegimeClassifier, XGBoostRegimeClassifier, HMMRegimeClassifier
-from optimization.portfolio_optimizer import MeanVarianceOptimizer, NeuralPortfolioOptimizer, RegimeAwareOptimizer
+from classifier.regime_classifier import LSTMRegimeClassifier, XGBoostRegimeClassifier, HMMRegimeClassifier
+from optimizer.portfolio_optimizer import MeanVarianceOptimizer, NeuralPortfolioOptimizer, RegimeAwareOptimizer
 from backtest.backtester import Backtester
+from optimizer.neural_regime_optimizer import NeuralRegimeOptimizer
+from optimizer.autoencoder_regime_optimizer import AutoencoderRegimeOptimizer
 
 class FactorTimingStrategy:
     def __init__(self,
@@ -27,6 +29,9 @@ class FactorTimingStrategy:
         self.test_start_date = test_start_date
         self.test_end_date = test_end_date
         
+        # Initialize factor columns
+        self.factor_columns = ['Mkt-RF', 'SMB', 'HML', 'RMW', 'CMA']
+        
         # Initialize components
         self.data_loader = DataLoader(data_dir=data_dir)
         self.data_loader.set_date_ranges(
@@ -40,7 +45,12 @@ class FactorTimingStrategy:
     def _init_regime_classifier(self, model_type: str):
         """Initialize regime classifier based on model type"""
         if model_type == 'lstm':
-            return LSTMRegimeClassifier(input_size=6)  # Match actual number of features
+            return LSTMRegimeClassifier(
+                input_size=6,  # Match actual number of features
+                hidden_size=64,
+                num_layers=2,
+                num_regimes=5  # Number of regimes to classify
+            )
         elif model_type == 'xgboost':
             return XGBoostRegimeClassifier()
         elif model_type == 'hmm':
@@ -52,10 +62,28 @@ class FactorTimingStrategy:
         """Initialize portfolio optimizer based on type"""
         if optimizer_type == 'mean_variance':
             return MeanVarianceOptimizer()
+        elif optimizer_type == 'regime_aware':
+            return RegimeAwareOptimizer(n_regimes=5)  # Match number of regimes
+        elif optimizer_type == 'neural_regime':
+            # Initialize with number of factors as input size
+            return NeuralRegimeOptimizer(
+                n_regimes=5,
+                input_size=len(self.factor_columns),
+                hidden_size=64
+            )
+        elif optimizer_type == 'autoencoder_regime':
+            # Initialize with number of factors as input size
+            return AutoencoderRegimeOptimizer(
+                n_regimes=5,
+                input_size=len(self.factor_columns),
+                encoding_dim=2  # Compress to 2 dimensions
+            )
         elif optimizer_type == 'neural':
-            return NeuralPortfolioOptimizer(input_size=6)  # Adjust based on features
+            # Initialize with number of factors as input size
+            return NeuralPortfolioOptimizer(input_size=len(self.factor_columns))
         else:
-            raise ValueError(f"Unknown optimizer type: {optimizer_type}")
+            self.logger.warning(f"Unknown optimizer type: {optimizer_type}")
+            return None
             
     def prepare_data(self) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """Load and prepare training and testing data"""
@@ -75,46 +103,50 @@ class FactorTimingStrategy:
             train_factors = train_factors.drop('date', axis=1)
         if 'date' in test_factors.columns:
             test_factors = test_factors.drop('date', axis=1)
-        
+
         # Convert returns to numeric and select factor columns
         factor_columns = ['Mkt-RF', 'SMB', 'HML', 'RMW', 'CMA']
         train_factors = train_factors[factor_columns].apply(pd.to_numeric, errors='coerce')
         test_factors = test_factors[factor_columns].apply(pd.to_numeric, errors='coerce')
-        
+
         # Convert percentage returns to decimal format (e.g., -0.87% -> -0.0087)
         train_factors = train_factors / 100
         test_factors = test_factors / 100
-        
+
         # Handle missing values in factor data
         train_factors = train_factors.ffill().bfill()
         test_factors = test_factors.ffill().bfill()
         self.logger.info("Factor data processed")
-        
+
         # Log some statistics about the factor returns
         self.logger.info("\nFactor Returns Summary (in decimal):")
         self.logger.info("\nTraining Period:")
         self.logger.info(train_factors.describe())
         self.logger.info("\nTesting Period:")
         self.logger.info(test_factors.describe())
-        
+
         # Load macro and market data for both periods
         self.logger.info("Loading macro and market data...")
         train_macro = self.data_loader.load_macro_data(
             self.train_start_date, self.train_end_date)
         test_macro = self.data_loader.load_macro_data(
             self.test_start_date, self.test_end_date)
-        
+
         train_market = self.data_loader.load_market_data(
             self.train_start_date, self.train_end_date)
         test_market = self.data_loader.load_market_data(
             self.test_start_date, self.test_end_date)
         self.logger.info("Macro and market data loaded")
-        
+
         # Prepare training data for regime classification
         self.logger.info("Preparing training data for regime classification...")
         train_X, train_y = self.data_loader.prepare_training_data()
-        self.logger.info("Training data prepared")
         
+        # Prepare test data for regime classification
+        self.logger.info("Preparing test data for regime classification...")
+        test_X, test_y = self.data_loader.prepare_training_data(is_test=True)
+        self.logger.info("Test data prepared")
+
         # Store data
         self.logger.info("Storing data...")
         self.train_data = {
@@ -124,22 +156,30 @@ class FactorTimingStrategy:
             'X': train_X,
             'y': train_y
         }
-        
+
         self.test_data = {
             'factors': test_factors,
             'macro': test_macro,
-            'market': test_market
+            'market': test_market,
+            'X': test_X,
+            'y': test_y
         }
-        
+
         # Ensure all data is properly aligned
         self.logger.info("Aligning data indices...")
         common_train_idx = train_factors.index.intersection(train_macro.index).intersection(train_market.index)
         common_test_idx = test_factors.index.intersection(test_macro.index).intersection(test_market.index)
-        
+
         train_factors = train_factors.loc[common_train_idx]
         test_factors = test_factors.loc[common_test_idx]
         self.logger.info("Data indices aligned")
-        
+
+        # Update neural optimizer input size if needed
+        if isinstance(self.portfolio_optimizer, NeuralPortfolioOptimizer):
+            input_size = train_X.shape[1]  # Number of features
+            self.portfolio_optimizer.update_input_size(input_size)
+            self.logger.info(f"Updated neural optimizer input size to {input_size}")
+
         self.logger.info("Data preparation completed")
         return train_factors, test_factors
         
@@ -236,7 +276,25 @@ class FactorTimingStrategy:
         
         # Get regime predictions for test period
         self.logger.info("Generating regime predictions for test period...")
-        test_X = pd.concat([self.test_data['macro'], self.test_data['market']], axis=1)
+        
+        # Calculate momentum and volatility features for test data
+        test_returns = self.test_data['market']['SP500_Return']
+        test_momentum = test_returns.rolling(window=60).mean()
+        test_volatility = test_returns.rolling(window=20).std() * np.sqrt(252)  # Annualized volatility
+        
+        # Create technical features DataFrame
+        test_technical = pd.DataFrame({
+            'momentum': test_momentum,
+            'volatility': test_volatility
+        }, index=test_returns.index)
+        
+        # Combine all features
+        test_X = pd.concat([
+            self.test_data['macro'],
+            self.test_data['market'],
+            test_technical
+        ], axis=1)
+        
         # Align test_X with test_factors
         test_X = test_X.reindex(test_factors.index).ffill().bfill()
         self.logger.info(f"Test features shape after alignment: {test_X.shape}")
@@ -245,7 +303,25 @@ class FactorTimingStrategy:
         
         # Calculate regime-specific returns from training period
         self.logger.info("Calculating regime-specific returns...")
-        train_X = pd.concat([self.train_data['macro'], self.train_data['market']], axis=1)
+        
+        # Calculate momentum and volatility features for training data
+        train_returns = self.train_data['market']['SP500_Return']
+        train_momentum = train_returns.rolling(window=60).mean()
+        train_volatility = train_returns.rolling(window=20).std() * np.sqrt(252)  # Annualized volatility
+        
+        # Create technical features DataFrame for training
+        train_technical = pd.DataFrame({
+            'momentum': train_momentum,
+            'volatility': train_volatility
+        }, index=train_returns.index)
+        
+        # Combine all features for training
+        train_X = pd.concat([
+            self.train_data['macro'],
+            self.train_data['market'],
+            train_technical
+        ], axis=1)
+        
         # Align train_X with train_factors
         train_X = train_X.reindex(train_factors.index).ffill().bfill()
         train_regime_predictions = self.regime_classifier.predict(train_X)
@@ -273,6 +349,16 @@ class FactorTimingStrategy:
         self.logger.info("Training portfolio optimizer...")
         if isinstance(self.portfolio_optimizer, RegimeAwareOptimizer):
             self.portfolio_optimizer.train(train_factors, train_regime_predictions, regime_returns)
+        elif isinstance(self.portfolio_optimizer, (NeuralRegimeOptimizer, AutoencoderRegimeOptimizer)):
+            self.portfolio_optimizer.train(train_factors, train_regime_predictions)
+        elif isinstance(self.portfolio_optimizer, NeuralPortfolioOptimizer):
+            # For neural optimizer, use equal weights as target
+            target_weights = pd.DataFrame(
+                np.ones_like(train_factors) / len(train_factors.columns),
+                index=train_factors.index,
+                columns=train_factors.columns
+            )
+            self.portfolio_optimizer.train(train_factors, target_weights)
         else:
             self.portfolio_optimizer.train(train_factors)
         self.logger.info("Portfolio optimizer training completed")
@@ -294,6 +380,11 @@ class FactorTimingStrategy:
                     current_regime,
                     regime_returns
                 )
+            elif isinstance(self.portfolio_optimizer, (NeuralRegimeOptimizer, AutoencoderRegimeOptimizer)):
+                weights.loc[date] = self.portfolio_optimizer.optimize_weights(
+                    historical_returns,
+                    current_regime
+                )
             else:
                 weights.loc[date] = self.portfolio_optimizer.optimize_weights(
                     historical_returns
@@ -305,22 +396,40 @@ class FactorTimingStrategy:
                 
         self.logger.info("Portfolio optimization completed")
         
-        # Run backtest on test period
-        self.logger.info("Running backtest...")
+        # Initialize backtester with test period returns
+        self.logger.info("Initializing backtester...")
         self.backtester = Backtester(test_factors.astype(float))
-        self.backtest_results = self.backtester.run_backtest(weights)
+        
+        # Run backtest and get results
+        self.logger.info("Running backtest...")
+        self.backtest_results = self.backtester.run_backtest(test_factors.astype(float), weights)
         self.logger.info("Backtest completed")
+        
+        # Print performance metrics
+        print("\nStrategy Performance Metrics:")
+        print("----------------------------")
+        print(f"Total Return: {self.backtest_results['total_return']:.2%}")
+        print(f"Annualized Return: {self.backtest_results['annualized_return']:.2%}")
+        print(f"Annualized Volatility: {self.backtest_results['annualized_volatility']:.2%}")
+        print(f"Sharpe Ratio: {self.backtest_results['sharpe_ratio']:.2f}")
+        print(f"Max Drawdown: {self.backtest_results['max_drawdown']:.2%}")
+        print(f"Annualized Turnover: {self.backtest_results['turnover']:.2%}")
         
         self.logger.info("Strategy execution completed")
         return self.backtest_results
         
-    def plot_results(self, benchmark: Optional[pd.Series] = None):
-        """Plot strategy results"""
+    def plot_results(self, benchmarks: Optional[Dict[str, pd.Series]] = None):
+        """Plot backtest results with multiple benchmarks"""
         self.logger.info("Starting to plot results...")
-        if self.backtester is None or self.backtest_results is None:
-            raise ValueError("Run strategy first before plotting results")
-        self.backtester.plot_results(benchmark)
-        self.logger.info("Results plotting completed")
+        
+        # Ensure backtest is run first
+        if self.backtester is None:
+            self.logger.info("Running backtest first...")
+            self.run_strategy()
+        
+        # Now plot the results
+        self.backtester.plot_results(benchmarks)
+        self.logger.info("Plot completed")
         
     def evaluate_strategy(self, benchmark: Optional[pd.Series] = None) -> Dict:
         """Evaluate strategy performance"""
@@ -330,7 +439,7 @@ class FactorTimingStrategy:
             
         # Get strategy metrics
         self.logger.info("Calculating performance metrics...")
-        strategy_metrics = self.backtester.calculate_performance_metrics()
+        strategy_metrics = self.backtester.calculate_performance_metrics(self.backtester.portfolio_returns)
         
         # Compare with benchmark if provided
         if benchmark is not None:
@@ -348,9 +457,9 @@ def main():
         train_end_date='2019-12-31',
         test_start_date='2020-01-01',
         test_end_date='2024-12-31',
-        model_type='lstm',
-        optimizer_type='mean_variance',
-        data_dir='data'  # Specify the data directory
+        model_type='xgboost',
+        optimizer_type='neural_regime',
+        data_dir='data'
     )
     
     # Create benchmarks

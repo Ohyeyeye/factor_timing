@@ -1,20 +1,18 @@
 # Factor Timing Strategy
 
-This project implements a factor timing strategy that dynamically allocates weights to Fama-French factors based on macroeconomic and market conditions.
+A factor timing strategy implementation that uses machine learning to identify market regimes and optimize portfolio weights accordingly.
 
 ## Project Structure
 
 ```
 factor_timing/
-├── data/
-│   └── data_loader.py      # Data loading and preprocessing
-├── models/
-│   └── regime_classifier.py # Regime classification models
-├── optimization/
-│   └── portfolio_optimizer.py # Portfolio optimization strategies
-├── backtest/
-│   └── backtester.py       # Backtesting framework
-└── main.py                 # Main strategy implementation
+├── classifier/           # Regime classification models
+├── optimizer/           # Portfolio optimization methods
+├── backtest/           # Backtesting framework
+├── data/               # Data loading and processing
+├── main.py            # Main strategy implementation
+├── select_strategy.py # Strategy selection and comparison
+└── requirements.txt   # Project dependencies
 ```
 
 ## Features

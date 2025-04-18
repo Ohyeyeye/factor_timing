@@ -24,12 +24,15 @@ class MeanVarianceOptimizer:
         self.risk_aversion = risk_aversion
         self.min_weight = min_weight
         self.logger = logging.getLogger(__name__)
+        self.returns = None
+        self.cov_matrix = None
         
     def train(self, historical_returns: pd.DataFrame):
         """Train the optimizer on historical data"""
         self.logger.info("Training mean-variance optimizer...")
         # Store historical data for reference
-        self.historical_returns = historical_returns
+        self.returns = historical_returns
+        self.cov_matrix = historical_returns.cov()
         self.logger.info("Mean-variance optimizer training completed")
         
     def optimize_weights(self, historical_returns: pd.DataFrame) -> pd.Series:
@@ -75,8 +78,17 @@ class NeuralPortfolioOptimizer(BasePortfolioOptimizer):
                  input_size: int,
                  hidden_size: int = 64,
                  learning_rate: float = 0.001):
+        self.input_size = input_size
+        self.hidden_size = hidden_size
+        self.learning_rate = learning_rate
         self.model = NeuralPortfolioModel(input_size, hidden_size)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=learning_rate)
+        
+    def update_input_size(self, new_input_size: int):
+        """Update the input size of the neural network model"""
+        self.input_size = new_input_size
+        self.model = NeuralPortfolioModel(new_input_size, self.hidden_size)
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.learning_rate)
         
     def optimize_weights(self,
                         expected_returns: pd.Series,
@@ -131,82 +143,52 @@ class NeuralPortfolioModel(nn.Module):
         x = self.fc3(x)
         return x
 
-class RegimeAwareOptimizer:
-    def __init__(self, risk_aversion: float = 1.0, min_weight: float = 0.01):
-        self.risk_aversion = risk_aversion
-        self.min_weight = min_weight
-        self.logger = logging.getLogger(__name__)
-        self.regime_weights = {}
+class RegimeAwareOptimizer(MeanVarianceOptimizer):
+    def __init__(self, n_regimes: int = 3):
+        super().__init__()
+        self.n_regimes = n_regimes
+        self.regime_optimizers = {}  # Store separate optimizers for each regime
+        self.regime_returns = {}  # Store historical returns for each regime
         
-    def train(self, historical_returns: pd.DataFrame, regime_predictions: np.ndarray, regime_returns: Dict):
-        """Train the optimizer on historical data and regime information"""
+    def train(self, factors: pd.DataFrame, regime_predictions: np.ndarray, regime_returns: Dict[int, pd.DataFrame] = None):
+        """Train regime-specific optimizers"""
         self.logger.info("Training regime-aware optimizer...")
-        self.historical_returns = historical_returns
-        self.regime_returns = regime_returns
         
-        # Calculate optimal weights for each regime using training data
-        for regime, returns in regime_returns.items():
-            if len(returns) > 0:
-                expected_returns = returns.mean()
-                cov_matrix = returns.cov()
-                weights = self._optimize_regime_weights(expected_returns, cov_matrix)
-                self.regime_weights[regime] = weights
+        # Store regime returns if provided
+        if regime_returns is not None:
+            self.regime_returns = regime_returns
+        
+        # Train separate optimizers for each regime
+        for regime in range(self.n_regimes):
+            regime_mask = regime_predictions == regime
+            regime_factors = factors[regime_mask]
+            
+            if len(regime_factors) > 0:
+                self.regime_optimizers[regime] = MeanVarianceOptimizer()
+                self.regime_optimizers[regime].train(regime_factors)
+                self.logger.info(f"Trained optimizer for regime {regime} with {len(regime_factors)} samples")
             else:
-                self.logger.warning(f"No data available for regime {regime}, using equal weights")
-                self.regime_weights[regime] = pd.Series(1/len(historical_returns.columns), 
-                                                      index=historical_returns.columns)
-        
-        self.logger.info("Regime-aware optimizer training completed")
-        
-    def _optimize_regime_weights(self, expected_returns: pd.Series, cov_matrix: pd.DataFrame) -> pd.Series:
-        """Optimize weights for a specific regime"""
-        try:
-            n_assets = len(expected_returns)
-            A = np.zeros((n_assets + 1, n_assets + 1))
-            A[0:n_assets, 0:n_assets] = 2 * self.risk_aversion * cov_matrix
-            A[n_assets, 0:n_assets] = 1
-            A[0:n_assets, n_assets] = 1
-            
-            b = np.zeros(n_assets + 1)
-            b[0:n_assets] = expected_returns
-            b[n_assets] = 1
-            
-            weights = np.linalg.solve(A, b)[0:n_assets]
-            
-            # Ensure weights are non-negative and above minimum
-            weights = np.maximum(weights, self.min_weight)
-            
-            # Normalize weights to sum to 1
-            weight_sum = np.sum(weights)
-            if weight_sum > 0:
-                weights = weights / weight_sum
-            else:
-                self.logger.warning("All weights are zero, using equal weights")
-                weights = np.ones(n_assets) / n_assets
+                self.logger.warning(f"No samples found for regime {regime}")
                 
-            weights = pd.Series(weights, index=expected_returns.index)
-            return weights
-            
-        except (np.linalg.LinAlgError, ZeroDivisionError) as e:
-            self.logger.warning(f"Optimization failed: {e}, using equal weights")
-            return pd.Series(1/n_assets, index=expected_returns.index)
+    def optimize_weights(self, factors: pd.DataFrame, current_regime: int, regime_returns: Dict[int, pd.DataFrame] = None) -> np.ndarray:
+        """Optimize weights based on current regime"""
+        self.logger.info(f"Optimizing weights for regime {current_regime}")
         
-    def optimize_weights(self, historical_returns: pd.DataFrame, current_regime: int, regime_returns: Dict) -> pd.Series:
-        """Optimize portfolio weights based on current regime and historical data"""
-        if current_regime in self.regime_weights:
-            weights = self.regime_weights[current_regime]
-            # Ensure weights are non-negative and above minimum
-            weights = weights.clip(lower=self.min_weight)
-            # Normalize weights to sum to 1
-            weight_sum = weights.sum()
-            if weight_sum > 0:
-                weights = weights / weight_sum
-            else:
-                self.logger.warning("All weights are zero, using equal weights")
-                n_assets = len(historical_returns.columns)
-                weights = pd.Series(1/n_assets, index=historical_returns.columns)
-            return weights
-        else:
-            self.logger.warning(f"Unknown regime {current_regime}, using equal weights")
-            n_assets = len(historical_returns.columns)
-            return pd.Series(1/n_assets, index=historical_returns.columns) 
+        # Use regime-specific optimizer if available
+        if current_regime in self.regime_optimizers:
+            return self.regime_optimizers[current_regime].optimize_weights(factors)
+        
+        # Fallback to base optimizer if regime-specific optimizer not available
+        self.logger.warning(f"No optimizer found for regime {current_regime}, using base optimizer")
+        return super().optimize_weights(factors)
+        
+    def get_regime_stats(self) -> Dict:
+        """Get statistics for each regime's optimizer"""
+        stats = {}
+        for regime, optimizer in self.regime_optimizers.items():
+            stats[regime] = {
+                'n_samples': len(optimizer.returns),
+                'mean_returns': optimizer.returns.mean(),
+                'cov_matrix': optimizer.cov_matrix
+            }
+        return stats 
