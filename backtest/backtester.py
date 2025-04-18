@@ -4,6 +4,7 @@ from typing import Dict, List, Optional
 from datetime import datetime
 import matplotlib.pyplot as plt
 import logging
+from data.data_loader import DataLoader
 
 class Backtester:
     def __init__(self, returns: pd.DataFrame, rebalance_freq: str = 'ME'):
@@ -11,7 +12,7 @@ class Backtester:
         Initialize backtester
         
         Args:
-            returns (pd.DataFrame): Asset returns
+            returns (pd.DataFrame): Factor returns (SMB, HML, RMW, CMA are actual returns, Mkt-RF is excess return)
             rebalance_freq (str): Rebalancing frequency (e.g., 'ME' for month-end)
         """
         self.returns = returns
@@ -20,6 +21,25 @@ class Backtester:
         self.portfolio_returns = None
         self.weights = None
         self.logger = logging.getLogger(__name__)
+        
+        # Load risk-free rate for Sharpe ratio calculation
+        try:
+            # Get the date range from the returns data
+            start_date = returns.index.min().strftime('%Y-%m-%d')
+            end_date = returns.index.max().strftime('%Y-%m-%d')
+            
+            # Load Fama-French factors using DataLoader
+            data_loader = DataLoader()
+            ff_data = data_loader.load_fama_french_factors(start_date, end_date)
+            
+            # Convert index to datetime and get RF rate
+            ff_data.index = pd.to_datetime(ff_data.index)
+            self.rf_rate = ff_data['RF'].apply(pd.to_numeric, errors='coerce') / 100  # Convert from percentage to decimal
+            self.logger.info("Loaded risk-free rate from FF5 data")
+            self.logger.info(f"RF rate range: {self.rf_rate.min():.4%} to {self.rf_rate.max():.4%}")
+        except Exception as e:
+            self.logger.warning(f"Could not load risk-free rate from FF5 data: {e}. Will use default value.")
+            self.rf_rate = None
         
     def run_backtest(self, weights: pd.DataFrame) -> Dict:
         """Run backtest on the test period"""
@@ -32,16 +52,9 @@ class Backtester:
         returns = self.returns.loc[common_dates]
         self.logger.info(f"Aligned {len(common_dates)} common dates")
         
-        # Validate returns
-        self.logger.info("Validating returns...")
-        if (returns > 1.0).any().any():
-            self.logger.warning("Found returns > 100%, capping at 100%")
-            returns = returns.clip(upper=1.0)
-        self.logger.info("Returns validation completed")
-        
         # Initialize portfolio value
         self.logger.info("Initializing portfolio...")
-        portfolio_value = 1.0
+        portfolio_value = 1000
         portfolio_values = []
         
         # Run backtest
@@ -51,15 +64,28 @@ class Backtester:
             current_returns = returns.loc[date]
             
             # Validate weights
-            if not np.isclose(current_weights.sum(), 1.0, rtol=1e-5):
+            weight_sum = current_weights.sum()
+            if not np.isclose(weight_sum, 1.0, rtol=1e-5):
                 self.logger.warning(f"Weights do not sum to 1 on {date}, normalizing")
-                current_weights = current_weights / current_weights.sum()
+                if weight_sum > 0:
+                    current_weights = current_weights / weight_sum
+                else:
+                    self.logger.warning("All weights are zero, using equal weights")
+                    current_weights = pd.Series(1/len(current_weights), index=current_weights.index)
             
-            # Calculate daily return
+            # Ensure weights are non-negative
+            if (current_weights < 0).any():
+                self.logger.warning(f"Negative weights found on {date}, clipping to 0")
+                current_weights = current_weights.clip(lower=0)
+                weight_sum = current_weights.sum()
+                if weight_sum > 0:
+                    current_weights = current_weights / weight_sum
+                else:
+                    self.logger.warning("All weights are zero after clipping, using equal weights")
+                    current_weights = pd.Series(1/len(current_weights), index=current_weights.index)
+            
+            # Calculate daily return as weighted sum of factor returns
             daily_return = (current_weights * current_returns).sum()
-            
-            # Cap daily return at 100%
-            daily_return = min(daily_return, 1.0)
             
             portfolio_value *= (1 + daily_return)
             portfolio_values.append(portfolio_value)
@@ -98,10 +124,41 @@ class Backtester:
         """Calculate annualized volatility"""
         return returns.std() * np.sqrt(252)  # Assuming daily returns
         
-    def _calculate_sharpe_ratio(self, returns: pd.Series, risk_free_rate: float = 0.02) -> float:
-        """Calculate Sharpe ratio"""
-        excess_returns = returns - risk_free_rate/252  # Daily risk-free rate
-        return excess_returns.mean() / excess_returns.std() * np.sqrt(252)
+    def _calculate_sharpe_ratio(self, returns: pd.Series) -> float:
+        """Calculate Sharpe ratio using FF5 risk-free rate"""
+        if self.rf_rate is not None:
+            try:
+                # Align RF rate with returns
+                aligned_rf = self.rf_rate.reindex(returns.index)
+                # For any missing values, use the previous available RF rate
+                aligned_rf = aligned_rf.fillna(method='ffill')
+                
+                # Calculate excess returns using actual RF rate
+                excess_returns = returns - aligned_rf
+                
+                # Log some diagnostic information
+                self.logger.info(f"Returns mean: {returns.mean():.4%}")
+                self.logger.info(f"RF rate mean: {aligned_rf.mean():.4%}")
+                self.logger.info(f"Excess returns mean: {excess_returns.mean():.4%}")
+                self.logger.info(f"Returns std: {returns.std():.4%}")
+                
+                # Check for valid data
+                if excess_returns.std() == 0:
+                    self.logger.warning("Zero standard deviation in excess returns")
+                    return 0
+                
+                annualized_sharpe = excess_returns.mean() / excess_returns.std() * np.sqrt(252)
+                self.logger.info(f"Calculated Sharpe ratio: {annualized_sharpe:.4f}")
+                return annualized_sharpe
+                
+            except Exception as e:
+                self.logger.error(f"Error calculating Sharpe ratio: {e}")
+                return 0
+        else:
+            # Fallback to default RF rate if FF5 data not available
+            self.logger.warning("Using default risk-free rate of 2%")
+            excess_returns = returns - 0.02/252  # Daily risk-free rate
+            return excess_returns.mean() / excess_returns.std() * np.sqrt(252)
         
     def _calculate_max_drawdown(self, portfolio_values: pd.Series) -> float:
         """Calculate maximum drawdown"""
@@ -109,28 +166,70 @@ class Backtester:
         drawdowns = portfolio_values / rolling_max - 1
         return drawdowns.min()
         
-    def plot_results(self, benchmark: Optional[pd.Series] = None):
-        """Plot backtest results"""
+    def plot_results(self, benchmarks: Optional[Dict[str, pd.Series]] = None):
+        """Plot backtest results with multiple benchmarks"""
         self.logger.info("Starting to plot results...")
         if self.portfolio_values is None:
             raise ValueError("Run backtest first before plotting")
             
-        self.logger.info("Creating plot...")
-        plt.figure(figsize=(12, 6))
-        plt.plot(self.portfolio_values.index, self.portfolio_values.values, label='Strategy')
+        # Create figure with two subplots
+        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10))
         
-        if benchmark is not None:
-            self.logger.info("Adding benchmark to plot...")
-            # Align benchmark with portfolio values
-            aligned_benchmark = benchmark.reindex(self.portfolio_values.index)
-            plt.plot(aligned_benchmark.index, aligned_benchmark.values, label='Benchmark')
+        # Plot 1: Portfolio Value Over Time
+        ax1.plot(self.portfolio_values.index, self.portfolio_values.values / 1000, 
+                label='Strategy', linewidth=2)
+        
+        if benchmarks is not None:
+            self.logger.info("Adding benchmarks to plot...")
+            for name, returns in benchmarks.items():
+                # Calculate cumulative value starting from $1000
+                benchmark_value = 1000 * (1 + returns).cumprod()
+                ax1.plot(benchmark_value.index, benchmark_value.values / 1000, 
+                        label=name, linestyle='--', alpha=0.7)
             
-        plt.title('Portfolio Value Over Time')
-        plt.xlabel('Date')
-        plt.ylabel('Portfolio Value')
-        plt.legend()
-        plt.grid(True)
-        plt.show()
+        ax1.set_title('Portfolio Value Over Time')
+        ax1.set_xlabel('Date')
+        ax1.set_ylabel('Portfolio Value (thousands)')
+        ax1.legend()
+        ax1.grid(True)
+        
+        # Plot 2: Monthly Returns Comparison
+        # Resample returns to monthly frequency using ME (month end) instead of M
+        monthly_returns = self.portfolio_returns.resample('ME').apply(lambda x: (1 + x).prod() - 1)
+        
+        if benchmarks is not None:
+            # Plot monthly returns comparison
+            width = 0.25
+            x = np.arange(len(monthly_returns))
+            
+            # Strategy returns
+            ax2.bar(x - width, monthly_returns * 100, width, 
+                   label='Strategy', alpha=0.7)
+            
+            # Benchmark returns
+            for i, (name, returns) in enumerate(benchmarks.items()):
+                # Align benchmark returns with strategy returns
+                aligned_returns = returns.reindex(self.portfolio_returns.index)
+                # Resample to monthly frequency
+                monthly_benchmark = aligned_returns.resample('ME').apply(lambda x: (1 + x).prod() - 1)
+                # Ensure same length as strategy returns
+                monthly_benchmark = monthly_benchmark.reindex(monthly_returns.index)
+                ax2.bar(x + width * i, monthly_benchmark * 100, width, 
+                       label=name, alpha=0.7)
+        else:
+            # Plot only strategy monthly returns
+            ax2.bar(monthly_returns.index, monthly_returns * 100, label='Strategy')
+            
+        ax2.set_title('Monthly Returns')
+        ax2.set_xlabel('Date')
+        ax2.set_ylabel('Return (%)')
+        ax2.legend()
+        ax2.grid(True)
+        
+        # Adjust layout to prevent overlap
+        plt.tight_layout()
+        plt.savefig('backtest_results.png')
+        plt.close()
         self.logger.info("Plot completed")
         
     def calculate_performance_metrics(self) -> Dict:
@@ -154,31 +253,38 @@ class Backtester:
         self.logger.info("Performance metrics calculation completed")
         return metrics
         
-    def compare_with_benchmark(self, benchmark: pd.Series) -> Dict:
-        """Compare strategy performance with benchmark"""
+    def compare_with_benchmark(self, benchmarks: Dict[str, pd.Series]) -> Dict:
+        """Compare strategy performance with multiple benchmarks"""
         if self.portfolio_returns is None:
-            raise ValueError("Run backtest first before comparing with benchmark")
+            raise ValueError("Run backtest first before comparing with benchmarks")
             
-        # Align benchmark with portfolio returns
-        aligned_benchmark = benchmark.reindex(self.portfolio_returns.index)
+        comparison = {}
         
-        # Calculate tracking error
-        tracking_error = (self.portfolio_returns - aligned_benchmark).std() * np.sqrt(252)
-        
-        # Calculate information ratio
-        active_returns = self.portfolio_returns - aligned_benchmark
-        information_ratio = active_returns.mean() / active_returns.std() * np.sqrt(252)
-        
-        # Calculate beta
-        covariance = np.cov(self.portfolio_returns, aligned_benchmark)[0,1]
-        variance = aligned_benchmark.var()
-        beta = covariance / variance
-        
-        comparison = {
-            'tracking_error': tracking_error,
-            'information_ratio': information_ratio,
-            'beta': beta,
-            'correlation': self.portfolio_returns.corr(aligned_benchmark)
-        }
+        for name, benchmark_returns in benchmarks.items():
+            # Align benchmark with portfolio returns
+            aligned_benchmark = benchmark_returns.reindex(self.portfolio_returns.index)
+            
+            # Calculate tracking error
+            tracking_error = (self.portfolio_returns - aligned_benchmark).std() * np.sqrt(252)
+            
+            # Calculate information ratio
+            active_returns = self.portfolio_returns - aligned_benchmark
+            information_ratio = active_returns.mean() / active_returns.std() * np.sqrt(252)
+            
+            # Calculate beta
+            covariance = np.cov(self.portfolio_returns, aligned_benchmark)[0,1]
+            variance = aligned_benchmark.var()
+            beta = covariance / variance if variance > 0 else 0
+            
+            # Calculate alpha
+            alpha = self.portfolio_returns.mean() - beta * aligned_benchmark.mean()
+            
+            comparison[name] = {
+                'tracking_error': tracking_error,
+                'information_ratio': information_ratio,
+                'beta': beta,
+                'alpha': alpha,
+                'correlation': self.portfolio_returns.corr(aligned_benchmark)
+            }
         
         return comparison 

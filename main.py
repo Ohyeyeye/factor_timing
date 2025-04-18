@@ -76,15 +76,26 @@ class FactorTimingStrategy:
         if 'date' in test_factors.columns:
             test_factors = test_factors.drop('date', axis=1)
         
-        # Convert returns to numeric, excluding the index
-        numeric_columns = ['Mkt-RF', 'SMB', 'HML', 'RMW', 'CMA', 'RF']
-        train_factors[numeric_columns] = train_factors[numeric_columns].apply(pd.to_numeric, errors='coerce')
-        test_factors[numeric_columns] = test_factors[numeric_columns].apply(pd.to_numeric, errors='coerce')
+        # Convert returns to numeric and select factor columns
+        factor_columns = ['Mkt-RF', 'SMB', 'HML', 'RMW', 'CMA']
+        train_factors = train_factors[factor_columns].apply(pd.to_numeric, errors='coerce')
+        test_factors = test_factors[factor_columns].apply(pd.to_numeric, errors='coerce')
+        
+        # Convert percentage returns to decimal format (e.g., -0.87% -> -0.0087)
+        train_factors = train_factors / 100
+        test_factors = test_factors / 100
         
         # Handle missing values in factor data
         train_factors = train_factors.ffill().bfill()
         test_factors = test_factors.ffill().bfill()
         self.logger.info("Factor data processed")
+        
+        # Log some statistics about the factor returns
+        self.logger.info("\nFactor Returns Summary (in decimal):")
+        self.logger.info("\nTraining Period:")
+        self.logger.info(train_factors.describe())
+        self.logger.info("\nTesting Period:")
+        self.logger.info(test_factors.describe())
         
         # Load macro and market data for both periods
         self.logger.info("Loading macro and market data...")
@@ -138,8 +149,40 @@ class FactorTimingStrategy:
         
         # Train regime classifier on training data
         self.logger.info("Training regime classifier...")
-        self.regime_classifier.train(self.train_data['X'], self.train_data['y'])
-        self.logger.info("Regime classifier training completed")
+        train_X = self.train_data['X']
+        train_y = self.train_data['y']
+        
+        # Train the model on full training period
+        self.regime_classifier.train(train_X, train_y)
+        
+        # Get training predictions
+        train_pred = self.regime_classifier.predict(train_X)
+        
+        # Calculate and display metrics
+        from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+        import seaborn as sns
+        import matplotlib.pyplot as plt
+        
+        # Training metrics
+        train_accuracy = accuracy_score(train_y, train_pred)
+        
+        print("\nModel Training Results:")
+        print("----------------------")
+        print(f"Training Accuracy: {train_accuracy:.4f}")
+        
+        print("\nTraining Set Classification Report:")
+        print(classification_report(train_y, train_pred))
+        
+        # Plot confusion matrix
+        plt.figure(figsize=(8, 6))
+        train_cm = confusion_matrix(train_y, train_pred)
+        sns.heatmap(train_cm, annot=True, fmt='d')
+        plt.title('Training Confusion Matrix')
+        plt.xlabel('Predicted')
+        plt.ylabel('True')
+        plt.tight_layout()
+        plt.savefig('training_results.png')
+        plt.close()
         
         # If using neural portfolio optimizer, train it
         if isinstance(self.portfolio_optimizer, NeuralPortfolioOptimizer):
@@ -148,6 +191,14 @@ class FactorTimingStrategy:
             self.logger.info("Neural portfolio optimizer training completed")
         
         self.logger.info("Model training completed")
+        
+        # Return metrics dictionary
+        training_metrics = {
+            'train_accuracy': train_accuracy,
+            'train_confusion_matrix': train_cm
+        }
+        
+        return training_metrics
         
     def run_strategy(self) -> Dict:
         """Run the factor timing strategy with train-test split"""
@@ -158,9 +209,23 @@ class FactorTimingStrategy:
         train_factors, test_factors = self.prepare_data()
         self.logger.info(f"Prepared data - Train shape: {train_factors.shape}, Test shape: {test_factors.shape}")
         
-        # Train models
+        # Train models and get metrics
         self.logger.info("Training models...")
-        self.train_models()
+        training_metrics = self.train_models()
+        
+        # Display additional training insights
+        print("\nRegime Distribution in Training Data:")
+        regime_dist = pd.Series(self.train_data['y']).value_counts(normalize=True)
+        print(regime_dist)
+        
+        print("\nFeature Importance:")
+        if hasattr(self.regime_classifier, 'feature_importance'):
+            feature_importance = pd.Series(
+                self.regime_classifier.feature_importance(),
+                index=self.train_data['X'].columns
+            ).sort_values(ascending=False)
+            print(feature_importance)
+        
         self.logger.info("Model training completed")
         
         # Initialize portfolio weights DataFrame for test period
@@ -204,6 +269,14 @@ class FactorTimingStrategy:
         # Create test period regime predictions series
         test_regimes = pd.Series(regime_predictions, index=test_factors.index)
         
+        # Train portfolio optimizer on training data
+        self.logger.info("Training portfolio optimizer...")
+        if isinstance(self.portfolio_optimizer, RegimeAwareOptimizer):
+            self.portfolio_optimizer.train(train_factors, train_regime_predictions, regime_returns)
+        else:
+            self.portfolio_optimizer.train(train_factors)
+        self.logger.info("Portfolio optimizer training completed")
+        
         # Optimize weights for each period in test set
         self.logger.info("Optimizing portfolio weights...")
         optimization_count = 0
@@ -212,20 +285,18 @@ class FactorTimingStrategy:
             # Get the most recent regime prediction
             current_regime = test_regimes.loc[date]
             
-            # Get factor returns for the current date
-            current_returns = test_factors.loc[date].astype(float)
+            # Get historical returns up to the current date
+            historical_returns = test_factors.loc[:date].astype(float)
             
             if isinstance(self.portfolio_optimizer, RegimeAwareOptimizer):
                 weights.loc[date] = self.portfolio_optimizer.optimize_weights(
-                    current_returns,
-                    test_factors.astype(float).cov(),
+                    historical_returns,
                     current_regime,
                     regime_returns
                 )
             else:
                 weights.loc[date] = self.portfolio_optimizer.optimize_weights(
-                    current_returns,
-                    test_factors.astype(float).cov()
+                    historical_returns
                 )
             
             optimization_count += 1
@@ -282,17 +353,47 @@ def main():
         data_dir='data'  # Specify the data directory
     )
     
+    # Create benchmarks
+    print("Creating benchmarks...")
+    
+    # Load Fama-French factors for test period
+    ff5_factors = strategy.data_loader.load_fama_french_factors(
+        strategy.test_start_date, 
+        strategy.test_end_date
+    )
+    
+    # Convert percentage returns to decimal
+    ff5_factors = ff5_factors.apply(pd.to_numeric, errors='coerce') / 100
+    
+    print("FF5 factors loaded and converted to decimal format")
+    
+    # Calculate equal weight returns (excluding RF)
+    factor_columns = ['Mkt-RF', 'SMB', 'HML', 'RMW', 'CMA']
+    equal_weight_returns = ff5_factors[factor_columns].mean(axis=1)
+    
+    # Load S&P 500 returns
+    sp500_returns = strategy.data_loader.load_market_data(
+        strategy.test_start_date,
+        strategy.test_end_date
+    )['SP500_Return']
+    
+    # Create benchmark dictionary
+    benchmarks = {
+        'Equal Weight FF5': equal_weight_returns,
+        'S&P 500': sp500_returns
+    }
+
     # Run strategy
     print("Running strategy...")
     results = strategy.run_strategy()
     print("Strategy Results:", results)
     
-    # Plot results
-    strategy.plot_results()
+    # Plot results with both benchmarks
+    strategy.plot_results(benchmarks)
     
-    # Evaluate strategy
+    # Evaluate strategy against both benchmarks
     print("Evaluating strategy...")
-    evaluation = strategy.evaluate_strategy()
+    evaluation = strategy.evaluate_strategy(benchmarks)
     print("Strategy Evaluation:", evaluation)
 
 if __name__ == "__main__":

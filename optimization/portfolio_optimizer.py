@@ -19,59 +19,56 @@ class BasePortfolioOptimizer:
         """Optimize portfolio weights"""
         raise NotImplementedError
 
-class MeanVarianceOptimizer(BasePortfolioOptimizer):
-    def __init__(self, risk_aversion: float = 1.0, max_weight: float = 0.5):
+class MeanVarianceOptimizer:
+    def __init__(self, risk_aversion: float = 1.0, min_weight: float = 0.01):
         self.risk_aversion = risk_aversion
-        self.max_weight = max_weight
+        self.min_weight = min_weight
         self.logger = logging.getLogger(__name__)
         
-    def optimize_weights(self, expected_returns: pd.Series, covariance: pd.DataFrame) -> pd.Series:
-        """Optimize portfolio weights using mean-variance optimization"""
-        self.logger.info("Optimizing portfolio weights...")
+    def train(self, historical_returns: pd.DataFrame):
+        """Train the optimizer on historical data"""
+        self.logger.info("Training mean-variance optimizer...")
+        # Store historical data for reference
+        self.historical_returns = historical_returns
+        self.logger.info("Mean-variance optimizer training completed")
         
-        # Convert inputs to numpy arrays
-        mu = expected_returns.values
-        Sigma = covariance.values
-        
-        # Number of assets
-        n = len(mu)
-        
-        # Define optimization problem
-        def objective(w):
-            return -(w @ mu - self.risk_aversion * w @ Sigma @ w)
+    def optimize_weights(self, historical_returns: pd.DataFrame) -> pd.Series:
+        """Optimize portfolio weights using historical data up to current date"""
+        try:
+            # Calculate expected returns and covariance matrix from historical data
+            expected_returns = historical_returns.mean()
+            cov_matrix = historical_returns.cov()
             
-        # Initial guess (equal weights)
-        w0 = np.ones(n) / n
-        
-        # Constraints
-        constraints = [
-            {'type': 'eq', 'fun': lambda w: np.sum(w) - 1},  # Weights sum to 1
-            {'type': 'ineq', 'fun': lambda w: w},  # Weights >= 0
-            {'type': 'ineq', 'fun': lambda w: self.max_weight - w}  # Weights <= max_weight
-        ]
-        
-        # Optimize
-        result = minimize(
-            objective,
-            w0,
-            method='SLSQP',
-            constraints=constraints,
-            options={'maxiter': 1000}
-        )
-        
-        if not result.success:
-            self.logger.warning("Optimization did not converge, using equal weights")
-            weights = np.ones(n) / n
-        else:
-            weights = result.x
+            # Solve mean-variance optimization
+            n_assets = len(expected_returns)
+            A = np.zeros((n_assets + 1, n_assets + 1))
+            A[0:n_assets, 0:n_assets] = 2 * self.risk_aversion * cov_matrix
+            A[n_assets, 0:n_assets] = 1
+            A[0:n_assets, n_assets] = 1
             
-        # Create Series with original index
-        weights_series = pd.Series(weights, index=expected_returns.index)
-        
-        # Log weight distribution
-        self.logger.info(f"Weight distribution: {weights_series.to_dict()}")
-        
-        return weights_series
+            b = np.zeros(n_assets + 1)
+            b[0:n_assets] = expected_returns
+            b[n_assets] = 1
+            
+            weights = np.linalg.solve(A, b)[0:n_assets]
+            
+            # Ensure weights are non-negative and above minimum
+            weights = np.maximum(weights, self.min_weight)
+            
+            # Normalize weights to sum to 1
+            weight_sum = np.sum(weights)
+            if weight_sum > 0:
+                weights = weights / weight_sum
+            else:
+                self.logger.warning("All weights are zero, using equal weights")
+                weights = np.ones(n_assets) / n_assets
+                
+            weights = pd.Series(weights, index=expected_returns.index)
+            return weights
+            
+        except (np.linalg.LinAlgError, ZeroDivisionError) as e:
+            self.logger.warning(f"Optimization failed: {e}, using equal weights")
+            return pd.Series(1/n_assets, index=expected_returns.index)
 
 class NeuralPortfolioOptimizer(BasePortfolioOptimizer):
     def __init__(self,
@@ -134,27 +131,82 @@ class NeuralPortfolioModel(nn.Module):
         x = self.fc3(x)
         return x
 
-class RegimeAwareOptimizer(BasePortfolioOptimizer):
-    def __init__(self, base_optimizer: BasePortfolioOptimizer):
-        self.base_optimizer = base_optimizer
+class RegimeAwareOptimizer:
+    def __init__(self, risk_aversion: float = 1.0, min_weight: float = 0.01):
+        self.risk_aversion = risk_aversion
+        self.min_weight = min_weight
+        self.logger = logging.getLogger(__name__)
+        self.regime_weights = {}
         
-    def optimize_weights(self,
-                        expected_returns: pd.Series,
-                        covariance: pd.DataFrame,
-                        regime: int,
-                        regime_returns: Dict[int, pd.DataFrame],
-                        constraints: Optional[Dict] = None) -> pd.Series:
-        """Optimize weights based on current regime"""
-        # Get regime-specific returns
-        regime_ret = regime_returns[regime]
+    def train(self, historical_returns: pd.DataFrame, regime_predictions: np.ndarray, regime_returns: Dict):
+        """Train the optimizer on historical data and regime information"""
+        self.logger.info("Training regime-aware optimizer...")
+        self.historical_returns = historical_returns
+        self.regime_returns = regime_returns
         
-        # Calculate regime-specific expected returns and covariance
-        regime_exp_returns = regime_ret.mean()
-        regime_cov = regime_ret.cov()
+        # Calculate optimal weights for each regime using training data
+        for regime, returns in regime_returns.items():
+            if len(returns) > 0:
+                expected_returns = returns.mean()
+                cov_matrix = returns.cov()
+                weights = self._optimize_regime_weights(expected_returns, cov_matrix)
+                self.regime_weights[regime] = weights
+            else:
+                self.logger.warning(f"No data available for regime {regime}, using equal weights")
+                self.regime_weights[regime] = pd.Series(1/len(historical_returns.columns), 
+                                                      index=historical_returns.columns)
         
-        # Use base optimizer with regime-specific parameters
-        return self.base_optimizer.optimize_weights(
-            regime_exp_returns,
-            regime_cov,
-            constraints
-        ) 
+        self.logger.info("Regime-aware optimizer training completed")
+        
+    def _optimize_regime_weights(self, expected_returns: pd.Series, cov_matrix: pd.DataFrame) -> pd.Series:
+        """Optimize weights for a specific regime"""
+        try:
+            n_assets = len(expected_returns)
+            A = np.zeros((n_assets + 1, n_assets + 1))
+            A[0:n_assets, 0:n_assets] = 2 * self.risk_aversion * cov_matrix
+            A[n_assets, 0:n_assets] = 1
+            A[0:n_assets, n_assets] = 1
+            
+            b = np.zeros(n_assets + 1)
+            b[0:n_assets] = expected_returns
+            b[n_assets] = 1
+            
+            weights = np.linalg.solve(A, b)[0:n_assets]
+            
+            # Ensure weights are non-negative and above minimum
+            weights = np.maximum(weights, self.min_weight)
+            
+            # Normalize weights to sum to 1
+            weight_sum = np.sum(weights)
+            if weight_sum > 0:
+                weights = weights / weight_sum
+            else:
+                self.logger.warning("All weights are zero, using equal weights")
+                weights = np.ones(n_assets) / n_assets
+                
+            weights = pd.Series(weights, index=expected_returns.index)
+            return weights
+            
+        except (np.linalg.LinAlgError, ZeroDivisionError) as e:
+            self.logger.warning(f"Optimization failed: {e}, using equal weights")
+            return pd.Series(1/n_assets, index=expected_returns.index)
+        
+    def optimize_weights(self, historical_returns: pd.DataFrame, current_regime: int, regime_returns: Dict) -> pd.Series:
+        """Optimize portfolio weights based on current regime and historical data"""
+        if current_regime in self.regime_weights:
+            weights = self.regime_weights[current_regime]
+            # Ensure weights are non-negative and above minimum
+            weights = weights.clip(lower=self.min_weight)
+            # Normalize weights to sum to 1
+            weight_sum = weights.sum()
+            if weight_sum > 0:
+                weights = weights / weight_sum
+            else:
+                self.logger.warning("All weights are zero, using equal weights")
+                n_assets = len(historical_returns.columns)
+                weights = pd.Series(1/n_assets, index=historical_returns.columns)
+            return weights
+        else:
+            self.logger.warning(f"Unknown regime {current_regime}, using equal weights")
+            n_assets = len(historical_returns.columns)
+            return pd.Series(1/n_assets, index=historical_returns.columns) 
