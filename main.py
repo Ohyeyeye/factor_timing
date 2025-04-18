@@ -7,10 +7,10 @@ import os
 
 from data.data_loader import DataLoader
 from classifier.regime_classifier import LSTMRegimeClassifier, XGBoostRegimeClassifier, HMMRegimeClassifier
-from optimizer.portfolio_optimizer import MeanVarianceOptimizer, NeuralPortfolioOptimizer, RegimeAwareOptimizer
+from optimizer.portfolio_optimizer import MeanVarianceOptimizer, NeuralPortfolioOptimizer
+from optimizer.transformer_regime_optimizer import TransformerRegimeOptimizer
+from optimizer.neural_attention_optimizer import NeuralAttentionOptimizer
 from backtest.backtester import Backtester
-from optimizer.neural_regime_optimizer import NeuralRegimeOptimizer
-from optimizer.autoencoder_regime_optimizer import AutoencoderRegimeOptimizer
 
 class FactorTimingStrategy:
     def __init__(self,
@@ -19,7 +19,7 @@ class FactorTimingStrategy:
                  test_start_date: str = '2020-01-01',
                  test_end_date: str = '2024-12-31',
                  model_type: str = 'lstm',
-                 optimizer_type: str = 'mean_variance',
+                 optimizer_type: str = 'regime_aware',
                  data_dir: str = None,
                  model_dir: str = 'models',
                  load_pretrained: bool = True):
@@ -108,25 +108,30 @@ class FactorTimingStrategy:
         """Initialize portfolio optimizer based on type"""
         if optimizer_type == 'mean_variance':
             return MeanVarianceOptimizer()
-        elif optimizer_type == 'regime_aware':
-            return RegimeAwareOptimizer(n_regimes=5)  # Match number of regimes
-        elif optimizer_type == 'neural_regime':
-            # Initialize with number of factors as input size
-            return NeuralRegimeOptimizer(
+        elif optimizer_type == 'transformer':
+            return TransformerRegimeOptimizer(
                 n_regimes=5,
-                input_size=len(self.factor_columns),
-                hidden_size=64
-            )
-        elif optimizer_type == 'autoencoder_regime':
-            # Initialize with number of factors as input size
-            return AutoencoderRegimeOptimizer(
-                n_regimes=5,
-                input_size=len(self.factor_columns),
-                encoding_dim=2  # Compress to 2 dimensions
+                sequence_length=60,
+                hidden_size=64,
+                num_layers=2,
+                dropout=0.2,
+                learning_rate=0.001,
+                num_epochs=100,
+                batch_size=32
             )
         elif optimizer_type == 'neural':
-            # Initialize with number of factors as input size
             return NeuralPortfolioOptimizer(input_size=len(self.factor_columns))
+        elif optimizer_type == 'neural_attention':
+            return NeuralAttentionOptimizer(
+                sequence_length=60,
+                hidden_size=64,
+                num_layers=2,
+                nhead=8,
+                dropout=0.2,
+                learning_rate=0.001,
+                num_epochs=100,
+                batch_size=32
+            )
         else:
             self.logger.warning(f"Unknown optimizer type: {optimizer_type}")
             return None
@@ -236,6 +241,7 @@ class FactorTimingStrategy:
         # Get training data
         train_X = self.train_data['X']
         train_y = self.train_data['y']
+        train_factors = self.train_data['factors']
         
         # Check if we need to train
         model_path = self.model_paths[self.model_type]
@@ -265,6 +271,24 @@ class FactorTimingStrategy:
                 self.logger.info("Load pretrained is disabled")
             self._train_new_model(train_X, train_y)
             
+        # Train portfolio optimizer
+        self.logger.info("Training portfolio optimizer...")
+        if isinstance(self.portfolio_optimizer, TransformerRegimeOptimizer):
+            # For regime-aware optimizer, we need both returns and regime predictions
+            train_regime_predictions = self.regime_classifier.predict(train_X)
+            self.portfolio_optimizer.train(train_factors, train_regime_predictions)
+        elif isinstance(self.portfolio_optimizer, NeuralPortfolioOptimizer):
+            # For neural optimizer, use equal weights as target
+            target_weights = pd.DataFrame(
+                np.ones_like(train_factors) / len(train_factors.columns),
+                index=train_factors.index,
+                columns=train_factors.columns
+            )
+            self.portfolio_optimizer.train(train_factors, target_weights)
+        else:
+            self.portfolio_optimizer.train(train_factors)
+        self.logger.info("Portfolio optimizer training completed")
+        
     def _train_new_model(self, train_X, train_y):
         """Train a new model from scratch"""
         self.logger.info("Training new model...")
@@ -353,58 +377,14 @@ class FactorTimingStrategy:
         
         # Get regime predictions for test period
         self.logger.info("Generating regime predictions for test period...")
-        # Use the prepare_training_data method to ensure consistent feature calculation
         test_X, _ = self.data_loader.prepare_training_data(is_test=True)
-        # Align test_X with test_factors
         test_X = test_X.reindex(test_factors.index).ffill().bfill()
         self.logger.info(f"Test features shape after alignment: {test_X.shape}")
         regime_predictions = self.regime_classifier.predict(test_X)
         self.logger.info(f"Generated {len(regime_predictions)} regime predictions")
         
-        # Calculate regime-specific returns from training period
-        self.logger.info("Calculating regime-specific returns...")
-        # Use the prepare_training_data method for training data as well
-        train_X, _ = self.data_loader.prepare_training_data(is_test=False)
-        # Align train_X with train_factors
-        train_X = train_X.reindex(train_factors.index).ffill().bfill()
-        train_regime_predictions = self.regime_classifier.predict(train_X)
-        
-        # Create a DataFrame with regime predictions
-        train_regimes = pd.Series(train_regime_predictions, index=train_factors.index)
-        
-        # Calculate regime-specific returns
-        regime_returns = {}
-        unique_regimes = np.unique(train_regime_predictions)
-        self.logger.info(f"Found {len(unique_regimes)} unique regimes")
-        
-        for regime in unique_regimes:
-            self.logger.info(f"Processing regime {regime}...")
-            # Align regime mask with factor data
-            regime_mask = train_regimes == regime
-            # Convert to float before storing
-            regime_returns[regime] = train_factors[regime_mask].apply(pd.to_numeric, errors='coerce')
-            self.logger.info(f"Regime {regime}: {len(regime_returns[regime])} samples")
-        
-        # Create test period regime predictions series
-        test_regimes = pd.Series(regime_predictions, index=test_factors.index)
-        
-        # Train portfolio optimizer on training data
-        self.logger.info("Training portfolio optimizer...")
-        if isinstance(self.portfolio_optimizer, RegimeAwareOptimizer):
-            self.portfolio_optimizer.train(train_factors, train_regime_predictions, regime_returns)
-        elif isinstance(self.portfolio_optimizer, (NeuralRegimeOptimizer, AutoencoderRegimeOptimizer)):
-            self.portfolio_optimizer.train(train_factors, train_regime_predictions)
-        elif isinstance(self.portfolio_optimizer, NeuralPortfolioOptimizer):
-            # For neural optimizer, use equal weights as target
-            target_weights = pd.DataFrame(
-                np.ones_like(train_factors) / len(train_factors.columns),
-                index=train_factors.index,
-                columns=train_factors.columns
-            )
-            self.portfolio_optimizer.train(train_factors, target_weights)
-        else:
-            self.portfolio_optimizer.train(train_factors)
-        self.logger.info("Portfolio optimizer training completed")
+        # Create a Series with the same index as test_factors
+        regime_predictions_series = pd.Series(regime_predictions, index=test_factors.index)
         
         # Optimize weights for each period in test set
         self.logger.info("Optimizing portfolio weights...")
@@ -412,18 +392,12 @@ class FactorTimingStrategy:
         
         for date in weights.index:
             # Get the most recent regime prediction
-            current_regime = test_regimes.loc[date]
+            current_regime = regime_predictions_series[date]
             
             # Get historical returns up to the current date
             historical_returns = test_factors.loc[:date].astype(float)
             
-            if isinstance(self.portfolio_optimizer, RegimeAwareOptimizer):
-                weights.loc[date] = self.portfolio_optimizer.optimize_weights(
-                    historical_returns,
-                    current_regime,
-                    regime_returns
-                )
-            elif isinstance(self.portfolio_optimizer, (NeuralRegimeOptimizer, AutoencoderRegimeOptimizer)):
+            if isinstance(self.portfolio_optimizer, TransformerRegimeOptimizer):
                 weights.loc[date] = self.portfolio_optimizer.optimize_weights(
                     historical_returns,
                     current_regime
@@ -501,7 +475,7 @@ def main():
         test_start_date='2020-01-01',
         test_end_date='2024-12-31',
         model_type='lstm',
-        optimizer_type='neural_regime',
+        optimizer_type='neural_attention',
         data_dir='data'
     )
     

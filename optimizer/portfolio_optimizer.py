@@ -1,23 +1,9 @@
 import numpy as np
 import pandas as pd
 from typing import Dict, Optional, Tuple
-import cvxpy as cp
-from sklearn.ensemble import RandomForestRegressor
+import logging
 import torch
 import torch.nn as nn
-from scipy.optimize import minimize
-import logging
-
-class BasePortfolioOptimizer:
-    def __init__(self):
-        pass
-    
-    def optimize_weights(self,
-                        expected_returns: pd.Series,
-                        covariance: pd.DataFrame,
-                        constraints: Optional[Dict] = None) -> pd.Series:
-        """Optimize portfolio weights"""
-        raise NotImplementedError
 
 class MeanVarianceOptimizer:
     def __init__(self, risk_aversion: float = 1.0, min_weight: float = 0.01):
@@ -73,7 +59,7 @@ class MeanVarianceOptimizer:
             self.logger.warning(f"Optimization failed: {e}, using equal weights")
             return pd.Series(1/n_assets, index=expected_returns.index)
 
-class NeuralPortfolioOptimizer(BasePortfolioOptimizer):
+class NeuralPortfolioOptimizer:
     def __init__(self,
                  input_size: int,
                  hidden_size: int = 64,
@@ -90,14 +76,11 @@ class NeuralPortfolioOptimizer(BasePortfolioOptimizer):
         self.model = NeuralPortfolioModel(new_input_size, self.hidden_size)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.learning_rate)
         
-    def optimize_weights(self,
-                        expected_returns: pd.Series,
-                        covariance: pd.DataFrame,
-                        constraints: Optional[Dict] = None) -> pd.Series:
+    def optimize_weights(self, historical_returns: pd.DataFrame) -> pd.Series:
         """Use neural network to predict optimal weights"""
-        # Convert expected returns and covariance to numeric values
-        expected_returns = pd.to_numeric(expected_returns, errors='coerce')
-        covariance = covariance.astype(float)
+        # Calculate expected returns and covariance
+        expected_returns = historical_returns.mean()
+        covariance = historical_returns.cov()
         
         # Prepare input features
         features = pd.concat([
@@ -142,53 +125,3 @@ class NeuralPortfolioModel(nn.Module):
         x = torch.relu(self.fc2(x))
         x = self.fc3(x)
         return x
-
-class RegimeAwareOptimizer(MeanVarianceOptimizer):
-    def __init__(self, n_regimes: int = 3):
-        super().__init__()
-        self.n_regimes = n_regimes
-        self.regime_optimizers = {}  # Store separate optimizers for each regime
-        self.regime_returns = {}  # Store historical returns for each regime
-        
-    def train(self, factors: pd.DataFrame, regime_predictions: np.ndarray, regime_returns: Dict[int, pd.DataFrame] = None):
-        """Train regime-specific optimizers"""
-        self.logger.info("Training regime-aware optimizer...")
-        
-        # Store regime returns if provided
-        if regime_returns is not None:
-            self.regime_returns = regime_returns
-        
-        # Train separate optimizers for each regime
-        for regime in range(self.n_regimes):
-            regime_mask = regime_predictions == regime
-            regime_factors = factors[regime_mask]
-            
-            if len(regime_factors) > 0:
-                self.regime_optimizers[regime] = MeanVarianceOptimizer()
-                self.regime_optimizers[regime].train(regime_factors)
-                self.logger.info(f"Trained optimizer for regime {regime} with {len(regime_factors)} samples")
-            else:
-                self.logger.warning(f"No samples found for regime {regime}")
-                
-    def optimize_weights(self, factors: pd.DataFrame, current_regime: int, regime_returns: Dict[int, pd.DataFrame] = None) -> np.ndarray:
-        """Optimize weights based on current regime"""
-        self.logger.info(f"Optimizing weights for regime {current_regime}")
-        
-        # Use regime-specific optimizer if available
-        if current_regime in self.regime_optimizers:
-            return self.regime_optimizers[current_regime].optimize_weights(factors)
-        
-        # Fallback to base optimizer if regime-specific optimizer not available
-        self.logger.warning(f"No optimizer found for regime {current_regime}, using base optimizer")
-        return super().optimize_weights(factors)
-        
-    def get_regime_stats(self) -> Dict:
-        """Get statistics for each regime's optimizer"""
-        stats = {}
-        for regime, optimizer in self.regime_optimizers.items():
-            stats[regime] = {
-                'n_samples': len(optimizer.returns),
-                'mean_returns': optimizer.returns.mean(),
-                'cov_matrix': optimizer.cov_matrix
-            }
-        return stats 
