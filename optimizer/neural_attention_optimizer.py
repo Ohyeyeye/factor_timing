@@ -171,8 +171,63 @@ class NeuralAttentionOptimizer:
             
         return sequences, target_weights
         
+    def _risk_parity_optimization(self, returns: np.ndarray) -> np.ndarray:
+        """Solve risk parity optimization problem
+        
+        Args:
+            returns: Array of asset returns
+            
+        Returns:
+            Array of optimal portfolio weights
+        """
+        n_assets = returns.shape[1]
+        
+        # Calculate covariance matrix
+        sigma = np.cov(returns.T)
+        
+        # Initialize weights
+        w = np.ones(n_assets) / n_assets
+        
+        # Risk parity optimization using gradient descent
+        learning_rate = 0.01
+        max_iter = 1000
+        tolerance = 1e-6
+        
+        for _ in range(max_iter):
+            # Calculate portfolio volatility
+            vol = np.sqrt(w @ sigma @ w)
+            
+            # Calculate marginal risk contributions
+            mrc = (sigma @ w) / vol
+            
+            # Calculate risk contributions
+            rc = w * mrc
+            
+            # Calculate gradient
+            gradient = rc - vol / n_assets
+            
+            # Update weights
+            w_new = w - learning_rate * gradient
+            
+            # Project back to simplex
+            w_new = np.maximum(w_new, 0)
+            w_new = w_new / np.sum(w_new)
+            
+            # Check convergence
+            if np.max(np.abs(w_new - w)) < tolerance:
+                break
+                
+            w = w_new
+            
+        return w
+
     def _mean_variance_optimization(self, returns: np.ndarray, risk_aversion: float = 1.0) -> np.ndarray:
         """Solve mean-variance optimization problem using quadratic programming"""
+        # Use risk parity as default optimization method
+        return self._risk_parity_optimization(returns)
+        
+        # Uncomment below to use traditional MVO instead
+        """
         n_assets = returns.shape[1]
         
         # Calculate mean returns and covariance
@@ -182,7 +237,7 @@ class NeuralAttentionOptimizer:
         # Add momentum factor
         momentum_returns = returns[-20:] if len(returns) >= 20 else returns
         momentum = np.mean(momentum_returns, axis=0)
-        mu = 0.7 * mu + 0.3 * momentum  # Increased momentum weight
+        mu = 0.7 * mu + 0.3 * momentum
         
         # QP matrices
         P = matrix(2.0 * risk_aversion * sigma)
@@ -204,6 +259,7 @@ class NeuralAttentionOptimizer:
             weights = np.ones(n_assets) / n_assets
             
         return weights
+        """
         
     def train(self, returns: Union[np.ndarray, pd.DataFrame], valid_returns: Optional[Union[np.ndarray, pd.DataFrame]] = None) -> Dict[str, list]:
         """Train the neural attention optimizer
