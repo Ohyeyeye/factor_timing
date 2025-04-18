@@ -3,6 +3,7 @@ import numpy as np
 from datetime import datetime, timedelta
 from typing import Dict, Optional, Tuple
 import logging
+import os
 
 from data.data_loader import DataLoader
 from classifier.regime_classifier import LSTMRegimeClassifier, XGBoostRegimeClassifier, HMMRegimeClassifier
@@ -19,7 +20,9 @@ class FactorTimingStrategy:
                  test_end_date: str = '2024-12-31',
                  model_type: str = 'lstm',
                  optimizer_type: str = 'mean_variance',
-                 data_dir: str = None):
+                 data_dir: str = None,
+                 model_dir: str = 'models',
+                 load_pretrained: bool = True):
         # Set up logging
         self.logger = logging.getLogger(__name__)
         self.logger.info(f"Initializing FactorTimingStrategy with {model_type} model and {optimizer_type} optimizer")
@@ -28,6 +31,12 @@ class FactorTimingStrategy:
         self.train_end_date = train_end_date
         self.test_start_date = test_start_date
         self.test_end_date = test_end_date
+        self.model_dir = model_dir
+        self.model_type = model_type
+        self.load_pretrained = load_pretrained
+        
+        # Create model directory if it doesn't exist
+        os.makedirs(model_dir, exist_ok=True)
         
         # Initialize factor columns
         self.factor_columns = ['Mkt-RF', 'SMB', 'HML', 'RMW', 'CMA']
@@ -38,25 +47,62 @@ class FactorTimingStrategy:
             train_start_date, train_end_date,
             test_start_date, test_end_date
         )
+        
+        # Set model paths with absolute paths
+        self.model_paths = {
+            'lstm': os.path.join(os.path.abspath(model_dir), 'lstm_classifier.pth'),
+            'xgboost': os.path.join(os.path.abspath(model_dir), 'xgboost_classifier.pkl'),
+            'hmm': os.path.join(os.path.abspath(model_dir), 'hmm_classifier.pkl')
+        }
+        
+        self.logger.info(f"Model will be saved to/loaded from: {self.model_paths[model_type]}")
+        
         self.regime_classifier = self._init_regime_classifier(model_type)
         self.portfolio_optimizer = self._init_portfolio_optimizer(optimizer_type)
         self.backtester = None
         
     def _init_regime_classifier(self, model_type: str):
         """Initialize regime classifier based on model type"""
+        model_path = self.model_paths[model_type]
+        self.logger.info(f"Initializing {model_type} classifier. Model path: {model_path}")
+        
         if model_type == 'lstm':
-            return LSTMRegimeClassifier(
-                input_size=6,  # Match actual number of features
+            classifier = LSTMRegimeClassifier(
+                n_regimes=5,
+                sequence_length=20,
                 hidden_size=64,
                 num_layers=2,
-                num_regimes=5  # Number of regimes to classify
+                dropout=0.2,
+                learning_rate=0.001,
+                num_epochs=100,
+                batch_size=32,
+                model_path=model_path
             )
         elif model_type == 'xgboost':
-            return XGBoostRegimeClassifier()
+            classifier = XGBoostRegimeClassifier()
         elif model_type == 'hmm':
-            return HMMRegimeClassifier()
+            classifier = HMMRegimeClassifier()
         else:
             raise ValueError(f"Unknown model type: {model_type}")
+            
+        # Try to load pretrained model if requested
+        if self.load_pretrained and os.path.exists(model_path):
+            try:
+                self.logger.info(f"Loading pretrained model from {model_path}")
+                if model_type == 'lstm':
+                    classifier.load_model()
+                elif model_type == 'xgboost':
+                    import joblib
+                    classifier = joblib.load(model_path)
+                elif model_type == 'hmm':
+                    import joblib
+                    classifier = joblib.load(model_path)
+                self.logger.info("Successfully loaded pretrained model")
+            except Exception as e:
+                self.logger.warning(f"Failed to load pretrained model: {str(e)}")
+                self.logger.info("Will train a new model")
+        
+        return classifier
             
     def _init_portfolio_optimizer(self, optimizer_type: str):
         """Initialize portfolio optimizer based on type"""
@@ -187,18 +233,60 @@ class FactorTimingStrategy:
         """Train regime classifier and portfolio optimizer"""
         self.logger.info("Starting model training...")
         
-        # Train regime classifier on training data
-        self.logger.info("Training regime classifier...")
+        # Get training data
         train_X = self.train_data['X']
         train_y = self.train_data['y']
         
-        # Train the model on full training period
-        self.regime_classifier.train(train_X, train_y)
+        # Check if we need to train
+        model_path = self.model_paths[self.model_type]
+        model_exists = os.path.exists(model_path)
+        self.logger.info(f"Checking for existing model at: {model_path}")
+        self.logger.info(f"Model exists: {model_exists}, Load pretrained: {self.load_pretrained}")
         
-        # Get training predictions
+        if self.load_pretrained and model_exists:
+            try:
+                if self.model_type == 'lstm':
+                    self.logger.info("Loading pretrained LSTM model...")
+                    self.regime_classifier.load_model(model_path)
+                elif self.model_type in ['xgboost', 'hmm']:
+                    self.logger.info(f"Loading pretrained {self.model_type} model...")
+                    import joblib
+                    self.regime_classifier = joblib.load(model_path)
+                self.logger.info("Successfully loaded pretrained model")
+                train_pred = self.regime_classifier.predict(train_X)
+            except Exception as e:
+                self.logger.error(f"Error loading model: {str(e)}")
+                self.logger.info("Falling back to training new model...")
+                self._train_new_model(train_X, train_y)
+        else:
+            if not model_exists:
+                self.logger.info("No existing model found")
+            elif not self.load_pretrained:
+                self.logger.info("Load pretrained is disabled")
+            self._train_new_model(train_X, train_y)
+            
+    def _train_new_model(self, train_X, train_y):
+        """Train a new model from scratch"""
+        self.logger.info("Training new model...")
+        # Train the model
+        self.regime_classifier.train(train_X, train_y)
         train_pred = self.regime_classifier.predict(train_X)
         
-        # Calculate and display metrics
+        # Save the trained model
+        try:
+            if self.model_type == 'lstm':
+                self.regime_classifier.save_model()
+            elif self.model_type in ['xgboost', 'hmm']:
+                import joblib
+                joblib.dump(self.regime_classifier, self.model_paths[self.model_type])
+            self.logger.info(f"Model saved to {self.model_paths[self.model_type]}")
+        except Exception as e:
+            self.logger.warning(f"Failed to save model: {str(e)}")
+            
+        self._evaluate_model(train_y, train_pred)
+        
+    def _evaluate_model(self, train_y, train_pred):
+        """Evaluate model performance and create visualizations"""
         from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
         import seaborn as sns
         import matplotlib.pyplot as plt
@@ -221,24 +309,13 @@ class FactorTimingStrategy:
         plt.xlabel('Predicted')
         plt.ylabel('True')
         plt.tight_layout()
-        plt.savefig('training_results.png')
+        plt.savefig(os.path.join(self.model_dir, 'training_results.png'))
         plt.close()
         
-        # If using neural portfolio optimizer, train it
-        if isinstance(self.portfolio_optimizer, NeuralPortfolioOptimizer):
-            self.logger.info("Training neural portfolio optimizer...")
-            # TODO: Prepare training data for neural portfolio optimizer
-            self.logger.info("Neural portfolio optimizer training completed")
-        
-        self.logger.info("Model training completed")
-        
-        # Return metrics dictionary
-        training_metrics = {
+        return {
             'train_accuracy': train_accuracy,
             'train_confusion_matrix': train_cm
         }
-        
-        return training_metrics
         
     def run_strategy(self) -> Dict:
         """Run the factor timing strategy with train-test split"""
@@ -276,25 +353,8 @@ class FactorTimingStrategy:
         
         # Get regime predictions for test period
         self.logger.info("Generating regime predictions for test period...")
-        
-        # Calculate momentum and volatility features for test data
-        test_returns = self.test_data['market']['SP500_Return']
-        test_momentum = test_returns.rolling(window=60).mean()
-        test_volatility = test_returns.rolling(window=20).std() * np.sqrt(252)  # Annualized volatility
-        
-        # Create technical features DataFrame
-        test_technical = pd.DataFrame({
-            'momentum': test_momentum,
-            'volatility': test_volatility
-        }, index=test_returns.index)
-        
-        # Combine all features
-        test_X = pd.concat([
-            self.test_data['macro'],
-            self.test_data['market'],
-            test_technical
-        ], axis=1)
-        
+        # Use the prepare_training_data method to ensure consistent feature calculation
+        test_X, _ = self.data_loader.prepare_training_data(is_test=True)
         # Align test_X with test_factors
         test_X = test_X.reindex(test_factors.index).ffill().bfill()
         self.logger.info(f"Test features shape after alignment: {test_X.shape}")
@@ -303,25 +363,8 @@ class FactorTimingStrategy:
         
         # Calculate regime-specific returns from training period
         self.logger.info("Calculating regime-specific returns...")
-        
-        # Calculate momentum and volatility features for training data
-        train_returns = self.train_data['market']['SP500_Return']
-        train_momentum = train_returns.rolling(window=60).mean()
-        train_volatility = train_returns.rolling(window=20).std() * np.sqrt(252)  # Annualized volatility
-        
-        # Create technical features DataFrame for training
-        train_technical = pd.DataFrame({
-            'momentum': train_momentum,
-            'volatility': train_volatility
-        }, index=train_returns.index)
-        
-        # Combine all features for training
-        train_X = pd.concat([
-            self.train_data['macro'],
-            self.train_data['market'],
-            train_technical
-        ], axis=1)
-        
+        # Use the prepare_training_data method for training data as well
+        train_X, _ = self.data_loader.prepare_training_data(is_test=False)
         # Align train_X with train_factors
         train_X = train_X.reindex(train_factors.index).ffill().bfill()
         train_regime_predictions = self.regime_classifier.predict(train_X)
@@ -457,7 +500,7 @@ def main():
         train_end_date='2019-12-31',
         test_start_date='2020-01-01',
         test_end_date='2024-12-31',
-        model_type='xgboost',
+        model_type='lstm',
         optimizer_type='neural_regime',
         data_dir='data'
     )

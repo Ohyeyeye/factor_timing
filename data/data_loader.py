@@ -369,23 +369,18 @@ class DataLoader:
         macro_data = self.load_macro_data(start_date, end_date)
         market_data = self.load_market_data(start_date, end_date)
         
-        # Calculate momentum and volatility features first
-        returns = market_data['SP500_Return']  # Use only SP500 returns for momentum
-        momentum = returns.rolling(window=60).mean()
-        volatility = returns.rolling(window=20).std() * np.sqrt(252)  # Annualized volatility
-        
-        # Create technical features DataFrame
-        technical_features = pd.DataFrame({
-            'momentum': momentum,
-            'volatility': volatility
-        }, index=returns.index)
-        
-        # Combine all features
+        # Combine features
         features = pd.concat([
             macro_data,
-            market_data,
-            technical_features
+            market_data
         ], axis=1)
+        
+        # Calculate returns and volatility features
+        returns = market_data['SP500_Return']  # Use only SP500 returns for momentum
+        
+        # Calculate momentum and volatility features
+        features['momentum'] = returns.rolling(window=60).mean()
+        features['volatility'] = returns.rolling(window=20).std() * np.sqrt(252)  # Annualized volatility
         
         # Handle missing values before clustering
         # First, forward fill with a limit to avoid propagating old values too far
@@ -397,7 +392,7 @@ class DataLoader:
         # Replace any infinities with large but finite numbers
         features = features.replace([np.inf, -np.inf], [1e10, -1e10])
         
-        # Store feature names and scaler for test data
+        # Store feature names for test data
         if not is_test:
             self.feature_names = features.columns.tolist()
             self.scaler = StandardScaler()
@@ -410,16 +405,8 @@ class DataLoader:
             if not hasattr(self, 'feature_names'):
                 raise ValueError("Must prepare training data before test data")
             
-            # Verify all required features are present
-            missing_features = set(self.feature_names) - set(features.columns)
-            if missing_features:
-                self.logger.warning(f"Missing features in test data: {missing_features}")
-                # Add missing features with default values
-                for feature in missing_features:
-                    features[feature] = 0
-            
-            # Reorder columns to match training data
-            features = features.reindex(columns=self.feature_names)
+            # Reorder columns to match training data and fill missing features with 0
+            features = features.reindex(columns=self.feature_names, fill_value=0)
             
             if not hasattr(self, 'scaler'):
                 raise ValueError("Must prepare training data before test data")

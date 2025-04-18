@@ -23,7 +23,7 @@ def run_parameter_grid():
     """Run strategy with different parameter combinations"""
     # Define parameter grid
     model_types = ['lstm', 'xgboost', 'hmm']
-    optimizer_types = ['neural_regime', 'autoencoder_regime']  # Focus on regime-aware optimizers
+    optimizer_types = ['mean_variance', 'regime_aware', 'neural_regime', 'autoencoder_regime', 'neural']
     n_regimes_list = [3, 5, 7]  # Test different numbers of regimes
     
     # Store results
@@ -50,11 +50,11 @@ def run_parameter_grid():
                         data_dir=data_dir
                     )
                     
-                    # Update regime classifier parameters
+                    # Update regime classifier parameters if needed
                     if hasattr(strategy.regime_classifier, 'num_regimes'):
                         strategy.regime_classifier.num_regimes = n_regimes
                     
-                    # Update optimizer parameters
+                    # Update optimizer parameters if needed
                     if hasattr(strategy.portfolio_optimizer, 'n_regimes'):
                         strategy.portfolio_optimizer.n_regimes = n_regimes
                     
@@ -62,17 +62,34 @@ def run_parameter_grid():
                     logging.info("Running strategy...")
                     strategy_results = strategy.run_strategy()
                     
-                    # Get regime-specific statistics
+                    # Validate results
+                    if not isinstance(strategy_results, dict):
+                        raise ValueError("Strategy results must be a dictionary")
+                    
+                    required_metrics = ['sharpe_ratio', 'annualized_return', 'annualized_volatility', 'max_drawdown']
+                    for metric in required_metrics:
+                        if metric not in strategy_results:
+                            raise ValueError(f"Missing required metric: {metric}")
+                    
+                    # Calculate model performance metrics
+                    # Get test predictions and actual values
+                    test_X = pd.concat([strategy.test_data['macro'], strategy.test_data['market']], axis=1)
+                    test_predictions = strategy.regime_classifier.predict(test_X)
+                    
+                    # Calculate accuracy and F-score if we have actual test labels
+                    model_metrics = {}
+                    if hasattr(strategy, 'test_data') and 'y' in strategy.test_data:
+                        test_y = strategy.test_data['y']
+                        model_metrics['accuracy'] = accuracy_score(test_y, test_predictions)
+                        model_metrics['fscore'] = f1_score(test_y, test_predictions, average='weighted')
+                    
+                    # Add model metrics to strategy results
+                    strategy_results['model_metrics'] = model_metrics
+                    
+                    # Get regime-specific statistics if available
                     regime_stats = {}
                     if hasattr(strategy.portfolio_optimizer, 'get_regime_stats'):
                         regime_stats = strategy.portfolio_optimizer.get_regime_stats()
-                        logging.info("\nRegime-specific statistics:")
-                        for regime, stats in regime_stats.items():
-                            logging.info(f"\nRegime {regime}:")
-                            logging.info(f"Number of samples: {stats.get('n_samples', 0)}")
-                            logging.info(f"Average return: {stats.get('avg_return', 0):.4f}")
-                            logging.info(f"Volatility: {stats.get('volatility', 0):.4f}")
-                            logging.info(f"Sharpe ratio: {stats.get('sharpe_ratio', 0):.4f}")
                     
                     # Store results
                     results.append({
