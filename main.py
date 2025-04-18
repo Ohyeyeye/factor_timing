@@ -6,7 +6,7 @@ import logging
 
 from data.data_loader import DataLoader
 from models.regime_classifier import LSTMRegimeClassifier, XGBoostRegimeClassifier, HMMRegimeClassifier
-from optimization.portfolio_optimizer import MeanVarianceOptimizer, NeuralPortfolioOptimizer, RegimeAwareOptimizer
+from optimization.portfolio_optimizer import MeanVarianceOptimizer, NeuralPortfolioOptimizer, RegimeAwareOptimizer, AutoencoderPortfolioOptimizer
 from backtest.backtester import Backtester
 
 class FactorTimingStrategy:
@@ -54,6 +54,12 @@ class FactorTimingStrategy:
             return MeanVarianceOptimizer()
         elif optimizer_type == 'neural':
             return NeuralPortfolioOptimizer(input_size=6)  # Adjust based on features
+        elif optimizer_type == 'autoencoder':
+            return AutoencoderPortfolioOptimizer(
+                input_size=5,  # 5 Fama-French factors
+                hidden_size=32,
+                latent_dim=3
+            )
         else:
             raise ValueError(f"Unknown optimizer type: {optimizer_type}")
             
@@ -349,7 +355,7 @@ def main():
         test_start_date='2020-01-01',
         test_end_date='2024-12-31',
         model_type='lstm',
-        optimizer_type='mean_variance',
+        optimizer_type='autoencoder',
         data_dir='data'  # Specify the data directory
     )
     

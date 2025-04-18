@@ -7,13 +7,13 @@ import logging
 from data.data_loader import DataLoader
 
 class Backtester:
-    def __init__(self, returns: pd.DataFrame, rebalance_freq: str = 'ME'):
+    def __init__(self, returns: pd.DataFrame, rebalance_freq: str = 'M'):
         """
         Initialize backtester
         
         Args:
             returns (pd.DataFrame): Factor returns (SMB, HML, RMW, CMA are actual returns, Mkt-RF is excess return)
-            rebalance_freq (str): Rebalancing frequency (e.g., 'ME' for month-end)
+            rebalance_freq (str): Rebalancing frequency (e.g., 'M' for month-end)
         """
         self.returns = returns
         self.rebalance_freq = rebalance_freq
@@ -194,8 +194,8 @@ class Backtester:
         ax1.grid(True)
         
         # Plot 2: Monthly Returns Comparison
-        # Resample returns to monthly frequency using ME (month end) instead of M
-        monthly_returns = self.portfolio_returns.resample('ME').apply(lambda x: (1 + x).prod() - 1)
+        # Resample returns to monthly frequency using M (month end) instead of M
+        monthly_returns = self.portfolio_returns.resample('M').apply(lambda x: (1 + x).prod() - 1)
         
         if benchmarks is not None:
             # Plot monthly returns comparison
@@ -211,7 +211,7 @@ class Backtester:
                 # Align benchmark returns with strategy returns
                 aligned_returns = returns.reindex(self.portfolio_returns.index)
                 # Resample to monthly frequency
-                monthly_benchmark = aligned_returns.resample('ME').apply(lambda x: (1 + x).prod() - 1)
+                monthly_benchmark = aligned_returns.resample('M').apply(lambda x: (1 + x).prod() - 1)
                 # Ensure same length as strategy returns
                 monthly_benchmark = monthly_benchmark.reindex(monthly_returns.index)
                 ax2.bar(x + width * i, monthly_benchmark * 100, width, 

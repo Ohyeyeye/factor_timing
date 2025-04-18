@@ -210,3 +210,89 @@ class RegimeAwareOptimizer:
             self.logger.warning(f"Unknown regime {current_regime}, using equal weights")
             n_assets = len(historical_returns.columns)
             return pd.Series(1/n_assets, index=historical_returns.columns) 
+        
+class AutoencoderPortfolioOptimizer(BasePortfolioOptimizer):
+    def __init__(self, input_size: int = 5, hidden_size: int = 32, latent_dim: int = 3, learning_rate: float = 0.001):
+        self.model = AutoencoderWeightModel(input_size, hidden_size, latent_dim)
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=learning_rate)
+        self.loss_fn = nn.MSELoss()
+        self.logger = logging.getLogger(__name__)
+        
+    def train(self, historical_returns: pd.DataFrame):
+        """Train the autoencoder model using historical returns"""
+        self.logger.info("Training autoencoder optimizer...")
+        
+        # Convert data to tensor
+        X = torch.FloatTensor(historical_returns.values)
+        
+        # Initialize target weights (equal weights)
+        n_assets = historical_returns.shape[1]
+        target_weights = torch.ones(n_assets) / n_assets
+        
+        # Training loop
+        num_epochs = 100
+        for epoch in range(num_epochs):
+            self.model.train()
+            self.optimizer.zero_grad()
+            
+            # Forward pass
+            weights = self.model(X)
+            weights = torch.softmax(weights, dim=1)  # Ensure weights sum to 1
+            
+            # Calculate loss (MSE between predicted weights and equal weights)
+            loss = self.loss_fn(weights.mean(dim=0), target_weights)
+            
+            # Backward pass
+            loss.backward()
+            self.optimizer.step()
+            
+            if (epoch + 1) % 10 == 0:
+                self.logger.info(f"Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}")
+        
+        self.logger.info("Autoencoder optimizer training completed")
+    
+    def optimize_weights(self, historical_returns: pd.DataFrame) -> pd.Series:
+        """Generate portfolio weights using the autoencoder"""
+        self.model.eval()
+        with torch.no_grad():
+            # Convert input to tensor
+            X = torch.FloatTensor(historical_returns.values)
+            
+            # Get weights from model
+            weights = self.model(X)
+            weights = torch.softmax(weights[-1], dim=0)  # Use last timestep's weights
+            
+            # Convert to series
+            weights = pd.Series(weights.numpy(), index=historical_returns.columns)
+            
+            # Ensure weights are valid
+            weights = weights.clip(lower=0)
+            weights = weights / weights.sum()
+            
+            return weights
+
+class AutoencoderWeightModel(nn.Module):
+    def __init__(self, input_size: int, hidden_size: int, latent_dim: int):
+        super().__init__()
+        
+        # Encoder
+        self.encoder = nn.Sequential(
+            nn.Linear(input_size, hidden_size),
+            nn.ReLU(),
+            nn.Linear(hidden_size, latent_dim),
+            nn.ReLU()
+        )
+        
+        # Decoder
+        self.decoder = nn.Sequential(
+            nn.Linear(latent_dim, hidden_size),
+            nn.ReLU(),
+            nn.Linear(hidden_size, input_size)
+        )
+    
+    def forward(self, x):
+        # Encode
+        z = self.encoder(x)
+        # Decode
+        weights = self.decoder(z)
+        return weights
