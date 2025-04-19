@@ -41,78 +41,27 @@ class Backtester:
             self.logger.warning(f"Could not load risk-free rate from FF5 data: {e}. Will use default value.")
             self.rf_rate = None
         
-    def run_backtest(self, weights: pd.DataFrame) -> Dict:
-        """Run backtest on the test period"""
+    def run_backtest(self, returns: pd.DataFrame, weights: pd.DataFrame) -> Dict:
+        """Run backtest and return performance metrics"""
         self.logger.info("Starting backtest...")
         
-        # Ensure dates are aligned
-        self.logger.info("Aligning dates between weights and returns...")
-        common_dates = weights.index.intersection(self.returns.index)
-        weights = weights.loc[common_dates]
-        returns = self.returns.loc[common_dates]
-        self.logger.info(f"Aligned {len(common_dates)} common dates")
-        
-        # Initialize portfolio value
-        self.logger.info("Initializing portfolio...")
-        portfolio_value = 1000
-        portfolio_values = []
-        
-        # Run backtest
-        self.logger.info("Running backtest simulation...")
-        for date in weights.index:
-            current_weights = weights.loc[date]
-            current_returns = returns.loc[date]
-            
-            # Validate weights
-            weight_sum = current_weights.sum()
-            if not np.isclose(weight_sum, 1.0, rtol=1e-5):
-                self.logger.warning(f"Weights do not sum to 1 on {date}, normalizing")
-                if weight_sum > 0:
-                    current_weights = current_weights / weight_sum
-                else:
-                    self.logger.warning("All weights are zero, using equal weights")
-                    current_weights = pd.Series(1/len(current_weights), index=current_weights.index)
-            
-            # Ensure weights are non-negative
-            if (current_weights < 0).any():
-                self.logger.warning(f"Negative weights found on {date}, clipping to 0")
-                current_weights = current_weights.clip(lower=0)
-                weight_sum = current_weights.sum()
-                if weight_sum > 0:
-                    current_weights = current_weights / weight_sum
-                else:
-                    self.logger.warning("All weights are zero after clipping, using equal weights")
-                    current_weights = pd.Series(1/len(current_weights), index=current_weights.index)
-            
-            # Calculate daily return as weighted sum of factor returns
-            daily_return = (current_weights * current_returns).sum()
-            
-            portfolio_value *= (1 + daily_return)
-            portfolio_values.append(portfolio_value)
-            
-            # Log if return is unusually high
-            if daily_return > 0.5:  # 50% daily return
-                self.logger.warning(f"Unusually high return on {date}: {daily_return:.2%}")
-        
-        self.logger.info("Backtest simulation completed")
-        
-        # Store results as instance variables
-        self.logger.info("Storing backtest results...")
-        self.portfolio_values = pd.Series(portfolio_values, index=weights.index)
-        self.portfolio_returns = pd.Series([(portfolio_values[i]/portfolio_values[i-1] - 1) 
-                                          for i in range(1, len(portfolio_values))], 
-                                          index=weights.index[1:])
+        # Store returns and weights
+        self.returns = returns
         self.weights = weights
         
-        # Create results dictionary
-        results = {
-            'portfolio_values': self.portfolio_values,
-            'returns': self.portfolio_returns,
-            'weights': self.weights
-        }
+        # Calculate portfolio returns
+        self.logger.info("Calculating portfolio returns...")
+        portfolio_returns = self._calculate_portfolio_returns(returns, weights)
         
-        self.logger.info("Backtest completed successfully")
-        return results
+        # Calculate performance metrics
+        self.logger.info("Calculating performance metrics...")
+        metrics = self.calculate_performance_metrics(portfolio_returns)
+        
+        # Store results
+        self.results = metrics
+        
+        self.logger.info("Backtest completed")
+        return metrics
         
     def _calculate_annualized_return(self, returns: pd.Series) -> float:
         """Calculate annualized return"""
@@ -125,40 +74,17 @@ class Backtester:
         return returns.std() * np.sqrt(252)  # Assuming daily returns
         
     def _calculate_sharpe_ratio(self, returns: pd.Series) -> float:
-        """Calculate Sharpe ratio using FF5 risk-free rate"""
-        if self.rf_rate is not None:
-            try:
-                # Align RF rate with returns
-                aligned_rf = self.rf_rate.reindex(returns.index)
-                # For any missing values, use the previous available RF rate
-                aligned_rf = aligned_rf.fillna(method='ffill')
-                
-                # Calculate excess returns using actual RF rate
-                excess_returns = returns - aligned_rf
-                
-                # Log some diagnostic information
-                self.logger.info(f"Returns mean: {returns.mean():.4%}")
-                self.logger.info(f"RF rate mean: {aligned_rf.mean():.4%}")
-                self.logger.info(f"Excess returns mean: {excess_returns.mean():.4%}")
-                self.logger.info(f"Returns std: {returns.std():.4%}")
-                
-                # Check for valid data
-                if excess_returns.std() == 0:
-                    self.logger.warning("Zero standard deviation in excess returns")
-                    return 0
-                
-                annualized_sharpe = excess_returns.mean() / excess_returns.std() * np.sqrt(252)
-                self.logger.info(f"Calculated Sharpe ratio: {annualized_sharpe:.4f}")
-                return annualized_sharpe
-                
-            except Exception as e:
-                self.logger.error(f"Error calculating Sharpe ratio: {e}")
-                return 0
-        else:
-            # Fallback to default RF rate if FF5 data not available
-            self.logger.warning("Using default risk-free rate of 2%")
-            excess_returns = returns - 0.02/252  # Daily risk-free rate
-            return excess_returns.mean() / excess_returns.std() * np.sqrt(252)
+        """Calculate annualized Sharpe ratio"""
+        if len(returns) < 2:
+            return 0.0
+            
+        # Calculate excess returns using risk-free rate
+        excess_returns = returns - self.rf_rate
+        
+        # Calculate annualized Sharpe ratio
+        annualized_sharpe = np.sqrt(252) * excess_returns.mean() / excess_returns.std()
+        
+        return float(annualized_sharpe)
         
     def _calculate_max_drawdown(self, portfolio_values: pd.Series) -> float:
         """Calculate maximum drawdown"""
@@ -232,22 +158,31 @@ class Backtester:
         plt.close()
         self.logger.info("Plot completed")
         
-    def calculate_performance_metrics(self) -> Dict:
+    def calculate_performance_metrics(self, returns: pd.Series) -> Dict:
         """Calculate detailed performance metrics"""
         self.logger.info("Starting performance metrics calculation...")
         if self.portfolio_returns is None:
             raise ValueError("Run backtest first before calculating metrics")
             
         self.logger.info("Calculating metrics...")
+        
+        # Calculate total return
+        total_return = (1 + returns).prod() - 1
+        
+        # Calculate turnover
+        turnover = self.weights.diff().abs().sum(axis=1).mean() * 252  # Annualized turnover
+        
         metrics = {
-            'annualized_return': self._calculate_annualized_return(self.portfolio_returns),
-            'annualized_volatility': self._calculate_annualized_volatility(self.portfolio_returns),
-            'sharpe_ratio': self._calculate_sharpe_ratio(self.portfolio_returns),
+            'total_return': total_return,
+            'annualized_return': self._calculate_annualized_return(returns),
+            'annualized_volatility': self._calculate_annualized_volatility(returns),
+            'sharpe_ratio': self._calculate_sharpe_ratio(returns),
             'max_drawdown': self._calculate_max_drawdown(self.portfolio_values),
-            'skewness': self.portfolio_returns.skew(),
-            'kurtosis': self.portfolio_returns.kurtosis(),
-            'var_95': self.portfolio_returns.quantile(0.05),
-            'var_99': self.portfolio_returns.quantile(0.01)
+            'turnover': turnover,
+            'skewness': returns.skew(),
+            'kurtosis': returns.kurtosis(),
+            'var_95': returns.quantile(0.05),
+            'var_99': returns.quantile(0.01)
         }
         
         self.logger.info("Performance metrics calculation completed")
@@ -262,7 +197,15 @@ class Backtester:
         
         for name, benchmark_returns in benchmarks.items():
             # Align benchmark with portfolio returns
-            aligned_benchmark = benchmark_returns.reindex(self.portfolio_returns.index)
+            if isinstance(benchmark_returns, pd.Series):
+                aligned_benchmark = benchmark_returns.reindex(self.portfolio_returns.index)
+            else:
+                # If benchmark is a float, create a Series with the same index as portfolio returns
+                aligned_benchmark = pd.Series(benchmark_returns, index=self.portfolio_returns.index)
+            
+            # Convert both series to numpy arrays and ensure they're float type
+            portfolio_array = self.portfolio_returns.values.astype(float)
+            benchmark_array = aligned_benchmark.values.astype(float)
             
             # Calculate tracking error
             tracking_error = (self.portfolio_returns - aligned_benchmark).std() * np.sqrt(252)
@@ -272,8 +215,8 @@ class Backtester:
             information_ratio = active_returns.mean() / active_returns.std() * np.sqrt(252)
             
             # Calculate beta
-            covariance = np.cov(self.portfolio_returns, aligned_benchmark)[0,1]
-            variance = aligned_benchmark.var()
+            covariance = np.cov(portfolio_array, benchmark_array)[0,1]
+            variance = np.var(benchmark_array)
             beta = covariance / variance if variance > 0 else 0
             
             # Calculate alpha
@@ -287,4 +230,23 @@ class Backtester:
                 'correlation': self.portfolio_returns.corr(aligned_benchmark)
             }
         
-        return comparison 
+        return comparison
+
+    def _calculate_portfolio_returns(self, returns: pd.DataFrame, weights: pd.DataFrame) -> pd.Series:
+        """Calculate portfolio returns from factor returns and weights"""
+        self.logger.info("Calculating portfolio returns...")
+        
+        # Ensure returns and weights are aligned
+        common_idx = returns.index.intersection(weights.index)
+        returns = returns.loc[common_idx]
+        weights = weights.loc[common_idx]
+        
+        # Calculate portfolio returns
+        portfolio_returns = (returns * weights).sum(axis=1)
+        
+        # Store portfolio returns and values
+        self.portfolio_returns = portfolio_returns
+        self.portfolio_values = (1 + portfolio_returns).cumprod() * 1000  # Starting with $1000
+        
+        self.logger.info(f"Calculated {len(portfolio_returns)} portfolio returns")
+        return portfolio_returns 

@@ -5,6 +5,8 @@ import yfinance as yf
 from datetime import datetime, timedelta
 import os
 import logging
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
 
 class DataLoader:
     def __init__(self, data_dir: str = None):
@@ -348,42 +350,81 @@ class DataLoader:
         except Exception as e:
             raise ValueError(f"Error downloading market data: {str(e)}")
     
-    def prepare_training_data(self) -> Tuple[pd.DataFrame, pd.Series]:
-        """Prepare training data for regime classification"""
-        if not all([self.train_start_date, self.train_end_date]):
-            raise ValueError("Training date ranges not set. Call set_date_ranges first.")
+    def prepare_training_data(self, is_test: bool = False) -> Tuple[pd.DataFrame, pd.Series]:
+        """
+        Prepare training or test data for regime classification
+        
+        Args:
+            is_test (bool): Whether to prepare test data instead of training data
             
-        # Load macro and market data
-        macro_data = self.load_macro_data(self.train_start_date, self.train_end_date)
-        market_data = self.load_market_data(self.train_start_date, self.train_end_date)
+        Returns:
+            Tuple[pd.DataFrame, pd.Series]: Features and labels for training/testing
+        """
+        self.logger.info(f"Preparing {'test' if is_test else 'training'} data for regime classification...")
+        
+        # Load macro data for appropriate period
+        start_date = self.test_start_date if is_test else self.train_start_date
+        end_date = self.test_end_date if is_test else self.train_end_date
+        
+        macro_data = self.load_macro_data(start_date, end_date)
+        market_data = self.load_market_data(start_date, end_date)
         
         # Combine features
-        X = pd.concat([macro_data, market_data], axis=1)
+        features = pd.concat([
+            macro_data,
+            market_data
+        ], axis=1)
         
-        # Create target variable based on market regime
-        # Use VIX as a proxy for market regime
-        vix = market_data['VIX']
-        vix_returns = vix.pct_change()
+        # Calculate returns and volatility features
+        returns = market_data['SP500_Return']  # Use only SP500 returns for momentum
         
-        # Define regimes based on VIX returns
-        # 0: Low volatility regime (VIX returns below median)
-        # 1: High volatility regime (VIX returns above median)
-        y = (vix_returns > vix_returns.median()).astype(int)
+        # Calculate momentum and volatility features
+        features['momentum'] = returns.rolling(window=60).mean()
+        features['volatility'] = returns.rolling(window=20).std() * np.sqrt(252)  # Annualized volatility
         
-        # Drop first row due to NaN in returns
-        X = X.iloc[1:]
-        y = y.iloc[1:]
+        # Handle missing values before clustering
+        # First, forward fill with a limit to avoid propagating old values too far
+        features = features.ffill(limit=5)
+        # Then backward fill with a limit
+        features = features.bfill(limit=5)
+        # Finally, fill any remaining NaNs with the column mean
+        features = features.fillna(features.mean())
+        # Replace any infinities with large but finite numbers
+        features = features.replace([np.inf, -np.inf], [1e10, -1e10])
         
-        # Ensure consistent lengths
-        common_index = X.index.intersection(y.index)
-        X = X.loc[common_index]
-        y = y.loc[common_index]
+        # Store feature names for test data
+        if not is_test:
+            self.feature_names = features.columns.tolist()
+            self.scaler = StandardScaler()
+            features_scaled = self.scaler.fit_transform(features)
+            # Identify regimes using clustering
+            self.kmeans_model = KMeans(n_clusters=5, random_state=42)
+            regime_labels = self.kmeans_model.fit_predict(features_scaled)
+        else:
+            # Ensure test data has same features as training data
+            if not hasattr(self, 'feature_names'):
+                raise ValueError("Must prepare training data before test data")
+            
+            # Reorder columns to match training data and fill missing features with 0
+            features = features.reindex(columns=self.feature_names, fill_value=0)
+            
+            if not hasattr(self, 'scaler'):
+                raise ValueError("Must prepare training data before test data")
+            features_scaled = self.scaler.transform(features)
+            
+            if not hasattr(self, 'kmeans_model'):
+                raise ValueError("Must prepare training data before test data")
+            regime_labels = self.kmeans_model.predict(features_scaled)
         
-        # Log data preparation info
-        self.logger.info(f"Prepared training data with {len(X)} samples")
-        self.logger.info(f"Class distribution: {dict(y.value_counts())}")
+        features_scaled = pd.DataFrame(features_scaled, index=features.index, columns=features.columns)
         
-        return X, y
+        # Store regime distribution
+        regime_dist = pd.Series(regime_labels).value_counts(normalize=True)
+        self.logger.info(f"{'Test' if is_test else 'Training'} class distribution: {dict(pd.Series(regime_labels).value_counts())}")
+        
+        self.logger.info(f"Prepared {'test' if is_test else 'training'} data with {len(features)} samples")
+        
+        return features, pd.Series(regime_labels)
     
     def get_factor_returns(self) -> pd.DataFrame:
         """Get the loaded Fama-French factor returns"""
