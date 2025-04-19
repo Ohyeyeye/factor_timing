@@ -137,7 +137,7 @@ class LSTMModel(nn.Module):
         out = self.fc3(out)
         return out
 
-class LSTMRegimeClassifier(BaseRegimeClassifier):
+class LSTMRegimePredictor(BaseRegimeClassifier):
     def __init__(self, n_regimes: int = 5, sequence_length: int = 20, 
                  hidden_size: int = 128, num_layers: int = 2, dropout: float = 0.3,
                  learning_rate: float = 0.001, num_epochs: int = 200, batch_size: int = 32,

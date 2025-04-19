@@ -6,9 +6,7 @@ import logging
 import os
 
 from data.data_loader import DataLoader
-from classifier.regime_classifier import LSTMRegimeClassifier, XGBoostRegimeClassifier, HMMRegimeClassifier
-from optimizer.portfolio_optimizer import MeanVarianceOptimizer, NeuralPortfolioOptimizer
-from optimizer.transformer_regime_optimizer import TransformerRegimeOptimizer
+from predictor.regime_predictor import LSTMRegimePredictor
 from optimizer.neural_attention_optimizer import NeuralAttentionOptimizer
 from backtest.backtester import Backtester
 
@@ -67,7 +65,7 @@ class FactorTimingStrategy:
         self.logger.info(f"Initializing {model_type} classifier. Model path: {model_path}")
         
         if model_type == 'lstm':
-            classifier = LSTMRegimeClassifier(
+            classifier = LSTMRegimePredictor(
                 n_regimes=5,
                 sequence_length=20,
                 hidden_size=64,
@@ -78,10 +76,6 @@ class FactorTimingStrategy:
                 batch_size=32,
                 model_path=model_path
             )
-        elif model_type == 'xgboost':
-            classifier = XGBoostRegimeClassifier()
-        elif model_type == 'hmm':
-            classifier = HMMRegimeClassifier()
         else:
             raise ValueError(f"Unknown model type: {model_type}")
             
@@ -91,13 +85,8 @@ class FactorTimingStrategy:
                 self.logger.info(f"Loading pretrained model from {model_path}")
                 if model_type == 'lstm':
                     classifier.load_model()
-                elif model_type == 'xgboost':
-                    import joblib
-                    classifier = joblib.load(model_path)
-                elif model_type == 'hmm':
-                    import joblib
-                    classifier = joblib.load(model_path)
-                self.logger.info("Successfully loaded pretrained model")
+                else:
+                    raise ValueError(f"Unknown model type: {model_type}")
             except Exception as e:
                 self.logger.warning(f"Failed to load pretrained model: {str(e)}")
                 self.logger.info("Will train a new model")
@@ -106,22 +95,8 @@ class FactorTimingStrategy:
             
     def _init_portfolio_optimizer(self, optimizer_type: str):
         """Initialize portfolio optimizer based on type"""
-        if optimizer_type == 'mean_variance':
-            return MeanVarianceOptimizer()
-        elif optimizer_type == 'transformer':
-            return TransformerRegimeOptimizer(
-                n_regimes=5,
-                sequence_length=60,
-                hidden_size=64,
-                num_layers=2,
-                dropout=0.2,
-                learning_rate=0.001,
-                num_epochs=100,
-                batch_size=32
-            )
-        elif optimizer_type == 'neural':
-            return NeuralPortfolioOptimizer(input_size=len(self.factor_columns))
-        elif optimizer_type == 'neural_attention':
+        if optimizer_type == 'neural_attention':
+            model_path = os.path.join(self.model_dir, 'neural_attention_optimizer.pth')
             return NeuralAttentionOptimizer(
                 sequence_length=60,
                 hidden_size=64,
@@ -130,7 +105,8 @@ class FactorTimingStrategy:
                 dropout=0.2,
                 learning_rate=0.001,
                 num_epochs=100,
-                batch_size=32
+                batch_size=32,
+                model_path=model_path
             )
         else:
             self.logger.warning(f"Unknown optimizer type: {optimizer_type}")
@@ -225,12 +201,6 @@ class FactorTimingStrategy:
         test_factors = test_factors.loc[common_test_idx]
         self.logger.info("Data indices aligned")
 
-        # Update neural optimizer input size if needed
-        if isinstance(self.portfolio_optimizer, NeuralPortfolioOptimizer):
-            input_size = train_X.shape[1]  # Number of features
-            self.portfolio_optimizer.update_input_size(input_size)
-            self.logger.info(f"Updated neural optimizer input size to {input_size}")
-
         self.logger.info("Data preparation completed")
         return train_factors, test_factors
         
@@ -254,10 +224,9 @@ class FactorTimingStrategy:
                 if self.model_type == 'lstm':
                     self.logger.info("Loading pretrained LSTM model...")
                     self.regime_classifier.load_model(model_path)
-                elif self.model_type in ['xgboost', 'hmm']:
-                    self.logger.info(f"Loading pretrained {self.model_type} model...")
-                    import joblib
-                    self.regime_classifier = joblib.load(model_path)
+                elif self.model_type == 'xgboost':
+                    self.logger.info("Loading pretrained XGBoost model...")
+                    self.regime_classifier.load_model()
                 self.logger.info("Successfully loaded pretrained model")
                 train_pred = self.regime_classifier.predict(train_X)
             except Exception as e:
@@ -273,20 +242,7 @@ class FactorTimingStrategy:
             
         # Train portfolio optimizer
         self.logger.info("Training portfolio optimizer...")
-        if isinstance(self.portfolio_optimizer, TransformerRegimeOptimizer):
-            # For regime-aware optimizer, we need both returns and regime predictions
-            train_regime_predictions = self.regime_classifier.predict(train_X)
-            self.portfolio_optimizer.train(train_factors, train_regime_predictions)
-        elif isinstance(self.portfolio_optimizer, NeuralPortfolioOptimizer):
-            # For neural optimizer, use equal weights as target
-            target_weights = pd.DataFrame(
-                np.ones_like(train_factors) / len(train_factors.columns),
-                index=train_factors.index,
-                columns=train_factors.columns
-            )
-            self.portfolio_optimizer.train(train_factors, target_weights)
-        else:
-            self.portfolio_optimizer.train(train_factors)
+        self.portfolio_optimizer.train(train_factors)
         self.logger.info("Portfolio optimizer training completed")
         
     def _train_new_model(self, train_X, train_y):
@@ -300,9 +256,8 @@ class FactorTimingStrategy:
         try:
             if self.model_type == 'lstm':
                 self.regime_classifier.save_model()
-            elif self.model_type in ['xgboost', 'hmm']:
-                import joblib
-                joblib.dump(self.regime_classifier, self.model_paths[self.model_type])
+            elif self.model_type == 'xgboost':
+                self.regime_classifier.save_model()
             self.logger.info(f"Model saved to {self.model_paths[self.model_type]}")
         except Exception as e:
             self.logger.warning(f"Failed to save model: {str(e)}")
@@ -397,15 +352,9 @@ class FactorTimingStrategy:
             # Get historical returns up to the current date
             historical_returns = test_factors.loc[:date].astype(float)
             
-            if isinstance(self.portfolio_optimizer, TransformerRegimeOptimizer):
-                weights.loc[date] = self.portfolio_optimizer.optimize_weights(
-                    historical_returns,
-                    current_regime
-                )
-            else:
-                weights.loc[date] = self.portfolio_optimizer.optimize_weights(
-                    historical_returns
-                )
+            weights.loc[date] = self.portfolio_optimizer.optimize_weights(
+                historical_returns
+            )
             
             optimization_count += 1
             if optimization_count % 50 == 0:
@@ -468,9 +417,13 @@ class FactorTimingStrategy:
         return strategy_metrics
 
 def main():
-    # Example usage with train-test split
+    # Multiple train-test splits tested manually:
+    # 1. Long training: 2000-2019 train, 2020-2024 eval
+    # 2. Medium training: 2014-2019 train, 2020-2024 backtest
+    # 3. Extended training: 2000-2021 train, 2022-2024 backtest
+    # 4. Short training: 2020-2021 train, 2022-2023 backtest
     strategy = FactorTimingStrategy(
-        train_start_date='2014-01-01',
+        train_start_date='2000-01-01',
         train_end_date='2019-12-31',
         test_start_date='2020-01-01',
         test_end_date='2024-12-31',
